@@ -1,0 +1,19 @@
+.Spinner {
+    width: clamp(1rem, 2vw, 1.4rem);
+    height: clamp(1rem, 2vw, 1.4rem);
+    border: 0.25rem solid var(--color-gray-400);
+    border-top: 0.25rem solid var(--color-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+
+    &[data-size='small'] {
+        width: clamp(0.4rem, 2vw, 0.6rem);
+        height: clamp(0.4rem, 2vw, 0.6rem);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

@@ -1,0 +1,15 @@
+@use "../../../../main.scss" as *;
+
+.Grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    row-gap: 0.5rem;
+    column-gap: 0.5rem;
+    align-items: start;
+}
+
+@media (max-width: $mobile-hard-cutoff) {
+    .Grid {
+        grid-template-columns: 1fr;
+    }
+}

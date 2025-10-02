@@ -1,0 +1,36 @@
+.Heading {
+    color: var(--color-text);
+    font-size: clamp(1.25rem, 4vw, 1.8rem);
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
+    &[data-variant='priority'] {
+        font-weight: bold;
+    }
+
+    &[data-variant='error'] {
+        color: var(--color-error);
+    }
+
+    &[data-variant='warning'] {
+        color: var(--color-primary);
+    }
+
+    &[data-size='title'] {
+        font-size: clamp(1.6rem, 8vw, 2.4rem);
+    }
+
+    &[data-size='sub-title'] {
+        font-size: clamp(1.4rem, 6vw, 2.1rem);
+    }
+
+    &[data-size='small'] {
+        font-size: clamp(1.1rem, 3vw, 1.6rem);
+    }
+
+}

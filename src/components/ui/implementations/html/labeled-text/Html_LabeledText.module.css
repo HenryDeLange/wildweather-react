@@ -1,0 +1,9 @@
+.Wrapper {
+    margin-top: -0.1rem;
+    width: fit-content;
+}
+
+.Text {
+    color: var(--color-gray-900);
+    word-break: break-all;
+}

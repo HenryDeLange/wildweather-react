@@ -1,0 +1,26 @@
+{
+    "editor.codeActionsOnSave": [
+        "source.addMissingImports",
+        "source.organizeImports"
+    ],
+    "typescript.preferences.quoteStyle": "single",
+    "javascript.preferences.quoteStyle": "single",
+    "files.exclude": {
+        "**/node_modules": true
+    },
+    "files.watcherExclude": {
+        "**/dist": true
+    },
+    "cSpell.words": [
+        "appinstalled",
+        "beforeinstallprompt",
+        "codegen",
+        "Lange",
+        "languagedetector",
+        "MyWild",
+        "revparse",
+        "VITE",
+        "WildWeather",
+        "zlevel"
+    ]
+}

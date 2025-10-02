@@ -1,0 +1,50 @@
+:root {
+    --color-primary: oklch(64.541% 0.11998 230.893);
+
+    --color-canvas: oklch(94.158% 0.01455 224.81);
+    --color-text: #000000;
+    --color-shadow: #00000055;
+    --color-button: #e1deff;
+
+    --color-error: oklch(56.408% 0.21183 27.439);
+    --color-warning: oklch(58.349% 0.14875 46.014);
+
+    --color-gray-50: oklch(98.42% 0.0034 247.86deg);
+    --color-gray-75: oklch(0% 0 0 / 0.10);
+    --color-gray-100: oklch(9.64% 0.02 256.742 / 0.08);
+    --color-gray-200: oklch(12% 9% 264deg / 8%);
+    --color-gray-300: oklch(12% 8.5% 264deg / 17%);
+    --color-gray-400: oklch(12% 8% 264deg / 38%);
+    --color-gray-500: oklch(12% 7.5% 264deg / 50%);
+    --color-gray-600: oklch(12% 7% 264deg / 67%);
+    --color-gray-700: oklch(12% 6% 264deg / 77%);
+    --color-gray-800: oklch(12% 5% 264deg / 85%);
+    --color-gray-900: oklch(12% 5% 264deg / 90%);
+    --color-gray-950: oklch(12% 5% 264deg / 95%);
+}
+
+/* See "data-theme" in "index.html", instead of using "@media (prefers-color-scheme: dark)". */
+:root[data-theme='dark'] {
+    --color-primary: oklch(76.548% 0.1229 218.484);
+
+    --color-canvas: oklch(28.36% 0.00869 208.935);
+    --color-text: #ffffff;
+    --color-shadow: #00000055;
+    --color-button: #272a38;
+
+    --color-error: oklch(80% 55% 31deg);
+    --color-warning: oklch(63.166% 0.11404 60.924);
+
+    --color-gray-50: oklch(17% 1% 264deg);
+    --color-gray-75: oklch(20.483% 0.00617 271.115 / 0.815);
+    --color-gray-100: oklch(28% 3% 264deg / 65%);
+    --color-gray-200: oklch(31% 3% 264deg / 80%);
+    --color-gray-300: oklch(35% 3% 264deg / 80%);
+    --color-gray-400: oklch(47% 3.5% 264deg / 80%);
+    --color-gray-500: oklch(64% 4% 264deg / 80%);
+    --color-gray-600: oklch(82% 4% 264deg / 80%);
+    --color-gray-700: oklch(92% 4.5% 264deg / 80%);
+    --color-gray-800: oklch(93% 3.5% 264deg / 85%);
+    --color-gray-900: oklch(95% 2% 264deg / 90%);
+    --color-gray-950: oklch(94% 1.5% 264deg / 95%);
+}

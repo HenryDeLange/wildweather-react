@@ -1,0 +1,53 @@
+.Text {
+    color: var(--color-text);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    margin: 0;
+    padding: 0;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
+    &[data-truncate=true] {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &[data-variant='bold'] {
+        font-weight: bold;
+    }
+
+    &[data-variant='priority'] {
+        color: var(--color-primary);
+        font-weight: bold;
+    }
+
+    &[data-variant='error'] {
+        color: var(--color-error);
+    }
+
+    &[data-variant='warning'] {
+        color: var(--color-warning);
+    }
+
+    &[data-variant='subdued'] {
+        color: var(--color-gray-600);
+    }
+
+    &[data-size='priority'] {
+        font-size: clamp(1.1rem, 3vw, 1.4rem);
+    }
+
+    &[data-size='large'] {
+        font-size: clamp(1.2rem, 3vw, 1.8rem);
+    }
+
+    &[data-size='small'] {
+        font-size: clamp(0.72rem, 2vw, 0.96rem);
+    }
+
+    &[data-size='tiny'] {
+        font-size: clamp(0.5rem, 2vw, 0.7rem);
+    }
+}

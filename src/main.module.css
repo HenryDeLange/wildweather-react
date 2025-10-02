@@ -1,0 +1,4 @@
+.root {
+    /* Needed for Base UI's portals (Dialog, Popover, etc.) to work */
+    isolation: isolate;
+}

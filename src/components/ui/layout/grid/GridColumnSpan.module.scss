@@ -1,0 +1,27 @@
+@use "../../../../main.scss" as *;
+
+.Span {
+    grid-column: span 1;
+
+    &[data-grid-span='2'] {
+        grid-column: span 2;
+    }
+
+    &[data-grid-span='3'] {
+        grid-column: span 3;
+    }
+
+    &[data-grid-span='4'] {
+        grid-column: span 4;
+    }
+}
+
+@media (max-width: $mobile-cutoff) {
+
+    .Span,
+    .Span[data-grid-span='2'],
+    .Span[data-grid-span='3'],
+    .Span[data-grid-span='4'] {
+        grid-column: span 1 !important;
+    }
+}

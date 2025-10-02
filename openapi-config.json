@@ -1,0 +1,9 @@
+{
+    "schemaFile": "http://localhost:8080/v3/api-docs",
+    "apiFile": "./src/redux/api/wildweatherBaseApi.ts",
+    "apiImport": "wildweatherBaseApi",
+    "outputFile": "./src/redux/api/wildweatherApi.ts",
+    "exportName": "wildweatherApi",
+    "hooks": true,
+    "tag": true
+}

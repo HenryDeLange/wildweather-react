@@ -1,0 +1,14 @@
+.SeparatorContainer {
+    display: flex;
+    height: 100%;
+}
+
+.SeparatorHorizontal {
+    height: 1px;
+    background-color: var(--color-gray-300);
+}
+
+.SeparatorVertical {
+    width: 1px;
+    background-color: var(--color-gray-300);
+}

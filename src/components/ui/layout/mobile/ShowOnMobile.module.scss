@@ -1,0 +1,11 @@
+@use '../../../../main.scss' as *;
+
+.ShowOnMobile {
+    display: none;
+}
+
+@media (max-width: $mobile-cutoff) {
+    .ShowOnMobile {
+        display: block;
+    }
+}
