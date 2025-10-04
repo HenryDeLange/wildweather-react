@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useGetWeatherQuery } from '../../../redux/api/wildweatherApi';
-import { HCBox, PageContainer } from '../../ui/layout';
-import { Heading, Spinner } from '../../ui/mywild';
+import { VBox } from '../../ui/layout';
+import { Heading, Separator, Spinner } from '../../ui/mywild';
 import { ErrorDisplay } from '../base/ErrorDisplay';
 import { WeatherChart } from './WeatherChart';
 
@@ -12,25 +12,42 @@ export function WeatherDisplay() {
         isLoading,
         error
     } = useGetWeatherQuery({
-        // startDate: ,
-        // endDate: 
+        // TODO: Add ability for UI to filter
     });
     return (
-        <PageContainer>
-            <HCBox>
-                <Heading>
-                    {t('Past Weather')}
-                </Heading>
-                <ErrorDisplay error={error} />
-                {isLoading &&
-                    <Spinner />
-                }
-                {data &&
+        <VBox>
+            <Heading size='small'>
+                {t('Past Weather')}
+            </Heading>
+            <ErrorDisplay error={error} />
+            {isLoading &&
+                <Spinner />
+            }
+            {data &&
+                <>
                     <WeatherChart
+                        type='temperature'
+                        data={data.weather}
                         loading={isLoading}
+                        grouping='month'
                     />
-                }
-            </HCBox>
-        </PageContainer>
+                    <Separator />
+                    <WeatherChart
+                        type='rain'
+                        data={data.weather}
+                        loading={isLoading}
+                        grouping='month'
+                    />
+                    <Separator />
+                    <WeatherChart
+                        type='wind'
+                        data={data.weather}
+                        loading={isLoading}
+                        grouping='month'
+                    />
+                </>
+
+            }
+        </VBox>
     );
 }

@@ -11,7 +11,10 @@ export function AdminActions() {
                     {t('registerButton')}
                 </RouterButton>
                 <Button>
-                    TODO: Process Files
+                    TODO: Process CSV Files
+                </Button>
+                <Button>
+                    TODO: Process API Data
                 </Button>
             </VBox>
         </PageContainer>

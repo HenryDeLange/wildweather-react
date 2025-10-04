@@ -1,6 +1,6 @@
 import { wildweatherBaseApi as api } from "./wildweatherBaseApi";
 export const addTagTypes = [
-  "User Authentication",
+  "Users",
   "Admin",
   "Weather",
   "Application Information",
@@ -13,7 +13,7 @@ const injectedRtkApi = api
     endpoints: (build) => ({
       getUser: build.query<GetUserApiResponse, GetUserApiArg>({
         query: (queryArg) => ({ url: `/api/v1/users/${queryArg.userId}` }),
-        providesTags: ["User Authentication"],
+        providesTags: ["Users"],
       }),
       updateUser: build.mutation<UpdateUserApiResponse, UpdateUserApiArg>({
         query: (queryArg) => ({
@@ -21,7 +21,7 @@ const injectedRtkApi = api
           method: "PUT",
           body: queryArg.userUpdate,
         }),
-        invalidatesTags: ["User Authentication"],
+        invalidatesTags: ["Users"],
       }),
       registerUser: build.mutation<RegisterUserApiResponse, RegisterUserApiArg>(
         {
@@ -30,12 +30,12 @@ const injectedRtkApi = api
             method: "POST",
             body: queryArg.userRegister,
           }),
-          invalidatesTags: ["User Authentication"],
+          invalidatesTags: ["Users"],
         },
       ),
       refreshUser: build.mutation<RefreshUserApiResponse, RefreshUserApiArg>({
         query: () => ({ url: `/api/v1/users/refresh`, method: "POST" }),
-        invalidatesTags: ["User Authentication"],
+        invalidatesTags: ["Users"],
       }),
       loginUser: build.mutation<LoginUserApiResponse, LoginUserApiArg>({
         query: (queryArg) => ({
@@ -43,17 +43,30 @@ const injectedRtkApi = api
           method: "POST",
           body: queryArg.userLogin,
         }),
-        invalidatesTags: ["User Authentication"],
+        invalidatesTags: ["Users"],
       }),
       triggerCsvProcessing: build.mutation<
         TriggerCsvProcessingApiResponse,
         TriggerCsvProcessingApiArg
       >({
         query: (queryArg) => ({
-          url: `/api/v1/admin/process-files`,
+          url: `/api/v1/admin/process/csv`,
           method: "POST",
           params: {
             forceFullReload: queryArg.forceFullReload,
+          },
+        }),
+        invalidatesTags: ["Admin"],
+      }),
+      triggerApiProcessing: build.mutation<
+        TriggerApiProcessingApiResponse,
+        TriggerApiProcessingApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/v1/admin/process/api`,
+          method: "POST",
+          params: {
+            processAllAvailable: queryArg.processAllAvailable,
           },
         }),
         invalidatesTags: ["Admin"],
@@ -62,22 +75,18 @@ const injectedRtkApi = api
         query: (queryArg) => ({
           url: `/api/v1/weather`,
           params: {
+            station: queryArg.station,
             startDate: queryArg.startDate,
             endDate: queryArg.endDate,
+            startMonth: queryArg.startMonth,
+            endMonth: queryArg.endMonth,
           },
         }),
         providesTags: ["Weather"],
       }),
-      getWeatherOnDay: build.query<
-        GetWeatherOnDayApiResponse,
-        GetWeatherOnDayApiArg
-      >({
-        query: (queryArg) => ({ url: `/api/v1/weather/${queryArg.date}` }),
-        providesTags: ["Weather"],
-      }),
-      getWeatherOnDay1: build.query<
-        GetWeatherOnDay1ApiResponse,
-        GetWeatherOnDay1ApiArg
+      getStationWeatherOnDay: build.query<
+        GetStationWeatherOnDayApiResponse,
+        GetStationWeatherOnDayApiArg
       >({
         query: (queryArg) => ({
           url: `/api/v1/weather/${queryArg.date}/${queryArg.station}`,
@@ -118,17 +127,21 @@ export type TriggerCsvProcessingApiResponse = unknown;
 export type TriggerCsvProcessingApiArg = {
   forceFullReload?: boolean;
 };
-export type GetWeatherApiResponse = /** status 200 OK */ WeatherDto[];
+export type TriggerApiProcessingApiResponse = unknown;
+export type TriggerApiProcessingApiArg = {
+  processAllAvailable?: boolean;
+};
+export type GetWeatherApiResponse = /** status 200 OK */ WeatherDataDto;
 export type GetWeatherApiArg = {
+  station?: string;
   startDate?: string;
   endDate?: string;
+  startMonth?: number;
+  endMonth?: number;
 };
-export type GetWeatherOnDayApiResponse = /** status 200 OK */ WeatherDto[];
-export type GetWeatherOnDayApiArg = {
-  date: string;
-};
-export type GetWeatherOnDay1ApiResponse = /** status 200 OK */ WeatherDto[];
-export type GetWeatherOnDay1ApiArg = {
+export type GetStationWeatherOnDayApiResponse =
+  /** status 200 OK */ WeatherDataDto;
+export type GetStationWeatherOnDayApiArg = {
   date: string;
   station: string;
 };
@@ -156,20 +169,18 @@ export type UserLogin = {
   username: string;
   password: string;
 };
-export type WeatherDto = {
-  station: string;
-  date: string;
-  category: "L" | "A" | "H";
-  temperature: number;
-  windSpeed: number;
-  windMax: number;
-  windDirection: string;
-  rainRate: number;
-  rainDaily: number;
-  pressure: number;
-  humidity: number;
-  uvRadiationIndex: number;
-  missing: number;
+export type WeatherDataDto = {
+  weather: {
+    [key: string]: {
+      [key: string]: {
+        [key: string]: {
+          [key: string]: {
+            [key: string]: number;
+          };
+        };
+      };
+    };
+  };
 };
 export type AppVersion = {
   appVersion: string;
@@ -185,8 +196,8 @@ export const {
   useRefreshUserMutation,
   useLoginUserMutation,
   useTriggerCsvProcessingMutation,
+  useTriggerApiProcessingMutation,
   useGetWeatherQuery,
-  useGetWeatherOnDayQuery,
-  useGetWeatherOnDay1Query,
+  useGetStationWeatherOnDayQuery,
   useGetServerVersionQuery,
 } = injectedRtkApi;
