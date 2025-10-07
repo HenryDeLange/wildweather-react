@@ -12,6 +12,7 @@ export * from './NavigationMenu';
 export * from './Popover';
 export * from './RouterButton';
 export * from './RouterLink';
+export * from './Select';
 export * from './Separator';
 export * from './Spinner';
 export * from './Text';

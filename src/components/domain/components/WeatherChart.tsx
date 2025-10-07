@@ -39,7 +39,7 @@ type Props = {
     type: 'temperature' | 'rain' | 'wind' | 'missing';
     data: WeatherDataDto['weather'];
     loading?: boolean;
-    grouping?: 'day' | 'week' | 'month' | 'year';
+    grouping?: 'daily' | 'weekly' | 'monthly' | 'yearly';
 }
 
 export function WeatherChart({ type, data, loading, grouping }: Props) {
@@ -84,7 +84,7 @@ export function WeatherChart({ type, data, loading, grouping }: Props) {
             },
             data: generateCategories(grouping)
         },
-        series: generateSeriesData(data, type, grouping),
+        series: generateSeriesData(data, type),
         legend: {
             show: true,
             type: 'scroll',
@@ -125,10 +125,10 @@ export function WeatherChart({ type, data, loading, grouping }: Props) {
 
 const generateCategories = (grouping: Props['grouping']): string[] => {
     switch (grouping) {
-        case 'day': {
+        case 'daily': {
             const days: string[] = [];
             const start = new Date(2024/*leap year*/, 0, 1);
-            for (let i = 0; i < 366/*leap yar*/; i++) {
+            for (let i = 0; i < 366/*leap year*/; i++) {
                 const date = new Date(start);
                 date.setDate(start.getDate() + i);
                 const formatted = date.toLocaleDateString("en-GB", { // TODO: use current lang from i18n
@@ -139,9 +139,16 @@ const generateCategories = (grouping: Props['grouping']): string[] => {
             }
             return days;
         }
-        case 'month': {
+        case 'weekly': {
             const days: string[] = [];
-            for (let i = 0; i < 12/*leap yar*/; i++) {
+            for (let i = 1; i <= 53; i++) {
+                days.push(String(i).padStart(2, '0'));
+            }
+            return days;
+        }
+        case 'monthly': {
+            const days: string[] = [];
+            for (let i = 0; i < 12; i++) {
                 const month = new Date(2025, i, 1);
                 const formatted = month.toLocaleDateString("en-GB", { // TODO: use current lang from i18n
                     month: "long"
@@ -150,12 +157,19 @@ const generateCategories = (grouping: Props['grouping']): string[] => {
             }
             return days;
         }
+        case 'yearly': {
+            const days: string[] = [];
+            for (let i = 2023; i <= new Date().getFullYear(); i++) {
+                days.push(String(i));
+            }
+            return days;
+        }
         default:
             return [];
     }
 };
 
-const generateSeriesData = (data: WeatherDataDto['weather'], type: Props['type'], grouping: Props['grouping']): (LineSeriesOption | BarSeriesOption)[] => {
+const generateSeriesData = (data: WeatherDataDto['weather'], type: Props['type']): (LineSeriesOption | BarSeriesOption)[] => {
     const seriesList: (LineSeriesOption | BarSeriesOption)[] = Object.keys(data).flatMap(station =>
         Object.keys(data[station]).flatMap(year => ({
             name: `${station} ${year}`,
@@ -170,46 +184,9 @@ const generateSeriesData = (data: WeatherDataDto['weather'], type: Props['type']
             },
             barCategoryGap: "30%",
             triggerLineEvent: true,
-            data:
-                grouping === "day"
-                    ? Object.keys(data[station][year]).flatMap(day =>
-                        getValue(type, data[station][year][day])
-                    )
-                    : grouping === "month"
-                        ? Object.entries(Object.keys(data[station][year]).reduce((months, day) => {
-                            const date = new Date(day);
-                            const month = date.getMonth();
-                            const value = getValue(type, data[station][year][day]);
-                            months[month] = (months[month] ?? 0) + value;
-                            return months;
-                        }, {} as Record<string, number>)
-                        ).map(([month, sum]) => {
-                            const missing: number = Object.keys(data[station][year])
-                                .filter(day => new Date(day).getMonth() === Number(month))
-                                .reduce((missingCount, monthDay) =>
-                                    ((missingCount ?? 0) + Number(getValue('missing', data[station][year][monthDay]))), 0);
-                                console.log(station, month, missing)
-                            if (type === 'rain') {
-                                return {
-                                    value: sum,
-                                    itemStyle: {
-                                        borderColor: missing === 0 ? 'rgba(0, 119, 20, 1)' : undefined,
-                                        borderWidth: 2
-                                    }
-                                };
-                            }
-                            else {
-                                const daysPerMonth = new Date(Number(year), Number(month) + 1, 0).getDate();
-                                return {
-                                    value: Math.round(sum / daysPerMonth) * 10 / 10,
-                                    itemStyle: {
-                                        borderColor: missing === 0 ? 'rgba(0, 119, 20, 1)' : undefined,
-                                        borderWidth: 2
-                                    }
-                                };
-                            }
-                        })
-                        : []
+            data: Object.keys(data[station][year]).flatMap(day =>
+                getValue(type, data[station][year][day])
+            )
         }) as LineSeriesOption | BarSeriesOption)
     );
     return seriesList;

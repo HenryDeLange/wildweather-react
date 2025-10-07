@@ -75,6 +75,9 @@ const injectedRtkApi = api
         query: (queryArg) => ({
           url: `/api/v1/weather`,
           params: {
+            category: queryArg.category,
+            grouping: queryArg.grouping,
+            aggregate: queryArg.aggregate,
             station: queryArg.station,
             startDate: queryArg.startDate,
             endDate: queryArg.endDate,
@@ -84,13 +87,11 @@ const injectedRtkApi = api
         }),
         providesTags: ["Weather"],
       }),
-      getStationWeatherOnDay: build.query<
-        GetStationWeatherOnDayApiResponse,
-        GetStationWeatherOnDayApiArg
+      getWeatherStations: build.query<
+        GetWeatherStationsApiResponse,
+        GetWeatherStationsApiArg
       >({
-        query: (queryArg) => ({
-          url: `/api/v1/weather/${queryArg.date}/${queryArg.station}`,
-        }),
+        query: () => ({ url: `/api/v1/weather/stations` }),
         providesTags: ["Weather"],
       }),
       getServerVersion: build.query<
@@ -133,18 +134,17 @@ export type TriggerApiProcessingApiArg = {
 };
 export type GetWeatherApiResponse = /** status 200 OK */ WeatherDataDto;
 export type GetWeatherApiArg = {
+  category?: "L" | "A" | "H";
+  grouping?: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+  aggregate?: "AVERAGE" | "TOTAL";
   station?: string;
   startDate?: string;
   endDate?: string;
   startMonth?: number;
   endMonth?: number;
 };
-export type GetStationWeatherOnDayApiResponse =
-  /** status 200 OK */ WeatherDataDto;
-export type GetStationWeatherOnDayApiArg = {
-  date: string;
-  station: string;
-};
+export type GetWeatherStationsApiResponse = /** status 200 OK */ string[];
+export type GetWeatherStationsApiArg = void;
 export type GetServerVersionApiResponse = /** status 200 OK */ AppVersion;
 export type GetServerVersionApiArg = void;
 export type UserInfo = {
@@ -198,6 +198,6 @@ export const {
   useTriggerCsvProcessingMutation,
   useTriggerApiProcessingMutation,
   useGetWeatherQuery,
-  useGetStationWeatherOnDayQuery,
+  useGetWeatherStationsQuery,
   useGetServerVersionQuery,
 } = injectedRtkApi;
