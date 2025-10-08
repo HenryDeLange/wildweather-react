@@ -100,7 +100,9 @@ export function Html_Drawer({ heading, menus }: Props) {
                                 >
                                     {menu.title &&
                                         <RouterLink to={menu.href as LinkProps['to']}>
-                                            {menu.title}
+                                            <div onClick={() => setOpen(false)}>
+                                                {menu.title}
+                                            </div>
                                         </RouterLink>
                                     }
                                     {menu.render &&

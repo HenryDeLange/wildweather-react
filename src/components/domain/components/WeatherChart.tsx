@@ -113,7 +113,7 @@ export function WeatherChart({ type, data, loading, grouping }: Props) {
             option={option}
             notMerge={true}
             lazyUpdate={true}
-            style={{ height: '15rem', width: '100%' }}
+            style={{ height: '40rem', width: '100%' }}
             // className='echarts-for-echarts'
             theme='my_theme'
             showLoading={loading}
