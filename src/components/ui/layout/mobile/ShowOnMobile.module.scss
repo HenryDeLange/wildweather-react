@@ -9,3 +9,13 @@
         display: block;
     }
 }
+
+.ShowOnMobileHardCutoff {
+    display: none;
+}
+
+@media (max-width: $mobile-hard-cutoff) {
+    .ShowOnMobileHardCutoff {
+        display: block;
+    }
+}

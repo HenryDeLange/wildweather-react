@@ -26,11 +26,13 @@ export function BaseUI_Select<T>({ items, value, onValueChange, onBlur, placehol
             onValueChange={(selectedValue, event) => onValueChange?.(selectedValue !== value ? selectedValue : null, event)}
         >
             <Select.Trigger className={styles.Select} onBlur={onBlur}>
-                <Select.Value render={
-                    <Text variant={!value && placeholder ? 'subdued' : 'standard'}>
-                        {!value ? (placeholder ?? '') : items.find(item => item.value === value)?.label ?? ''}
-                    </Text>
-                } />
+                <Select.Value
+                    render={
+                        <Text variant={!value && placeholder ? 'subdued' : 'standard'}>
+                            {!value ? (placeholder ?? '') : items.find(item => item.value === value)?.label ?? ''}
+                        </Text>
+                    }
+                />
                 <Select.Icon className={styles.SelectIcon}>
                     <ChevronUpDownIcon />
                 </Select.Icon>
@@ -44,9 +46,15 @@ export function BaseUI_Select<T>({ items, value, onValueChange, onBlur, placehol
                                 <Select.ItemIndicator className={styles.ItemIndicator}>
                                     <CheckIcon className={styles.ItemIndicatorIcon} />
                                 </Select.ItemIndicator>
-                                <Select.ItemText className={styles.ItemText}>
-                                    {label}
-                                </Select.ItemText>
+                                <Select.ItemText className={styles.ItemText}
+                                    render={
+                                        <div>
+                                            <Text>
+                                                {label}
+                                            </Text>
+                                        </div>
+                                    }
+                                />
                             </Select.Item>
                         ))}
                     </Select.Popup>

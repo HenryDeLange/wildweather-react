@@ -5,7 +5,8 @@ import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useTranslation } from 'react-i18next';
-import type { WeatherDataDto } from '../../../redux/api/wildweatherApi';
+import type { GetWeatherApiArg, WeatherDataDto } from '../../../redux/api/wildweatherApi';
+import type { CategoryType, GroupedFieldType, WeatherFieldType } from './types';
 
 // Use individual manual imports to reduce bundle size. See https://github.com/hustcc/echarts-for-react?tab=readme-ov-file#usage
 
@@ -36,18 +37,19 @@ type EChartsOption = echarts.ComposeOption<
 >;
 
 type Props = {
-    type: 'temperature' | 'rain' | 'wind' | 'missing';
+    type: WeatherFieldType;
     data: WeatherDataDto['weather'];
     loading?: boolean;
-    grouping?: 'daily' | 'weekly' | 'monthly' | 'yearly';
+    grouping?: GetWeatherApiArg['grouping'];
+    category: CategoryType;
 }
 
-export function WeatherChart({ type, data, loading, grouping }: Props) {
+export function WeatherChart({ type, data, loading, grouping, category }: Props) {
     const { t } = useTranslation();
 
     const option: EChartsOption = {
         title: {
-            text: t(`chartType${type.toUpperCase()}`)
+            text: t(`chartType${type}`)
         },
         tooltip: {
             trigger: 'item',
@@ -84,7 +86,7 @@ export function WeatherChart({ type, data, loading, grouping }: Props) {
             },
             data: generateCategories(grouping)
         },
-        series: generateSeriesData(data, type),
+        series: generateSeriesData(type, grouping, category, data),
         legend: {
             show: true,
             type: 'scroll',
@@ -125,7 +127,7 @@ export function WeatherChart({ type, data, loading, grouping }: Props) {
 
 const generateCategories = (grouping: Props['grouping']): string[] => {
     switch (grouping) {
-        case 'daily': {
+        case 'DAILY': {
             const days: string[] = [];
             const start = new Date(2024/*leap year*/, 0, 1);
             for (let i = 0; i < 366/*leap year*/; i++) {
@@ -139,69 +141,88 @@ const generateCategories = (grouping: Props['grouping']): string[] => {
             }
             return days;
         }
-        case 'weekly': {
-            const days: string[] = [];
+        case 'WEEKLY': {
+            const weeks: string[] = [];
             for (let i = 1; i <= 53; i++) {
-                days.push(String(i).padStart(2, '0'));
+                weeks.push(String(i).padStart(2, '0'));
             }
-            return days;
+            return weeks;
         }
-        case 'monthly': {
-            const days: string[] = [];
+        case 'MONTHLY': {
+            const months: string[] = [];
             for (let i = 0; i < 12; i++) {
                 const month = new Date(2025, i, 1);
                 const formatted = month.toLocaleDateString("en-GB", { // TODO: use current lang from i18n
                     month: "long"
                 });
-                days.push(formatted);
+                months.push(formatted);
             }
-            return days;
+            return months;
         }
-        case 'yearly': {
-            const days: string[] = [];
+        case 'YEARLY': {
+            const years: string[] = [];
             for (let i = 2023; i <= new Date().getFullYear(); i++) {
-                days.push(String(i));
+                years.push(String(i));
             }
-            return days;
+            return years;
         }
         default:
             return [];
     }
 };
 
-const generateSeriesData = (data: WeatherDataDto['weather'], type: Props['type']): (LineSeriesOption | BarSeriesOption)[] => {
-    const seriesList: (LineSeriesOption | BarSeriesOption)[] = Object.keys(data).flatMap(station =>
-        Object.keys(data[station]).flatMap(year => ({
-            name: `${station} ${year}`,
-            symbolSize: 12,
-            type: 'bar',
-            smooth: true,
-            emphasis: {
-                focus: 'series'
-            },
-            lineStyle: {
-                width: 4
-            },
-            barCategoryGap: "30%",
-            triggerLineEvent: true,
-            data: Object.keys(data[station][year]).flatMap(day =>
-                getValue(type, data[station][year][day])
-            )
-        }) as LineSeriesOption | BarSeriesOption)
-    );
+const generateSeriesData = (type: Props['type'], grouping: Props['grouping'], category: CategoryType, data: WeatherDataDto['weather']): (LineSeriesOption | BarSeriesOption)[] => {
+    const seriesList: (LineSeriesOption | BarSeriesOption)[] = Object.keys(data).flatMap(station => {
+        // TODO: Handle year grouping 
+        return Object.keys(data[station]).flatMap(year => {
+            const dataRecords = Object.keys(data[station][year]).flatMap(group => {
+                return getValue(type, category, data[station][year][group] as GroupedFieldType)
+            });
+            return ({
+                name: `${station} ${year}`,
+                symbolSize: 12,
+                type: 'bar',
+                smooth: true,
+                emphasis: {
+                    focus: 'series'
+                },
+                lineStyle: {
+                    width: 4
+                },
+                barCategoryGap: "30%",
+                triggerLineEvent: true,
+                data: dataRecords
+            }) as LineSeriesOption | BarSeriesOption;
+        });
+    });
+    console.log({ seriesList })
     return seriesList;
 };
 
-function getValue(type: Props['type'], data: { [key: string]: { [key: string]: number; }; }) {
+
+
+function getValue(type: WeatherFieldType, category: CategoryType, data: GroupedFieldType) {
     switch (type) {
-        case 'temperature':
-            return data['tmp']['A'];
-        case 'rain':
-            return data['rDy']['A'];
-        case 'wind':
-            return data['wSp']['A'];
-        case 'missing':
-            return data['mis']['A'];
+        case 'TEMPERATURE':
+            return data['tmp'][category];
+        case 'WIND_SPEED':
+            return data['wSp'][category];
+        case 'WIND_MAX':
+            return data['wMx'][category];
+        case 'WIND_DIRECTION':
+            return data['wDr'][category];
+        case 'RAIN_RATE':
+            return data['rRt'][category];
+        case 'RAIN_DAILY':
+            return data['rDy'][category];
+        case 'PRESSURE':
+            return data['prs'][category];
+        case 'HUMIDITY':
+            return data['hmd'][category];
+        case 'UV_RADIATION_INDEX':
+            return data['uvI'][category];
+        case 'MISSING':
+            return data['mis'][category];
         default:
             return 0;
     }

@@ -75,10 +75,11 @@ const injectedRtkApi = api
         query: (queryArg) => ({
           url: `/api/v1/weather`,
           params: {
-            category: queryArg.category,
-            grouping: queryArg.grouping,
-            aggregate: queryArg.aggregate,
             station: queryArg.station,
+            grouping: queryArg.grouping,
+            category: queryArg.category,
+            aggregate: queryArg.aggregate,
+            weatherFields: queryArg.weatherFields,
             startDate: queryArg.startDate,
             endDate: queryArg.endDate,
             startMonth: queryArg.startMonth,
@@ -134,10 +135,22 @@ export type TriggerApiProcessingApiArg = {
 };
 export type GetWeatherApiResponse = /** status 200 OK */ WeatherDataDto;
 export type GetWeatherApiArg = {
-  category?: "L" | "A" | "H";
-  grouping?: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
-  aggregate?: "AVERAGE" | "TOTAL";
   station?: string;
+  grouping?: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
+  category?: "L" | "A" | "H";
+  aggregate?: "AVERAGE" | "TOTAL";
+  weatherFields?: (
+    | "TEMPERATURE"
+    | "WIND_SPEED"
+    | "WIND_MAX"
+    | "WIND_DIRECTION"
+    | "RAIN_RATE"
+    | "RAIN_DAILY"
+    | "PRESSURE"
+    | "HUMIDITY"
+    | "UV_RADIATION_INDEX"
+    | "MISSING"
+  )[];
   startDate?: string;
   endDate?: string;
   startMonth?: number;

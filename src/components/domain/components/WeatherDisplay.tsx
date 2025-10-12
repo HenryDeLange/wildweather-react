@@ -1,25 +1,34 @@
-import { useState, type ComponentProps } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetWeatherQuery, useGetWeatherStationsQuery, type GetWeatherApiArg } from '../../../redux/api/wildweatherApi';
 import { HBox, VBox } from '../../ui/layout';
-import { Heading, Select, Separator, Spinner } from '../../ui/mywild';
+import { Select, Spinner } from '../../ui/mywild';
 import { ErrorDisplay } from '../base/ErrorDisplay';
+import { type CategoryType, type WeatherFieldType } from './types';
 import { WeatherChart } from './WeatherChart';
 
 export function WeatherDisplay() {
     const { t } = useTranslation();
 
-    const [chart, setCart] = useState<'TEMPERATURE' | 'RAIN' | 'WIND' | 'MISSING'>('RAIN');
+    const [chart, setCart] = useState<WeatherFieldType>('RAIN_DAILY');
     const [station, setStation] = useState<GetWeatherApiArg['station']>();
     const [grouping, setGrouping] = useState<GetWeatherApiArg['grouping']>('MONTHLY');
     const [aggregate, setAggregate] = useState<GetWeatherApiArg['aggregate']>('AVERAGE');
-    const [category, setCategory] = useState<GetWeatherApiArg['category']>('A');
+    const [category, setCategory] = useState<CategoryType>('A');
+    const [month, setMonth] = useState<GetWeatherApiArg['startMonth'] | null>(null);
 
     const {
         data: weatherData,
         isLoading: weatherIsLoading,
         error: weatherError
-    } = useGetWeatherQuery({ category, aggregate, grouping, station });
+    } = useGetWeatherQuery({
+        station,
+        grouping,
+        aggregate,
+        category,
+        startMonth: month === null ? undefined : month,
+        endMonth: month === null ? undefined : month
+    });
 
     const {
         data: stationsData,
@@ -28,20 +37,27 @@ export function WeatherDisplay() {
     } = useGetWeatherStationsQuery();
 
     const isLoading = weatherIsLoading || stationsIsLoading;
-    const chartGrouping = grouping?.toLowerCase() as ComponentProps<typeof WeatherChart>['grouping'] ?? 'daily';
-    const chartType = chart.toLocaleLowerCase() as ComponentProps<typeof WeatherChart>['type'];
+    const chartGrouping = grouping ?? 'DAILY';
+    const chartType = chart;
 
     return (
         <VBox>
             <HBox>
-                <Heading size='small'>
-                    {t('Past Weather')}
-                </Heading>
-                <Separator orientation='vertical' />
                 <Select
-                    items={['TEMPERATURE', 'RAIN', 'WIND', 'MISSING'].map(value => ({ label: t(`filterChart${value}`), value }))}
+                    items={[
+                        'TEMPERATURE',
+                        'WIND_SPEED',
+                        'WIND_MAX',
+                        'WIND_DIRECTION',
+                        'RAIN_RATE',
+                        'RAIN_DAILY',
+                        'PRESSURE',
+                        'HUMIDITY',
+                        'UV_RADIATION_INDEX',
+                        'MISSING'
+                    ].map(value => ({ label: t(`filterChart${value}`), value }))}
                     value={chart}
-                    onValueChange={value => setCart(!value ? 'MISSING' : value as 'TEMPERATURE' | 'RAIN' | 'WIND' | 'MISSING')}
+                    onValueChange={value => setCart(!value ? 'MISSING' : value as WeatherFieldType)}
                 />
                 <Select
                     items={stationsData?.map(station => ({ label: station, value: station })) ?? []}
@@ -64,8 +80,14 @@ export function WeatherDisplay() {
                 <Select
                     items={['A', 'L', 'H'].map(value => ({ label: t(`filterCategory${value}`), value }))}
                     value={category}
-                    onValueChange={value => setCategory(!value ? undefined : value as GetWeatherApiArg['category'])}
+                    onValueChange={value => setCategory(!value ? 'A' : value as CategoryType)}
                     placeholder={t('filterCategoryA')}
+                />
+                <Select
+                    items={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(value => ({ label: t(`filterMonth${value}`), value }))}
+                    value={month}
+                    onValueChange={value => setMonth(!value ? null : value)}
+                    placeholder={t('filterMonth')}
                 />
             </HBox>
             <ErrorDisplay error={weatherError || stationsError} />
@@ -79,6 +101,7 @@ export function WeatherDisplay() {
                         data={weatherData.weather}
                         loading={isLoading}
                         grouping={chartGrouping}
+                        category={category}
                     />
                 </>
             }

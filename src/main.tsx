@@ -24,7 +24,7 @@ document.title = i18n.t('appTitle');
 createRoot(document.getElementById('root')!).render(
     <ErrorBoundary fallback={
         <div style={{ textAlign: 'center', verticalAlign: 'center', width: '100%', height: '100%' }}>
-            <h1>🔥💥🔥 👣 🔥💥🔥</h1>
+            <h1>🔥💥🔥 😶‍🌫️ 🔥💥🔥</h1>
             <p>Unexpected Error!</p>
         </div>
     }>
