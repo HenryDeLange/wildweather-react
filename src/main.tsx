@@ -12,14 +12,14 @@ import { PwaProvider } from './pwa/PwaProvider.tsx';
 import { store } from './redux/store.ts';
 import { routeTree } from './routeTree.gen';
 
+document.title = i18n.t('appTitle');
+
 const router = createRouter({ routeTree });
 declare module '@tanstack/react-router' {
     interface Register {
         router: typeof router
     }
 };
-
-document.title = i18n.t('appTitle');
 
 createRoot(document.getElementById('root')!).render(
     <ErrorBoundary fallback={
@@ -32,9 +32,7 @@ createRoot(document.getElementById('root')!).render(
             <PwaProvider>
                 <Provider store={store}>
                     <ToastProvider>
-                        <div className='root'>
-                            <RouterProvider router={router} />
-                        </div>
+                        <RouterProvider router={router} />
                     </ToastProvider>
                 </Provider>
             </PwaProvider>

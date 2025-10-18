@@ -1,10 +1,12 @@
 import { useLocation, useNavigate } from '@tanstack/react-router';
-import { useCallback, type ComponentProps } from 'react';
+import { ArrowBigDownDash } from 'lucide-react';
+import { useCallback, useContext, type ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
 import { authLogout, selectIsAuthenticated } from '../../../auth/authSlice';
+import { PwaContext } from '../../../pwa/pwaContext';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { Box, HBox, HideOnMobile, ShowOnMobile, VBox } from '../../ui/layout';
-import { Heading, LanguageToggle, LinkButton, NavigationMenu, RouterLink, Separator, Text } from '../../ui/mywild';
+import { Button, Heading, LanguageToggle, LinkButton, NavigationMenu, RouterLink, Separator, Text } from '../../ui/mywild';
 import { Drawer } from '../../ui/mywild/Drawer';
 import type { LoginRedirectType } from '../pages/user/LoginPage';
 
@@ -19,10 +21,19 @@ export function AppHeader() {
 
     const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
+    const { isPwa, showPwaInstallButton, handleInstallClick } = useContext(PwaContext);
+
     const handleLogout = useCallback(() => {
         dispatch(authLogout());
         navigate({ to: '/' });
     }, [dispatch, navigate]);
+
+    const menus = [
+        {
+            title: t('aboutButton'),
+            href: '/about'
+        }
+    ];
 
     return (
         <VBox>
@@ -40,15 +51,12 @@ export function AppHeader() {
                                         }
                                     ]
                                     : []),
-                                {
-                                    title: t('aboutButton'),
-                                    href: '/about'
-                                },
+                                ...menus,
                                 {
                                     render: (
                                         <HBox>
                                             <Text variant='subdued'>
-                                                Language
+                                                {t('languageTitle')}
                                             </Text>
                                             <LanguageToggle />
                                         </HBox>
@@ -80,7 +88,26 @@ export function AppHeader() {
                             </Text>
                         </RouterLink>
                     </ShowOnMobile>
+
                 </HBox>
+                {!isPwa && showPwaInstallButton &&
+                    <>
+                        <HideOnMobile>
+                            <Button
+                                onClick={handleInstallClick}
+                                icon={<ArrowBigDownDash size='1.2rem' />}
+                            >
+                                {t('pwaInstall')}
+                            </Button>
+                        </HideOnMobile>
+                        <ShowOnMobile>
+                            <Button
+                                onClick={handleInstallClick}
+                                icon={<ArrowBigDownDash size='1.1rem' />}
+                            />
+                        </ShowOnMobile>
+                    </>
+                }
                 <Box marginLeft='auto' marginRight='auto'>
                     <HideOnMobile>
                         <NavigationMenu
@@ -93,10 +120,7 @@ export function AppHeader() {
                                         }
                                     ]
                                     : []),
-                                {
-                                    title: t('aboutButton'),
-                                    href: '/about'
-                                }
+                                ...menus
                             ] as ComponentProps<typeof NavigationMenu>['menus']}
                         />
                     </HideOnMobile>

@@ -7,16 +7,17 @@ import styles from './Html_Button.module.css';
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button
 
 type Props = {
-    children: ReactNode | ReactNode[];
+    children?: ReactNode | ReactNode[];
     onClick?: MouseEventHandler<HTMLButtonElement>;
     disabled?: boolean;
     loading?: boolean;
     variant?: 'standard' | 'priority' | 'error' | 'warning';
     type?: 'button' | 'submit';
     size?: 'standard' | 'large' | 'small';
+    icon?: ReactNode;
 }
 
-export function Html_Button({ children, onClick, disabled, loading, variant, type = 'button', size }: Props) {
+export function Html_Button({ children, onClick, disabled, loading, variant, type = 'button', size, icon }: Props) {
     const isText = typeof children === 'string' || typeof children === 'number';
     return (
         <button
@@ -28,9 +29,10 @@ export function Html_Button({ children, onClick, disabled, loading, variant, typ
             data-variant={variant}
             data-size={size}
         >
-            {loading &&
-                <Box marginRight='0.5rem'>
-                    <Spinner size='small' />
+            {(loading || icon) &&
+                <Box marginRight={children ? '0.5rem' : undefined}>
+                    {loading && <Spinner size='small' />}
+                    {(!loading && icon) && <>{icon}</>}
                 </Box>
             }
             {isText

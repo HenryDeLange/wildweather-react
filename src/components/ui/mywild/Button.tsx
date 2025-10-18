@@ -2,16 +2,17 @@ import type { MouseEventHandler, ReactNode } from 'react';
 import { Html_Button } from '../implementations/html/button/Html_Button';
 
 type Props = {
-    children: ReactNode | ReactNode[];
+    children?: ReactNode | ReactNode[];
     onClick?: MouseEventHandler<HTMLButtonElement>;
     disabled?: boolean;
     loading?: boolean;
     variant?: 'standard' | 'priority' | 'error' | 'warning';
     type?: 'button' | 'submit';
     size?: 'standard' | 'large' | 'small';
+    icon?: ReactNode;
 }
 
-export function Button({ children, onClick, disabled, loading, variant, type, size }: Props) {
+export function Button({ children, onClick, disabled, loading, variant, type, size, icon }: Props) {
     return (
         <Html_Button
             type={type}
@@ -20,6 +21,7 @@ export function Button({ children, onClick, disabled, loading, variant, type, si
             loading={loading}
             variant={variant}
             size={size}
+            icon={icon}
         >
             {children}
         </Html_Button>

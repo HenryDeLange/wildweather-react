@@ -1,21 +1,10 @@
-import { useContext, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { PwaContext } from '../../../pwa/pwaContext';
+import { useContext, useEffect, useRef } from 'react';
 import { useGetServerVersionQuery } from '../../../redux/api/wildweatherApi';
-import { Box, PageContainer, VBox } from '../../ui/layout';
-import { Button, Card, LinkButton, Text } from '../../ui/mywild';
+import { PageContainer } from '../../ui/layout';
 import { ToastContext } from '../../ui/toast';
 import { WeatherDisplay } from '../components/WeatherDisplay';
 
 export function HomePage() {
-    const { t } = useTranslation();
-
-    const { isPwa, showPwaInstallButton, handleInstallClick } = useContext(PwaContext);
-
-    // TODO: Move this show popup state into the context instead
-    const [showPwa, setShowPwa] = useState(!isPwa && showPwaInstallButton);
-    useEffect(() => setShowPwa(!isPwa && showPwaInstallButton), [isPwa, showPwaInstallButton]);
-
     const { showToast, updateToast, close } = useContext(ToastContext);
 
     const {
@@ -59,39 +48,9 @@ export function HomePage() {
 
     return (
         <PageContainer>
-            <VBox fullWidth>
+            {/* <VBox fullWidth> */}
                 <WeatherDisplay />
-                {showPwa &&
-                    <div
-                        style={{
-                            position: 'absolute',
-                            bottom: 12,
-                            left: 12,
-                            maxWidth: '15rem'
-                        }}
-                    >
-                        <Card>
-                            <VBox>
-                                <Box>
-                                    <Text size='small'>
-                                        {t('pwaInstallDetails')}
-                                    </Text>
-                                    <Box marginLeft='1rem'>
-                                        <div style={{ justifyItems: 'flex-start' }}>
-                                            <LinkButton onClick={() => setShowPwa(false)}>
-                                                X
-                                            </LinkButton>
-                                        </div>
-                                    </Box>
-                                </Box>
-                                <Button onClick={handleInstallClick}>
-                                    {t('pwaInstall')}
-                                </Button>
-                            </VBox>
-                        </Card>
-                    </div>
-                }
-            </VBox>
+            {/* </VBox> */}
         </PageContainer>
     );
 }

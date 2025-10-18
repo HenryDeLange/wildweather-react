@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { useGetServerVersionQuery } from '../../../redux/api/wildweatherApi';
-import { HCBox, PageContainer, VBox } from '../../ui/layout';
+import { HBox, HCBox, PageContainer, VBox } from '../../ui/layout';
 import { Card, LabeledText, Separator, Spinner, Text } from '../../ui/mywild';
+import myWildLogo from './../../../assets/mywild/mywild-logo.png';
 
 export function AppAbout() {
     const { t } = useTranslation();
@@ -21,7 +22,27 @@ export function AppAbout() {
                             <Card
                                 title={t('appTitle')}
                                 description={t('aboutDescription')}
-                            />
+                            >
+                                <Separator marginTop='1rem' />
+                                <HBox gap='0.5rem' marginLeft='auto' marginRight='auto'>
+                                    <img
+                                        src={myWildLogo}
+                                        height={20}
+                                        alt='MyWild'
+                                        style={{ backgroundColor: '#fff', borderRadius: '50%', padding: '1px' }}
+                                    />
+                                    <a
+                                        href='https://www.mywild.co.za'
+                                        style={{ textDecoration: 'none' }}
+                                        target='_blank'
+                                        rel='noopener'
+                                    >
+                                        <Text size='small'>
+                                            {t('mywildTitle')}
+                                        </Text>
+                                    </a>
+                                </HBox>
+                            </Card>
                             <Separator />
                             <HCBox>
                                 <Card

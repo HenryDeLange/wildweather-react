@@ -1,4 +1,8 @@
-body {
+html, body, #root {
     font-family: Arial, Helvetica, sans-serif;
     background-color: var(--color-canvas);
+    min-height: 0;
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }

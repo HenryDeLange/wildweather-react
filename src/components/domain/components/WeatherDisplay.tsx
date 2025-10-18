@@ -95,16 +95,15 @@ export function WeatherDisplay() {
                 <Spinner />
             }
             {weatherData &&
-                <>
-                    <WeatherChart
-                        type={chartType}
-                        data={weatherData.weather}
-                        loading={isLoading}
-                        grouping={chartGrouping}
-                        category={category}
-                    />
-                </>
+                <WeatherChart
+                    type={chartType}
+                    data={weatherData.weather}
+                    loading={isLoading}
+                    grouping={chartGrouping}
+                    category={category}
+                />
             }
         </VBox>
+
     );
 }

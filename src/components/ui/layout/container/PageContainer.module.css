@@ -1,5 +1,7 @@
 .PageContainer {
     display: flex;
-    margin: 0 auto;
+    flex: 1;
+    min-height: 0;
     padding: 1rem;
+    margin: 0 auto;
 }
