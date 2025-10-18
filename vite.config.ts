@@ -100,15 +100,21 @@ export default defineConfig({
                     ],
                     ui_base: [
                         '@base-ui-components/react',
-                        '@tanstack/react-virtual'
+                        'lucide-react'
                     ],
                     ui_form: [
                         'react-hook-form',
-                        'use-debounce'
+                        '@hookform/devtools'
+                    ],
+                    echarts: [
+                        'echarts',
+                        'echarts-for-react'
                     ],
                     routing: [
                         'react-error-boundary',
-                        '@tanstack/react-router'
+                        '@tanstack/react-router',
+                        '@tanstack/react-router-devtools',
+                        '@tanstack/router-devtools'
                     ],
                     i18n: [
                         'i18next',

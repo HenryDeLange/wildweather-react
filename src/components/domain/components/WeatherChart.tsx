@@ -174,6 +174,7 @@ const generateCategories = (grouping: Props['grouping']): string[] => {
 const generateSeriesData = (type: Props['type'], grouping: Props['grouping'], category: CategoryType, data: WeatherDataDto['weather']): (LineSeriesOption | BarSeriesOption)[] => {
     const seriesList: (LineSeriesOption | BarSeriesOption)[] = Object.keys(data).flatMap(station => {
         // TODO: Handle year grouping 
+        console.log(grouping)
         return Object.keys(data[station]).flatMap(year => {
             const dataRecords = Object.keys(data[station][year]).flatMap(group => {
                 return getValue(type, category, data[station][year][group] as GroupedFieldType)
