@@ -18,7 +18,7 @@
     cursor: default;
     -webkit-user-select: none;
     user-select: none;
-    background-color: var(--color-gray-50);
+    background-color: var(--color-input);
 
     @media (hover: hover) {
         &:hover {
@@ -164,7 +164,7 @@
     &[data-highlighted] {
         z-index: 0;
         position: relative;
-        color: var(--color-gray-50);
+        color: var(--color-input);
     }
 
     &[data-highlighted]::before {
@@ -174,18 +174,12 @@
         inset-block: 0;
         inset-inline: 0.25rem;
         border-radius: 0.25rem;
-        background-color: var(--color-gray-900);
+        background-color: var(--color-gray-300);
     }
 }
 
 .ItemIndicator {
     grid-column-start: 1;
-}
-
-.ItemIndicatorIcon {
-    display: block;
-    width: 0.75rem;
-    height: 0.75rem;
 }
 
 .ItemText {

@@ -5,7 +5,7 @@
     width: 90%;
     max-width: 15rem;
     height: 100%;
-    background: var(--color-gray-50);
+    background: var(--color-input);
     transition: left 0.3s ease;
     z-index: 99000;
     padding: 1rem;

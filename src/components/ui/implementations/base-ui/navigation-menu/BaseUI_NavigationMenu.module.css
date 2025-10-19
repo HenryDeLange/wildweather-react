@@ -114,7 +114,7 @@
     position: relative;
     box-sizing: border-box;
     border-radius: 0.5rem;
-    background-color: var(--color-gray-50);
+    background-color: var(--color-input);
     color: var(--color-gray-900);
     transform-origin: var(--transform-origin);
     transition-property: opacity, transform, width, height;

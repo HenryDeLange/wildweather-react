@@ -172,12 +172,20 @@ const generateCategories = (grouping: Props['grouping']): string[] => {
 };
 
 const generateSeriesData = (type: Props['type'], grouping: Props['grouping'], category: CategoryType, data: WeatherDataDto['weather']): (LineSeriesOption | BarSeriesOption)[] => {
+    const categories = generateCategories(grouping);
     const seriesList: (LineSeriesOption | BarSeriesOption)[] = Object.keys(data).flatMap(station => {
-        // TODO: Handle year grouping 
-        console.log(grouping)
         return Object.keys(data[station]).flatMap(year => {
-            const dataRecords = Object.keys(data[station][year]).flatMap(group => {
-                return getValue(type, category, data[station][year][group] as GroupedFieldType)
+            const dataRecords = categories.map((categoryLabel, index) => {
+                const group = grouping === 'YEARLY' ? categoryLabel
+                    : grouping === 'DAILY' ? new Date(`${categoryLabel} ${year}`).toISOString().substring(0, 10)
+                    : index < 9 ? `0${index + 1}` : `${index + 1}`;
+                const dataRecord = data[station][year][group] as GroupedFieldType;
+                if (dataRecord) {
+                    return getValue(type, category, dataRecord)
+                }
+                else {
+                    return 0;
+                }
             });
             return ({
                 name: `${station} ${year}`,
@@ -196,13 +204,15 @@ const generateSeriesData = (type: Props['type'], grouping: Props['grouping'], ca
             }) as LineSeriesOption | BarSeriesOption;
         });
     });
-    console.log({ seriesList })
     return seriesList;
 };
 
 
 
 function getValue(type: WeatherFieldType, category: CategoryType, data: GroupedFieldType) {
+    if (!data) {
+        return 0;
+    }
     switch (type) {
         case 'TEMPERATURE':
             return data['tmp'][category];
