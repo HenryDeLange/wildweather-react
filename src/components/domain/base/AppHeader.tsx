@@ -36,35 +36,37 @@ export function AppHeader() {
     ];
 
     return (
-        <VBox>
-            <HBox>
+        <VBox marginTop='0.25rem'>
+            <HBox marginLeft='0.5rem' marginRight='0.5rem'>
                 <HBox gap='0.25rem'>
                     <ShowOnMobile>
-                        <Drawer
-                            heading={t('appTitle')}
-                            menus={[
-                                ...(isAuthenticated
-                                    ? [
-                                        {
-                                            title: t('adminButton'),
-                                            href: '/admin'
-                                        }
-                                    ]
-                                    : []),
-                                ...menus,
-                                {
-                                    render: (
-                                        <HBox>
-                                            <Text variant='subdued'>
-                                                {t('languageTitle')}
-                                            </Text>
-                                            <LanguageToggle />
-                                        </HBox>
-                                    ),
-                                    closeOnClick: false
-                                }
-                            ]}
-                        />
+                        <HBox marginRight='0.5rem'>
+                            <Drawer
+                                heading={t('appTitle')}
+                                menus={[
+                                    ...(isAuthenticated
+                                        ? [
+                                            {
+                                                title: t('adminButton'),
+                                                href: '/admin'
+                                            }
+                                        ]
+                                        : []),
+                                    ...menus,
+                                    {
+                                        render: (
+                                            <HBox>
+                                                <Text variant='subdued'>
+                                                    {t('languageTitle')}
+                                                </Text>
+                                                <LanguageToggle />
+                                            </HBox>
+                                        ),
+                                        closeOnClick: false
+                                    }
+                                ]}
+                            />
+                        </HBox>
                     </ShowOnMobile>
                     <HideOnMobile useHardCutoff>
                         <RouterLink to='/'>

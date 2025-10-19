@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { authLogin } from '../../../../auth/authSlice';
 import { useLoginUserMutation, type UserLogin } from '../../../../redux/api/wildweatherApi';
 import { useAppDispatch } from '../../../../redux/hooks';
-import { HCBox, PageContainer } from '../../../ui/layout';
+import { HBox, PageContainer, VBox } from '../../../ui/layout';
 import { Card, Form, FormField, Separator } from '../../../ui/mywild';
 
 export function LoginPage() {
@@ -42,55 +42,59 @@ export function LoginPage() {
 
     return (
         <PageContainer>
-            <HCBox marginVertical='3rem' marginHorizontal='auto' maxWidth='30rem'>
-                <Card
-                    title={t('loginTitle')}
-                    description={t('loginDescription')}
-                >
-                    <Separator />
-                    <Form<UserLogin>
-                        formProps={{
-                            defaultValues: {
-                                username: '',
-                                password: ''
-                            }
-                        }}
-                        onSubmit={onSubmit}
-                        submitLabel={t('loginButton')}
-                        loading={isLoading}
-                        error={error}
-                        errorLabel={t('loginFailed')}
-                    >
-                        <FormField<UserLogin>
-                            label={t('loginUsernameField')}
-                            formControl={{
-                                name: 'username',
-                                rules: {
-                                    required: t('fieldRequired'),
-                                    minLength: {
-                                        value: 4,
-                                        message: t('fieldTooShort', { length: 4 })
+            <VBox marginTop='3rem' fullWidth>
+                <HBox marginLeft='auto' marginRight='auto'>
+                    <VBox maxWidth='30rem'>
+                        <Card
+                            title={t('loginTitle')}
+                            description={t('loginDescription')}
+                        >
+                            <Separator />
+                            <Form<UserLogin>
+                                formProps={{
+                                    defaultValues: {
+                                        username: '',
+                                        password: ''
                                     }
-                                }
-                            }}
-                        />
-                        <FormField<UserLogin>
-                            type='password'
-                            label={t('userPasswordField')}
-                            formControl={{
-                                name: 'password',
-                                rules: {
-                                    required: t('fieldRequired'),
-                                    minLength: {
-                                        value: 4,
-                                        message: t('fieldTooShort', { length: 4 })
-                                    }
-                                }
-                            }}
-                        />
-                    </Form>
-                </Card>
-            </HCBox>
+                                }}
+                                onSubmit={onSubmit}
+                                submitLabel={t('loginButton')}
+                                loading={isLoading}
+                                error={error}
+                                errorLabel={t('loginFailed')}
+                            >
+                                <FormField<UserLogin>
+                                    label={t('loginUsernameField')}
+                                    formControl={{
+                                        name: 'username',
+                                        rules: {
+                                            required: t('fieldRequired'),
+                                            minLength: {
+                                                value: 4,
+                                                message: t('fieldTooShort', { length: 4 })
+                                            }
+                                        }
+                                    }}
+                                />
+                                <FormField<UserLogin>
+                                    type='password'
+                                    label={t('userPasswordField')}
+                                    formControl={{
+                                        name: 'password',
+                                        rules: {
+                                            required: t('fieldRequired'),
+                                            minLength: {
+                                                value: 4,
+                                                message: t('fieldTooShort', { length: 4 })
+                                            }
+                                        }
+                                    }}
+                                />
+                            </Form>
+                        </Card>
+                    </VBox>
+                </HBox>
+            </VBox>
         </PageContainer>
     );
 }

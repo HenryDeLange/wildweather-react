@@ -41,8 +41,8 @@ export function WeatherDisplay() {
     const chartType = chart;
 
     return (
-        <VBox>
-            <HBox>
+        <VBox fullWidth gap={0}>
+            <HBox margin='0.5rem'>
                 <Select
                     items={[
                         'TEMPERATURE',

@@ -6,11 +6,12 @@ type Props = {
     debug?: boolean;
     gap?: CSSProperties['gap'];
     fullWidth?: boolean;
+    margin?: CSSProperties['margin'];
     marginLeft?: CSSProperties['marginLeft'];
     marginRight?: CSSProperties['marginRight'];
 };
 
-export function HBox({ children, debug, gap = '1rem', fullWidth, marginLeft, marginRight }: Props) {
+export function HBox({ children, debug, gap = '1rem', fullWidth, margin, marginLeft, marginRight }: Props) {
     return (
         <div
             className={styles.HorizontalBox}
@@ -18,6 +19,7 @@ export function HBox({ children, debug, gap = '1rem', fullWidth, marginLeft, mar
                 ...(debug ? { outline: '1px solid blue' } : {}),
                 ...(gap ? { gap } : {}),
                 ...(fullWidth ? { width: '100%' } : {}),
+                ...(margin ? { margin } : {}),
                 ...(marginLeft ? { marginLeft } : {}),
                 ...(marginRight ? { marginRight } : {})
             }}

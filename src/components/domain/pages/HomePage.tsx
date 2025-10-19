@@ -48,9 +48,7 @@ export function HomePage() {
 
     return (
         <PageContainer>
-            {/* <VBox fullWidth> */}
-                <WeatherDisplay />
-            {/* </VBox> */}
+            <WeatherDisplay />
         </PageContainer>
     );
 }
