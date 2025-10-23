@@ -15,8 +15,8 @@ type Props = {
     placeholder?: string;
     autoFocus?: boolean;
     items: SelectItem[];
-    value: string | null;
-    onValueChange: (value: string | null, eventDetails: Select.Root.ChangeEventDetails) => void;
+    value?: string | null;
+    onValueChange: (value?: string | null, eventDetails?: Select.Root.ChangeEventDetails) => void;
     onBlur?: Noop;
 }
 

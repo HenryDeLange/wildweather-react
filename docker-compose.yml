@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  build-app:
+    container_name: wildweather-ui-build
+    build:
+      context: .
+      dockerfile: Dockerfile.build
+    volumes:
+      - .:/app
+    working_dir: /app
+    # Note: Need to set "--mode docker" because "local" can't be set and otherwise "production" is used
+    entrypoint: ["/bin/sh", "-c", "npm install && npm run git:info && npx vite build --mode docker"]
+  run-app:
+    container_name: wildweather-ui
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:8080
+    ports:
+      - 5173:80
+    # volumes:
+    #   - ./dist:/usr/share/nginx/html
+  
+

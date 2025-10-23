@@ -1,9 +1,11 @@
 .Field {
+    align-self: flex-start;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
     padding: 0;
     margin: 0;
+    width: 100%;
 
     &[data-disabled] {
         gap: 0rem;
@@ -45,6 +47,10 @@
         height: inherit;
         padding-left: inherit;
         border: none
+    }
+
+    &[data-invalid] {
+        border: 1px solid var(--color-error);
     }
 
     &::placeholder {

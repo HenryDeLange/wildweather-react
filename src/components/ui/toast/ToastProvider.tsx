@@ -1,5 +1,6 @@
 import { Toast } from '@base-ui-components/react/toast';
 import { type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BaseUI_Toast } from '../implementations/base-ui/toast/BaseUI_Toast';
 import { ToastContext } from './toastContext';
 
@@ -18,6 +19,7 @@ export function ToastProvider({ children }: Props) {
 }
 
 function ToastedChildren({ children }: Props) {
+    const { t } = useTranslation();
     const toastManager = Toast.useToastManager();
     return (
         <ToastContext.Provider
@@ -34,6 +36,25 @@ function ToastedChildren({ children }: Props) {
                 },
                 promiseToast: (promise, options) => {
                     toastManager.promise(promise, { ...options });
+                },
+                mutationFeedbackToast: (promise, title) => {
+                    toastManager.promise(promise, {
+                        loading: {
+                            title: title,
+                            description: t('toastSaving'),
+                            type: 'loading'
+                        },
+                        success: {
+                            title: title,
+                            description: t('toastUpdated'),
+                            type: 'success'
+                        },
+                        error: {
+                            title: title,
+                            description: t('errorUnknown'),
+                            type: 'error'
+                        }
+                    });
                 }
             }}
         >

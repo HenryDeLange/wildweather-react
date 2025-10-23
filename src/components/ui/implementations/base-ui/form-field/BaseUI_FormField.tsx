@@ -16,9 +16,9 @@ type Props<T extends FieldValues> = {
 }
 
 export function BaseUI_FormField<T extends FieldValues>({ label, description, placeholder, formControl, type, disabled }: Props<T>) {
-    const { field, fieldState: { error } } = useController(formControl);
+    const { field, fieldState: { error, invalid } } = useController(formControl);
     return (
-        <Field.Root className={styles.Field} disabled={disabled}>
+        <Field.Root className={styles.Field} disabled={disabled} invalid={invalid}>
             {label &&
                 <Field.Label className={styles.Label}>
                     {label}

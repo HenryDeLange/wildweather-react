@@ -22,11 +22,13 @@ export type ToastContextType = {
     updateToast: (toastId: string, options: ToastOptions) => string;
     close: (toastId: string) => void;
     promiseToast: <T>(promise: Promise<T>, options: ToastPromiseStateOptions) => void;
+    mutationFeedbackToast: <T>(promise: Promise<T>, title: string) => void;
 }
 
 export const ToastContext = createContext<ToastContextType>({
     showToast: () => 'toastId',
     updateToast: () => 'toastId',
     close: () => { },
-    promiseToast: () => { }
+    promiseToast: () => { },
+    mutationFeedbackToast: () => { }
 });

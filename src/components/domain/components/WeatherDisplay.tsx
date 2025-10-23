@@ -15,7 +15,7 @@ export function WeatherDisplay() {
     const [grouping, setGrouping] = useState<GetWeatherApiArg['grouping']>('MONTHLY');
     const [aggregate, setAggregate] = useState<GetWeatherApiArg['aggregate']>('AVERAGE');
     const [category, setCategory] = useState<CategoryType>('A');
-    const [month, setMonth] = useState<GetWeatherApiArg['startMonth'] | null>(null);
+    const [month, setMonth] = useState<string | undefined>();
 
     const {
         data: weatherData,
@@ -26,8 +26,8 @@ export function WeatherDisplay() {
         grouping,
         aggregate,
         category,
-        startMonth: month === null ? undefined : month,
-        endMonth: month === null ? undefined : month
+        startMonth: month ? Number(month) : undefined,
+        endMonth: month ? Number(month) : undefined
     });
 
     const {
@@ -84,9 +84,9 @@ export function WeatherDisplay() {
                     placeholder={t('filterCategoryA')}
                 />
                 <Select
-                    items={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(value => ({ label: t(`filterMonth${value}`), value }))}
+                    items={['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'].map(value => ({ label: t(`filterMonth${value}`), value }))}
                     value={month}
-                    onValueChange={value => setMonth(!value ? null : value)}
+                    onValueChange={value => setMonth(value === null ? undefined : value)}
                     placeholder={t('filterMonth')}
                 />
             </HBox>

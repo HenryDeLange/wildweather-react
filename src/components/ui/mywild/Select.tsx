@@ -1,24 +1,26 @@
 import { BaseUI_Select } from '../implementations/base-ui/select/BaseUI_Select';
 
-export type SelectItem<T> = {
+type SelectItem = {
     label: string;
-    value: T | null;
+    value: string | null;
 }
 
-type Props<T> = {
-    items: SelectItem<T>[];
-    value: T | null;
-    onValueChange: (value: T | null, eventDetails: unknown) => void;
+type Props = {
     placeholder?: string;
+    autoFocus?: boolean;
+    items: SelectItem[];
+    value?: string | null;
+    onValueChange: (value?: string | null, eventDetails?: unknown) => void;
 }
 
-export function Select<T>({ items, value, onValueChange, placeholder }: Props<T>) {
+export function Select({ placeholder, autoFocus, items, value, onValueChange }: Props) {
     return (
         <BaseUI_Select
+            placeholder={placeholder}
+            autoFocus={autoFocus}
             items={items}
             value={value}
             onValueChange={onValueChange}
-            placeholder={placeholder}
         />
     );
 }
