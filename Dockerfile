@@ -1,11 +1,9 @@
 # Build the application
-FROM node:22.14 AS builder
+FROM node:22.21 AS builder
 RUN apt-get update && apt-get install -y git
 WORKDIR /app
 ADD ./ /app/
-ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
-RUN npm install && npm run build
+RUN npm install && npm run git:info && npx vite build --mode docker
 
 # Run the application
 FROM nginx:1.29.2-alpine AS production
