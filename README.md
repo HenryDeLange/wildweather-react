@@ -48,11 +48,11 @@ It will generate PWA assets based on the [pwa-assets.config.ts](./pwa-assets.con
 
 ## Release
 
-![Release](https://img.shields.io/github/actions/workflow/status/HenryDeLange/wildweather-react/xxx.yml?label=release)
+![Release](https://img.shields.io/github/actions/workflow/status/HenryDeLange/wildweather-react/react-release-build.yml?label=release)
 
 ### Publish To GitHub Pages
 
-Run the [xxx.yml](./.github/workflows/xxx.yml) _Github Action_.
+Run the [react-release-build.yml](./.github/workflows/react-release-build.yml) _Github Action_.
 
 ### Build
 

@@ -1,27 +1,28 @@
 name: Build Vite App
 
-on: 
-    workflow_dispatch:
-    # push:
-    #     branches: [main]
-    # pull_request:
-    #     branches: [main]
+on:
+  workflow_dispatch:
+  push:
+      branches: [main]
+  pull_request:
+      branches: [main]
 
 jobs:
-    build-vite-artifacts:
-        runs-on: ubuntu-latest
+  build-vite-artifacts:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout Code
-              uses: actions/checkout@v5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
 
-            - name: Set up Node.js 22
-              uses: actions/setup-node@v5
-              with:
-                  node-version: '22'
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
 
-            - name: Install Dependencies
-              run: npm ci
+      - name: Install Dependencies
+        run: npm ci
 
-            - name: Build with Vite
-              run: npm run build
+      - name: Build with Vite
+        run: npm run build
