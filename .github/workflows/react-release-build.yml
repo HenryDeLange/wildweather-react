@@ -6,6 +6,9 @@ on:
       version:
         description: "Release version (e.g. 1.2.3)"
         required: true
+  # push:
+  #   tags:
+  #     - 'v*'
 
 jobs:
   release-deploy:
@@ -58,6 +61,9 @@ jobs:
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
+
+      - name: Add 404.html fallback for GitHub Pages
+        run: cp dist/index.html dist/404.html
 
       - name: Upload artifact to GitHub Pages
         uses: actions/upload-pages-artifact@v4
