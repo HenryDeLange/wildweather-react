@@ -42,7 +42,14 @@ export function AppHeader() {
                     <ShowOnMobile>
                         <HBox marginRight='0.5rem'>
                             <Drawer
-                                heading={t('appTitle')}
+                                heading={
+                                    <HBox gap='0.25rem'>
+                                        <img src='/pwa-64x64.png' width={32} height={32} />
+                                        <Heading>
+                                            {t('appTitle')}
+                                        </Heading>
+                                    </HBox>
+                                }
                                 menus={[
                                     ...(isAuthenticated
                                         ? [

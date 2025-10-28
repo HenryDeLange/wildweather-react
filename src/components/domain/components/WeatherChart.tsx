@@ -19,7 +19,9 @@ echarts.use([
     LineChart,
     BarChart,
     CanvasRenderer,
-    UniversalTransition
+    UniversalTransition,
+    // MarkAreaComponent,
+    // MarkPointComponent
 ]);
 
 // Register the theme
@@ -34,18 +36,23 @@ type EChartsOption = echarts.ComposeOption<
     | LineSeriesOption
     | BarSeriesOption
     | LegendComponentOption
+    // | MarkAreaComponentOption
+// | MarkPointComponentOption
 >;
 
 type Props = {
     type: WeatherFieldType;
-    data: WeatherDataDto['weather'];
     loading?: boolean;
+    data: WeatherDataDto['weather'];
     grouping?: GetWeatherApiArg['grouping'];
     category: CategoryType;
+    showMissing?: boolean;
 }
 
-export function WeatherChart({ type, data, loading, grouping, category }: Props) {
+export function WeatherChart({ type, loading, data, grouping, category, showMissing }: Props) {
     const { t } = useTranslation();
+
+    const seriesData = generateSeriesData(type, grouping, data);
 
     const option: EChartsOption = {
         title: {
@@ -55,7 +62,26 @@ export function WeatherChart({ type, data, loading, grouping, category }: Props)
             trigger: 'item',
             axisPointer: {
                 type: 'cross'
-            }
+            },
+            // formatter: (params) => {
+            //     if (!params?.data?.coord) {
+            //         return `
+            //             <u><b>${params.seriesName}</b></u><br/>
+            //             <b>${params.name}</b><br/>
+            //             <b>${params.data}°C</b>
+            //             `;
+            //     }
+            //     else {
+            //         const avg = seriesData[params.seriesIndex].data[params.dataIndex];
+            //         const high = params.data.coord[0][1];
+            //         const low = params.data.coord[1][1];
+            //         return `
+            //             <u><b>${params.seriesName}</b></u><br/>
+            //             <b>${params.data.xAxis}</b><br/>
+            //             ${low}°C | <b>${avg}°C</b> | ${high}°C
+            //             `;
+            //     }
+            // }
         },
         grid: {
             left: 8,
@@ -86,12 +112,12 @@ export function WeatherChart({ type, data, loading, grouping, category }: Props)
             },
             data: generateCategories(grouping)
         },
-        series: generateSeriesData(type, grouping, category, data),
+        series: seriesData,
         legend: {
             show: true,
             type: 'scroll',
             bottom: 0
-        }
+        },
     };
 
     const loadingOption = {
@@ -125,7 +151,7 @@ export function WeatherChart({ type, data, loading, grouping, category }: Props)
     );
 }
 
-const generateCategories = (grouping: Props['grouping']): string[] => {
+export function generateCategories(grouping: Props['grouping']): string[] {
     switch (grouping) {
         case 'DAILY': {
             const days: string[] = [];
@@ -133,7 +159,8 @@ const generateCategories = (grouping: Props['grouping']): string[] => {
             for (let i = 0; i < 366/*leap year*/; i++) {
                 const date = new Date(start);
                 date.setDate(start.getDate() + i);
-                const formatted = date.toLocaleDateString("en-GB", { // TODO: use current lang from i18n
+                // TODO: use current lang from i18n
+                const formatted = date.toLocaleDateString("en-GB", {
                     day: "2-digit",
                     month: "short"
                 });
@@ -152,7 +179,8 @@ const generateCategories = (grouping: Props['grouping']): string[] => {
             const months: string[] = [];
             for (let i = 0; i < 12; i++) {
                 const month = new Date(2025, i, 1);
-                const formatted = month.toLocaleDateString("en-GB", { // TODO: use current lang from i18n
+                // TODO: use current lang from i18n
+                const formatted = month.toLocaleDateString("en-GB", {
                     month: "long"
                 });
                 months.push(formatted);
@@ -169,28 +197,17 @@ const generateCategories = (grouping: Props['grouping']): string[] => {
         default:
             return [];
     }
-};
+}
 
-const generateSeriesData = (type: Props['type'], grouping: Props['grouping'], category: CategoryType, data: WeatherDataDto['weather']): (LineSeriesOption | BarSeriesOption)[] => {
+function generateSeriesData(chartType: Props['type'], grouping: Props['grouping'], data: WeatherDataDto['weather']): (LineSeriesOption | BarSeriesOption)[] {
     const categories = generateCategories(grouping);
     const seriesList: (LineSeriesOption | BarSeriesOption)[] = Object.keys(data).flatMap(station => {
         return Object.keys(data[station]).flatMap(year => {
-            const dataRecords = categories.map((categoryLabel, index) => {
-                const group = grouping === 'YEARLY' ? categoryLabel
-                    : grouping === 'DAILY' ? new Date(`${categoryLabel} ${year}`).toISOString().substring(0, 10)
-                    : index < 9 ? `0${index + 1}` : `${index + 1}`;
-                const dataRecord = data[station][year][group] as GroupedFieldType;
-                if (dataRecord) {
-                    return getValue(type, category, dataRecord)
-                }
-                else {
-                    return 0;
-                }
-            });
+            const dataAverageRecords = getDataValues(chartType, categories, data, station, year, grouping, 'A');
             return ({
                 name: `${station} ${year}`,
                 symbolSize: 12,
-                type: 'bar',
+                type: 'line',
                 smooth: true,
                 emphasis: {
                     focus: 'series'
@@ -200,41 +217,97 @@ const generateSeriesData = (type: Props['type'], grouping: Props['grouping'], ca
                 },
                 barCategoryGap: "30%",
                 triggerLineEvent: true,
-                data: dataRecords
+                data: dataAverageRecords,
+                // markArea: {
+                //     data: getMarkArea(chartType, categories, data, station, year, grouping),
+                //     // itemStyle: {
+                //     //     color: 'rgba(135, 206, 250, 0.43)',
+                //     //     borderWidth: 20,
+                //     //     opacity: 0.75
+                //     // },
+                // },
             }) as LineSeriesOption | BarSeriesOption;
         });
     });
     return seriesList;
-};
+}
 
+function getDataValues(chartType: Props['type'], categories: string[], data: WeatherDataDto['weather'], station: string, year: string, grouping: Props['grouping'], category: CategoryType) {
+    return categories.map((categoryLabel, index) => {
+        const group = grouping === 'YEARLY' ? categoryLabel
+            : grouping === 'DAILY' ? new Date(`${categoryLabel} ${year}`).toISOString().substring(0, 10)
+                : index < 9 ? `0${index + 1}` : `${index + 1}`;
+        const dataRecord = data[station][year][group] as GroupedFieldType;
+        if (dataRecord) {
+            return getWeatherFieldTypeValue(chartType, category, dataRecord)
+        }
+        else {
+            if (Number(year) <= 2023) {
+                return null;
+            }
+            if (grouping === 'MONTHLY') {
+                const today = new Date();
+                if (Number(year) === today.getFullYear() && today.getMonth() < index) {
+                    return null;
+                }
+            }
+            return 0;
+        }
+    });
+}
 
-
-function getValue(type: WeatherFieldType, category: CategoryType, data: GroupedFieldType) {
+function getWeatherFieldTypeValue(type: WeatherFieldType, category: CategoryType, data: GroupedFieldType) {
     if (!data) {
         return 0;
     }
     switch (type) {
         case 'TEMPERATURE':
-            return data['tmp'][category];
+            return data['tmp']?.[category] ?? 0;
         case 'WIND_SPEED':
-            return data['wSp'][category];
+            return data['wSp']?.[category] ?? 0;
         case 'WIND_MAX':
-            return data['wMx'][category];
+            return data['wMx']?.[category] ?? 0;
         case 'WIND_DIRECTION':
-            return data['wDr'][category];
+            return data['wDr']?.[category] ?? 0;
         case 'RAIN_RATE':
-            return data['rRt'][category];
+            return data['rRt']?.[category] ?? 0;
         case 'RAIN_DAILY':
-            return data['rDy'][category];
+            return data['rDy']?.[category] ?? 0;
         case 'PRESSURE':
-            return data['prs'][category];
+            return data['prs']?.[category] ?? 0;
         case 'HUMIDITY':
-            return data['hmd'][category];
+            return data['hmd']?.[category] ?? 0;
         case 'UV_RADIATION_INDEX':
-            return data['uvI'][category];
+            return data['uvI']?.[category] ?? 0;
         case 'MISSING':
-            return data['mis'][category];
+            return data['mis']?.[category] ?? 0;
         default:
             return 0;
     }
 }
+
+// function getMarkArea(chartType: Props['type'], categories: string[], data: WeatherDataDto['weather'], station: string, year: string, grouping: Props['grouping']) {
+//     const high = getDataValues(chartType, categories, data, station, year, grouping, 'H');
+//     const low = getDataValues(chartType, categories, data, station, year, grouping, 'L');
+//     const highLowPairs: (MarkArea1DDataItemOption | MarkArea2DDataItemOption)[] = high.map((h, i) => {
+//         return [
+//             {
+//                 xAxis: categories[i],
+//                 yAxis: h ?? -Infinity,
+//                 itemStyle: {
+//                     borderWidth: 15,
+//                     opacity: 0.25
+//                 }
+//             },
+//             {
+//                 xAxis: categories[i],
+//                 yAxis: low[i] ?? -Infinity,
+//                 itemStyle: {
+//                     borderWidth: 30,
+//                     opacity: 0.75
+//                 }
+//             }
+//         ];
+//     });
+//     return highLowPairs;
+// }

@@ -88,6 +88,13 @@ const injectedRtkApi = api
         }),
         providesTags: ["Weather"],
       }),
+      getWeatherStatus: build.query<
+        GetWeatherStatusApiResponse,
+        GetWeatherStatusApiArg
+      >({
+        query: () => ({ url: `/api/v1/weather/status` }),
+        providesTags: ["Weather"],
+      }),
       getWeatherStations: build.query<
         GetWeatherStationsApiResponse,
         GetWeatherStationsApiArg
@@ -156,6 +163,9 @@ export type GetWeatherApiArg = {
   startMonth?: number;
   endMonth?: number;
 };
+export type GetWeatherStatusApiResponse =
+  /** status 200 OK */ WeatherStatusDto[];
+export type GetWeatherStatusApiArg = void;
 export type GetWeatherStationsApiResponse = /** status 200 OK */ string[];
 export type GetWeatherStationsApiArg = void;
 export type GetServerVersionApiResponse = /** status 200 OK */ AppVersion;
@@ -195,6 +205,10 @@ export type WeatherDataDto = {
     };
   };
 };
+export type WeatherStatusDto = {
+  station: string;
+  lastProcessedOn: string;
+};
 export type AppVersion = {
   appVersion: string;
   branch: string;
@@ -211,6 +225,7 @@ export const {
   useTriggerCsvProcessingMutation,
   useTriggerApiProcessingMutation,
   useGetWeatherQuery,
+  useGetWeatherStatusQuery,
   useGetWeatherStationsQuery,
   useGetServerVersionQuery,
 } = injectedRtkApi;
