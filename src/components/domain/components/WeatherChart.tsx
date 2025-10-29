@@ -48,6 +48,8 @@ type Props = {
 export function WeatherChart({ type, loading, data, grouping, category, showMissing }: Props) {
     const { t } = useTranslation();
 
+    console.log('TODO: Show Missing', showMissing)
+
     const xAxisLabels = useGenerateXAxis(grouping);
     const yAxisValues = useGenerateYAxis(type, grouping, data, category);
 
