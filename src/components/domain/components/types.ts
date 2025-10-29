@@ -2,7 +2,9 @@ import type { GetWeatherApiArg } from '../../../redux/api/wildweatherApi';
 
 export type WeatherFieldType = NonNullable<GetWeatherApiArg['weatherFields']>[number];
 
-export type CategoryType = NonNullable<GetWeatherApiArg['category']> | 'ALL';
+export type CategoryFilterType = CategoryType | 'ALL';
+
+export type CategoryType = NonNullable<GetWeatherApiArg['category']>;
 
 export type CategoryValueType = {
     [K in CategoryType]: number;

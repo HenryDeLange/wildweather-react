@@ -59,7 +59,7 @@
     "filterChartHUMIDITY": "Humidity",
     "filterChartUV_RADIATION_INDEX": "UV Radiation Index",
     "filterChartMISSING": "Missing",
-    "filterAggregateAVERAGE": "Average",
+    "filterAggregateAVERAGE": "Mean",
     "filterAggregateTOTAL": "Total",
     "filterStation": "Station",
     "filterGroupDAILY": "Daily",

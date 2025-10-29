@@ -1,14 +1,15 @@
 import ReactEChartsCore from 'echarts-for-react/lib/core';
-import { BarChart, type BarSeriesOption, LineChart, type LineSeriesOption } from 'echarts/charts';
+import { LineChart, type LineSeriesOption } from 'echarts/charts';
 import { GridComponent, type GridComponentOption, LegendComponent, type LegendComponentOption, TitleComponent, type TitleComponentOption, TooltipComponent, type TooltipComponentOption } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useTranslation } from 'react-i18next';
 import type { GetWeatherApiArg, WeatherDataDto } from '../../../redux/api/wildweatherApi';
-import type { CategoryType, GroupedFieldType, WeatherFieldType } from './types';
+import type { CategoryFilterType, CategoryType, GroupedFieldType, WeatherFieldType } from './types';
 
-// Use individual manual imports to reduce bundle size. See https://github.com/hustcc/echarts-for-react?tab=readme-ov-file#usage
+// Use individual manual imports to reduce bundle size:
+// https://github.com/hustcc/echarts-for-react?tab=readme-ov-file#usage
 
 // Register the required components
 echarts.use([
@@ -17,11 +18,9 @@ echarts.use([
     LegendComponent,
     GridComponent,
     LineChart,
-    BarChart,
+    // BarChart,
     CanvasRenderer,
-    UniversalTransition,
-    // MarkAreaComponent,
-    // MarkPointComponent
+    UniversalTransition
 ]);
 
 // Register the theme
@@ -34,10 +33,8 @@ type EChartsOption = echarts.ComposeOption<
     | TooltipComponentOption
     | GridComponentOption
     | LineSeriesOption
-    | BarSeriesOption
+    // | BarSeriesOption
     | LegendComponentOption
-    // | MarkAreaComponentOption
-// | MarkPointComponentOption
 >;
 
 type Props = {
@@ -45,14 +42,15 @@ type Props = {
     loading?: boolean;
     data: WeatherDataDto['weather'];
     grouping?: GetWeatherApiArg['grouping'];
-    category: CategoryType;
+    category: CategoryFilterType;
     showMissing?: boolean;
 }
 
 export function WeatherChart({ type, loading, data, grouping, category, showMissing }: Props) {
     const { t } = useTranslation();
 
-    const seriesData = generateSeriesData(type, grouping, data);
+    const xAxisLabels = useGenerateXAxis(grouping);
+    const yAxisValues = useGenerateYAxis(type, grouping, data, category);
 
     const option: EChartsOption = {
         title: {
@@ -62,26 +60,7 @@ export function WeatherChart({ type, loading, data, grouping, category, showMiss
             trigger: 'item',
             axisPointer: {
                 type: 'cross'
-            },
-            // formatter: (params) => {
-            //     if (!params?.data?.coord) {
-            //         return `
-            //             <u><b>${params.seriesName}</b></u><br/>
-            //             <b>${params.name}</b><br/>
-            //             <b>${params.data}°C</b>
-            //             `;
-            //     }
-            //     else {
-            //         const avg = seriesData[params.seriesIndex].data[params.dataIndex];
-            //         const high = params.data.coord[0][1];
-            //         const low = params.data.coord[1][1];
-            //         return `
-            //             <u><b>${params.seriesName}</b></u><br/>
-            //             <b>${params.data.xAxis}</b><br/>
-            //             ${low}°C | <b>${avg}°C</b> | ${high}°C
-            //             `;
-            //     }
-            // }
+            }
         },
         grid: {
             left: 8,
@@ -110,9 +89,9 @@ export function WeatherChart({ type, loading, data, grouping, category, showMiss
             axisTick: {
                 interval: 7
             },
-            data: generateCategories(grouping)
+            data: xAxisLabels
         },
-        series: seriesData,
+        series: yAxisValues,
         legend: {
             show: true,
             type: 'scroll',
@@ -151,7 +130,10 @@ export function WeatherChart({ type, loading, data, grouping, category, showMiss
     );
 }
 
-export function generateCategories(grouping: Props['grouping']): string[] {
+export function useGenerateXAxis(
+    grouping: Props['grouping']
+): string[] {
+    const { i18n } = useTranslation();
     switch (grouping) {
         case 'DAILY': {
             const days: string[] = [];
@@ -159,8 +141,7 @@ export function generateCategories(grouping: Props['grouping']): string[] {
             for (let i = 0; i < 366/*leap year*/; i++) {
                 const date = new Date(start);
                 date.setDate(start.getDate() + i);
-                // TODO: use current lang from i18n
-                const formatted = date.toLocaleDateString("en-GB", {
+                const formatted = date.toLocaleDateString(i18n.language, {
                     day: "2-digit",
                     month: "short"
                 });
@@ -179,8 +160,7 @@ export function generateCategories(grouping: Props['grouping']): string[] {
             const months: string[] = [];
             for (let i = 0; i < 12; i++) {
                 const month = new Date(2025, i, 1);
-                // TODO: use current lang from i18n
-                const formatted = month.toLocaleDateString("en-GB", {
+                const formatted = month.toLocaleDateString(i18n.language, {
                     month: "long"
                 });
                 months.push(formatted);
@@ -199,40 +179,98 @@ export function generateCategories(grouping: Props['grouping']): string[] {
     }
 }
 
-function generateSeriesData(chartType: Props['type'], grouping: Props['grouping'], data: WeatherDataDto['weather']): (LineSeriesOption | BarSeriesOption)[] {
-    const categories = generateCategories(grouping);
-    const seriesList: (LineSeriesOption | BarSeriesOption)[] = Object.keys(data).flatMap(station => {
+function useGenerateYAxis(
+    chartType: Props['type'],
+    grouping: Props['grouping'],
+    data: WeatherDataDto['weather'],
+    category: CategoryFilterType
+): LineSeriesOption[] {
+    const xAxisLabels = useGenerateXAxis(grouping);
+    const yAxisValues: LineSeriesOption[] = Object.keys(data).flatMap(station => {
         return Object.keys(data[station]).flatMap(year => {
-            const dataAverageRecords = getDataValues(chartType, categories, data, station, year, grouping, 'A');
-            return ({
-                name: `${station} ${year}`,
-                symbolSize: 12,
-                type: 'line',
-                smooth: true,
-                emphasis: {
-                    focus: 'series'
-                },
-                lineStyle: {
-                    width: 4
-                },
-                barCategoryGap: "30%",
-                triggerLineEvent: true,
-                data: dataAverageRecords,
-                // markArea: {
-                //     data: getMarkArea(chartType, categories, data, station, year, grouping),
-                //     // itemStyle: {
-                //     //     color: 'rgba(135, 206, 250, 0.43)',
-                //     //     borderWidth: 20,
-                //     //     opacity: 0.75
-                //     // },
-                // },
-            }) as LineSeriesOption | BarSeriesOption;
+            if (category === 'ALL') {
+                return [
+                    {
+                        name: `${station} ${year}`,
+                        type: 'line',
+                        smooth: true,
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        symbolSize: 10,
+                        lineStyle: {
+                            width: 3,
+                            type: 'dashed'
+                        },
+                        triggerLineEvent: true,
+                        data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'H')
+                    },
+                    {
+                        name: `${station} ${year}`,
+                        type: 'line',
+                        smooth: true,
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        symbolSize: 12,
+                        lineStyle: {
+                            width: 2,
+                            type: 'dashed'
+                        },
+                        triggerLineEvent: true,
+                        data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'A')
+                    },
+                    {
+                        name: `${station} ${year}`,
+                        type: 'line',
+                        smooth: true,
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        symbolSize: 12,
+                        lineStyle: {
+                            width: 1,
+                            type: 'dashed'
+                        },
+                        triggerLineEvent: true,
+                        data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'L')
+                    }
+                ] as LineSeriesOption[];
+            }
+            else {
+                const categoryRecords = getDataValues(chartType, xAxisLabels, data, station, year, grouping, category);
+                return ({
+                    name: `${station} ${year}`,
+                    type: 'line',
+                    smooth: true,
+                    emphasis: {
+                        focus: 'series'
+                    },
+                    symbolSize: 12,
+                    lineStyle: {
+                        width: 4
+                    },
+                    areaStyle: {
+                        opacity: 0.1
+                    },
+                    triggerLineEvent: true,
+                    data: categoryRecords
+                }) as LineSeriesOption;
+            }
         });
     });
-    return seriesList;
+    return yAxisValues;
 }
 
-function getDataValues(chartType: Props['type'], categories: string[], data: WeatherDataDto['weather'], station: string, year: string, grouping: Props['grouping'], category: CategoryType) {
+function getDataValues(
+    chartType: Props['type'],
+    categories: string[],
+    data: WeatherDataDto['weather'],
+    station: string,
+    year: string,
+    grouping: Props['grouping'],
+    category: CategoryType
+) {
     return categories.map((categoryLabel, index) => {
         const group = grouping === 'YEARLY' ? categoryLabel
             : grouping === 'DAILY' ? new Date(`${categoryLabel} ${year}`).toISOString().substring(0, 10)
@@ -256,7 +294,11 @@ function getDataValues(chartType: Props['type'], categories: string[], data: Wea
     });
 }
 
-function getWeatherFieldTypeValue(type: WeatherFieldType, category: CategoryType, data: GroupedFieldType) {
+function getWeatherFieldTypeValue(
+    type: WeatherFieldType,
+    category: CategoryType,
+    data: GroupedFieldType
+) {
     if (!data) {
         return 0;
     }
@@ -285,29 +327,3 @@ function getWeatherFieldTypeValue(type: WeatherFieldType, category: CategoryType
             return 0;
     }
 }
-
-// function getMarkArea(chartType: Props['type'], categories: string[], data: WeatherDataDto['weather'], station: string, year: string, grouping: Props['grouping']) {
-//     const high = getDataValues(chartType, categories, data, station, year, grouping, 'H');
-//     const low = getDataValues(chartType, categories, data, station, year, grouping, 'L');
-//     const highLowPairs: (MarkArea1DDataItemOption | MarkArea2DDataItemOption)[] = high.map((h, i) => {
-//         return [
-//             {
-//                 xAxis: categories[i],
-//                 yAxis: h ?? -Infinity,
-//                 itemStyle: {
-//                     borderWidth: 15,
-//                     opacity: 0.25
-//                 }
-//             },
-//             {
-//                 xAxis: categories[i],
-//                 yAxis: low[i] ?? -Infinity,
-//                 itemStyle: {
-//                     borderWidth: 30,
-//                     opacity: 0.75
-//                 }
-//             }
-//         ];
-//     });
-//     return highLowPairs;
-// }

@@ -5,19 +5,19 @@ import { Box, HBox, VBox } from '../../ui/layout';
 import { LabeledText, Popover, Select, Spinner, Text } from '../../ui/mywild';
 import { Checkbox } from '../../ui/mywild/Checkbox';
 import { ErrorDisplay } from '../base/ErrorDisplay';
-import { type CategoryType, type WeatherFieldType } from './types';
-import { generateCategories, WeatherChart } from './WeatherChart';
+import { type CategoryFilterType, type WeatherFieldType } from './types';
+import { useGenerateXAxis, WeatherChart } from './WeatherChart';
 
 export function WeatherDisplay() {
     const { t } = useTranslation();
 
     const [chart, setCart] = useState<WeatherFieldType>('TEMPERATURE');
-    const [station, setStation] = useState<GetWeatherApiArg['station']>();
+    const [station, setStation] = useState<string | null>(null);
     const [grouping, setGrouping] = useState<GetWeatherApiArg['grouping']>('MONTHLY');
-    const [category, setCategory] = useState<CategoryType>('ALL');
+    const [category, setCategory] = useState<CategoryFilterType>('A');
     const [aggregate, setAggregate] = useState<GetWeatherApiArg['aggregate']>('AVERAGE');
-    const [month, setMonth] = useState<string | undefined>();
-    const [year, setYear] = useState<string | undefined>();
+    const [month, setMonth] = useState<string | null>(null);
+    const [year, setYear] = useState<string | null>(null);
     const [showMissing, setShowMissing] = useState<boolean>(false);
 
     const {
@@ -25,7 +25,7 @@ export function WeatherDisplay() {
         isLoading: weatherIsLoading,
         error: weatherError
     } = useGetWeatherQuery({
-        station,
+        station: station ?? undefined,
         grouping,
         weatherFields: (chart !== 'MISSING' && showMissing) ? [chart, 'MISSING'] : [chart],
         category: category === 'ALL' ? undefined : category,
@@ -75,31 +75,31 @@ export function WeatherDisplay() {
                     onValueChange={value => setGrouping(!value ? grouping : value as GetWeatherApiArg['grouping'])}
                 />
                 <Select
+                    items={['L', 'A', 'H', 'ALL'].map(value => ({ label: t(`filterCategory${value}`), value }))}
+                    value={category}
+                    onValueChange={value => setCategory(!value ? category : value as CategoryFilterType)}
+                />
+                <Select
                     items={['AVERAGE', 'TOTAL'].map(value => ({ label: t(`filterAggregate${value}`), value }))}
                     value={aggregate}
                     onValueChange={value => setAggregate(!value ? aggregate : value as GetWeatherApiArg['aggregate'])}
                 />
                 <Select
-                    items={['L', 'A', 'H', 'ALL'].map(value => ({ label: t(`filterCategory${value}`), value }))}
-                    value={category}
-                    onValueChange={value => setCategory(!value ? category : value as CategoryType)}
-                />
-                <Select
                     items={stationsData?.map(station => ({ label: station, value: station })) ?? []}
                     value={station}
-                    onValueChange={value => setStation(!value ? undefined : value)}
+                    onValueChange={value => setStation(value ?? null)}
                     placeholder={t('filterStation')}
                 />
                 <Select
-                    items={generateCategories('YEARLY').map(value => ({ label: value, value }))}
+                    items={useGenerateXAxis('YEARLY').map(value => ({ label: value, value }))}
                     value={year}
-                    onValueChange={value => setYear(value === null ? undefined : value)}
+                    onValueChange={value => setYear(value ?? null)}
                     placeholder={t('filterYear')}
                 />
                 <Select
                     items={['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'].map(value => ({ label: t(`filterMonth${value}`), value }))}
                     value={month}
-                    onValueChange={value => setMonth(value === null ? undefined : value)}
+                    onValueChange={value => setMonth(value ?? null)}
                     placeholder={t('filterMonth')}
                 />
                 <Checkbox
