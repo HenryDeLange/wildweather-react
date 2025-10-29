@@ -68,22 +68,48 @@ export function WeatherChart({ type, loading, data, grouping, category, showMiss
             bottom: 40,
             containLabel: true
         },
-        yAxis: {
-            type: 'value',
-            axisLabel: {
-                margin: 30,
-                fontSize: 16
-            }
-        },
+        series: yAxisValues,
+        yAxis: type === 'WIND_DIRECTION' ?
+            [
+                {
+                    type: 'value',
+                    position: 'left',
+                    min: 0,
+                    max: 360,
+                    splitNumber: 12,
+                    axisLabel: {
+                        fontSize: 16,
+                        formatter: '{value}°'
+                    }
+                },
+                {
+                    type: 'value',
+                    position: 'right',
+                    min: 0,
+                    max: 360,
+                    splitNumber: 12,
+                    axisLabel: {
+                        formatter: (value) => degreesToDirection(value)
+                    }
+                }
+            ]
+            : {
+                type: 'value',
+                axisLabel: {
+                    fontSize: 16
+                }
+            },
         xAxis: {
             type: 'category',
             splitLine: {
                 show: true,
                 interval: 30
             },
+            axisLine: {
+                show: false
+            },
             axisLabel: {
-                margin: 12,
-                fontSize: 14
+                fontSize: 16
             },
             boundaryGap: true,
             axisTick: {
@@ -91,7 +117,6 @@ export function WeatherChart({ type, loading, data, grouping, category, showMiss
             },
             data: xAxisLabels
         },
-        series: yAxisValues,
         legend: {
             show: true,
             type: 'scroll',
@@ -327,3 +352,15 @@ function getWeatherFieldTypeValue(
             return 0;
     }
 }
+
+function degreesToDirection(deg: number): string {
+    const directions = [
+        'N', 'NNE', 'NE', 'ENE',
+        'E', 'ESE', 'SE', 'SSE',
+        'S', 'SSW', 'SW', 'WSW',
+        'W', 'WNW', 'NW', 'NNW'
+    ];
+    const index = Math.round(deg / (360 / 16)) % 16;
+    return directions[index];
+}
+
