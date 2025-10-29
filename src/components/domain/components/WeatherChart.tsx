@@ -6,9 +6,10 @@ import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useTranslation } from 'react-i18next';
 import type { GetWeatherApiArg, WeatherDataDto } from '../../../redux/api/wildweatherApi';
-import type { CategoryType, GroupedFieldType, WeatherFieldType } from './types';
+import type { CategoryFilterType, CategoryType, GroupedFieldType, WeatherFieldType } from './types';
 
-// Use individual manual imports to reduce bundle size. See https://github.com/hustcc/echarts-for-react?tab=readme-ov-file#usage
+// Use individual manual imports to reduce bundle size:
+// https://github.com/hustcc/echarts-for-react?tab=readme-ov-file#usage
 
 // Register the required components
 echarts.use([
@@ -31,21 +32,26 @@ type EChartsOption = echarts.ComposeOption<
     | TitleComponentOption
     | TooltipComponentOption
     | GridComponentOption
-    | LineSeriesOption
-    | BarSeriesOption
+    | (LineSeriesOption | BarSeriesOption)
     | LegendComponentOption
 >;
 
 type Props = {
     type: WeatherFieldType;
-    data: WeatherDataDto['weather'];
     loading?: boolean;
+    data: WeatherDataDto['weather'];
     grouping?: GetWeatherApiArg['grouping'];
-    category: CategoryType;
+    category: CategoryFilterType;
+    showMissing?: boolean;
 }
 
-export function WeatherChart({ type, data, loading, grouping, category }: Props) {
+export function WeatherChart({ type, loading, data, grouping, category, showMissing }: Props) {
     const { t } = useTranslation();
+
+    console.log('TODO: Show Missing', showMissing)
+
+    const xAxisLabels = useGenerateXAxis(grouping);
+    const yAxisValues = useGenerateYAxis(type, grouping, data, category);
 
     const option: EChartsOption = {
         title: {
@@ -63,44 +69,69 @@ export function WeatherChart({ type, data, loading, grouping, category }: Props)
             bottom: 40,
             containLabel: true
         },
-        yAxis: {
-            type: 'value',
-            axisLabel: {
-                margin: 30,
-                fontSize: 16
-            }
-        },
+        series: yAxisValues,
+        yAxis: type === 'WIND_DIRECTION' ?
+            [
+                {
+                    type: 'value',
+                    position: 'left',
+                    min: 0,
+                    max: 360,
+                    splitNumber: 12,
+                    axisLabel: {
+                        fontSize: 16,
+                        formatter: '{value}°'
+                    }
+                },
+                {
+                    type: 'value',
+                    position: 'right',
+                    min: 0,
+                    max: 360,
+                    splitNumber: 12,
+                    axisLabel: {
+                        formatter: (value) => degreesToDirection(value)
+                    }
+                }
+            ]
+            : {
+                type: 'value',
+                axisLabel: {
+                    fontSize: 16
+                }
+            },
         xAxis: {
             type: 'category',
             splitLine: {
                 show: true,
                 interval: 30
             },
+            axisLine: {
+                show: false
+            },
             axisLabel: {
-                margin: 12,
-                fontSize: 14
+                fontSize: 16
             },
             boundaryGap: true,
             axisTick: {
                 interval: 7
             },
-            data: generateCategories(grouping)
+            data: xAxisLabels
         },
-        series: generateSeriesData(type, grouping, category, data),
         legend: {
             show: true,
             type: 'scroll',
             bottom: 0
-        }
+        },
     };
 
     const loadingOption = {
-        text: 'Loading',
+        text: t('chartLoading'),
         color: '#185180ff',
         textColor: '#23426bff',
         maskColor: '#868c8d9d',
         zlevel: 0,
-        fontSize: 14,
+        fontSize: 16,
         showSpinner: true,
         spinnerRadius: 10,
         lineWidth: 5,
@@ -125,7 +156,10 @@ export function WeatherChart({ type, data, loading, grouping, category }: Props)
     );
 }
 
-const generateCategories = (grouping: Props['grouping']): string[] => {
+export function useGenerateXAxis(
+    grouping: Props['grouping']
+): string[] {
+    const { i18n } = useTranslation();
     switch (grouping) {
         case 'DAILY': {
             const days: string[] = [];
@@ -133,7 +167,7 @@ const generateCategories = (grouping: Props['grouping']): string[] => {
             for (let i = 0; i < 366/*leap year*/; i++) {
                 const date = new Date(start);
                 date.setDate(start.getDate() + i);
-                const formatted = date.toLocaleDateString("en-GB", { // TODO: use current lang from i18n
+                const formatted = date.toLocaleDateString(i18n.language, {
                     day: "2-digit",
                     month: "short"
                 });
@@ -152,7 +186,7 @@ const generateCategories = (grouping: Props['grouping']): string[] => {
             const months: string[] = [];
             for (let i = 0; i < 12; i++) {
                 const month = new Date(2025, i, 1);
-                const formatted = month.toLocaleDateString("en-GB", { // TODO: use current lang from i18n
+                const formatted = month.toLocaleDateString(i18n.language, {
                     month: "long"
                 });
                 months.push(formatted);
@@ -169,72 +203,165 @@ const generateCategories = (grouping: Props['grouping']): string[] => {
         default:
             return [];
     }
-};
+}
 
-const generateSeriesData = (type: Props['type'], grouping: Props['grouping'], category: CategoryType, data: WeatherDataDto['weather']): (LineSeriesOption | BarSeriesOption)[] => {
-    const categories = generateCategories(grouping);
-    const seriesList: (LineSeriesOption | BarSeriesOption)[] = Object.keys(data).flatMap(station => {
+function useGenerateYAxis(
+    chartType: Props['type'],
+    grouping: Props['grouping'],
+    data: WeatherDataDto['weather'],
+    category: CategoryFilterType
+): LineSeriesOption[] {
+    const xAxisLabels = useGenerateXAxis(grouping);
+    const yAxisValues: LineSeriesOption[] = Object.keys(data).flatMap(station => {
         return Object.keys(data[station]).flatMap(year => {
-            const dataRecords = categories.map((categoryLabel, index) => {
-                const group = grouping === 'YEARLY' ? categoryLabel
-                    : grouping === 'DAILY' ? new Date(`${categoryLabel} ${year}`).toISOString().substring(0, 10)
-                    : index < 9 ? `0${index + 1}` : `${index + 1}`;
-                const dataRecord = data[station][year][group] as GroupedFieldType;
-                if (dataRecord) {
-                    return getValue(type, category, dataRecord)
-                }
-                else {
-                    return 0;
-                }
-            });
-            return ({
-                name: `${station} ${year}`,
-                symbolSize: 12,
-                type: 'bar',
-                smooth: true,
-                emphasis: {
-                    focus: 'series'
-                },
-                lineStyle: {
-                    width: 4
-                },
-                barCategoryGap: "30%",
-                triggerLineEvent: true,
-                data: dataRecords
-            }) as LineSeriesOption | BarSeriesOption;
+            if (category === 'ALL') {
+                return [
+                    {
+                        name: `${station} ${year}`,
+                        type: grouping === 'YEARLY' ? 'bar' : 'line',
+                        smooth: true,
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        symbolSize: 10,
+                        lineStyle: {
+                            width: 3,
+                            type: 'dashed'
+                        },
+                        triggerLineEvent: true,
+                        data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'H')
+                    },
+                    {
+                        name: `${station} ${year}`,
+                        type: grouping === 'YEARLY' ? 'bar' : 'line',
+                        smooth: true,
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        symbolSize: 12,
+                        lineStyle: {
+                            width: 2,
+                            type: 'dashed'
+                        },
+                        triggerLineEvent: true,
+                        data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'A')
+                    },
+                    {
+                        name: `${station} ${year}`,
+                        type: grouping === 'YEARLY' ? 'bar' : 'line',
+                        smooth: true,
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        symbolSize: 12,
+                        lineStyle: {
+                            width: 1,
+                            type: 'dashed'
+                        },
+                        triggerLineEvent: true,
+                        data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'L')
+                    }
+                ] as LineSeriesOption[];
+            }
+            else {
+                const categoryRecords = getDataValues(chartType, xAxisLabels, data, station, year, grouping, category);
+                return ({
+                    name: `${station} ${year}`,
+                    type: grouping === 'YEARLY' ? 'bar' : 'line',
+                    smooth: true,
+                    emphasis: {
+                        focus: 'series'
+                    },
+                    symbolSize: 12,
+                    lineStyle: {
+                        width: 4
+                    },
+                    areaStyle: {
+                        opacity: 0.1
+                    },
+                    triggerLineEvent: true,
+                    data: categoryRecords
+                }) as LineSeriesOption;
+            }
         });
     });
-    return seriesList;
-};
+    return yAxisValues;
+}
 
+function getDataValues(
+    chartType: Props['type'],
+    categories: string[],
+    data: WeatherDataDto['weather'],
+    station: string,
+    year: string,
+    grouping: Props['grouping'],
+    category: CategoryType
+) {
+    return categories.map((categoryLabel, index) => {
+        const group = grouping === 'YEARLY' ? categoryLabel
+            : grouping === 'DAILY' ? new Date(`${categoryLabel} ${year}`).toISOString().substring(0, 10)
+                : index < 9 ? `0${index + 1}` : `${index + 1}`;
+        const dataRecord = data[station][year][group] as GroupedFieldType;
+        if (dataRecord) {
+            return getWeatherFieldTypeValue(chartType, category, dataRecord)
+        }
+        else {
+            if (Number(year) <= 2023) {
+                return null;
+            }
+            if (grouping === 'MONTHLY') {
+                const today = new Date();
+                if (Number(year) === today.getFullYear() && today.getMonth() < index) {
+                    return null;
+                }
+            }
+            return 0;
+        }
+    });
+}
 
-
-function getValue(type: WeatherFieldType, category: CategoryType, data: GroupedFieldType) {
+function getWeatherFieldTypeValue(
+    type: WeatherFieldType,
+    category: CategoryType,
+    data: GroupedFieldType
+) {
     if (!data) {
         return 0;
     }
     switch (type) {
         case 'TEMPERATURE':
-            return data['tmp'][category];
+            return data['tmp']?.[category] ?? 0;
         case 'WIND_SPEED':
-            return data['wSp'][category];
+            return data['wSp']?.[category] ?? 0;
         case 'WIND_MAX':
-            return data['wMx'][category];
+            return data['wMx']?.[category] ?? 0;
         case 'WIND_DIRECTION':
-            return data['wDr'][category];
+            return data['wDr']?.[category] ?? 0;
         case 'RAIN_RATE':
-            return data['rRt'][category];
+            return data['rRt']?.[category] ?? 0;
         case 'RAIN_DAILY':
-            return data['rDy'][category];
+            return data['rDy']?.[category] ?? 0;
         case 'PRESSURE':
-            return data['prs'][category];
+            return data['prs']?.[category] ?? 0;
         case 'HUMIDITY':
-            return data['hmd'][category];
+            return data['hmd']?.[category] ?? 0;
         case 'UV_RADIATION_INDEX':
-            return data['uvI'][category];
+            return data['uvI']?.[category] ?? 0;
         case 'MISSING':
-            return data['mis'][category];
+            return data['mis']?.[category] ?? 0;
         default:
             return 0;
     }
 }
+
+function degreesToDirection(deg: number): string {
+    const directions = [
+        'N', 'NNE', 'NE', 'ENE',
+        'E', 'ESE', 'SE', 'SSE',
+        'S', 'SSW', 'SW', 'WSW',
+        'W', 'WNW', 'NW', 'NNW'
+    ];
+    const index = Math.round(deg / (360 / 16)) % 16;
+    return directions[index];
+}
+
