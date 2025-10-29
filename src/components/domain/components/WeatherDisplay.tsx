@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetWeatherQuery, useGetWeatherStationsQuery, useGetWeatherStatusQuery, type GetWeatherApiArg } from '../../../redux/api/wildweatherApi';
 import { Box, HBox, VBox } from '../../ui/layout';
-import { LabeledText, Popover, Select, Spinner, Text } from '../../ui/mywild';
+import { LabeledText, Popover, Select, Text } from '../../ui/mywild';
 import { Checkbox } from '../../ui/mywild/Checkbox';
 import { ErrorDisplay } from '../base/ErrorDisplay';
 import { type CategoryFilterType, type WeatherFieldType } from './types';
@@ -22,7 +22,7 @@ export function WeatherDisplay() {
 
     const {
         data: weatherData,
-        isLoading: weatherIsLoading,
+        isFetching: weatherIsLoading,
         error: weatherError
     } = useGetWeatherQuery({
         station: station ?? undefined,
@@ -38,13 +38,13 @@ export function WeatherDisplay() {
 
     const {
         data: stationsData,
-        isLoading: stationsIsLoading,
+        isFetching: stationsIsLoading,
         error: stationsError
     } = useGetWeatherStationsQuery();
 
     const {
         data: statusData,
-        isLoading: statusIsLoading,
+        isFetching: statusIsLoading,
         error: statusError
     } = useGetWeatherStatusQuery();
 
@@ -142,21 +142,21 @@ export function WeatherDisplay() {
                 </Box>
             </HBox>
             <ErrorDisplay error={weatherError || stationsError || statusError} />
-            {isLoading &&
+            {/* {isLoading &&
                 <Box marginLeft='auto' marginRight='auto'>
                     <Spinner />
                 </Box>
-            }
-            {weatherData &&
+            } */}
+            {/* {weatherData && */}
                 <WeatherChart
                     type={chartType}
                     loading={isLoading}
-                    data={weatherData.weather}
+                    data={weatherData?.weather ?? {}}
                     grouping={chartGrouping}
                     category={category}
                     showMissing={showMissing}
                 />
-            }
+            {/* } */}
         </VBox>
 
     );

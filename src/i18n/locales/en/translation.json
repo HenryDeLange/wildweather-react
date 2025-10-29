@@ -39,6 +39,7 @@
     "toastUpdated": "Successfully updated.",
     "toastCreated": "Successfully created.",
     "adminButton": "Admin",
+    "chartLoading": "Loading",
     "chartTypeTEMPERATURE": "Temperature (Celsius)",
     "chartTypeWIND_SPEED": "Wind Speed (km/hr)",
     "chartTypeWIND_MAX": "Wind Gust (km/hr)",

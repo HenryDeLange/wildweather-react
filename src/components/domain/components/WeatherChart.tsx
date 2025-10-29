@@ -1,5 +1,5 @@
 import ReactEChartsCore from 'echarts-for-react/lib/core';
-import { LineChart, type LineSeriesOption } from 'echarts/charts';
+import { BarChart, type BarSeriesOption, LineChart, type LineSeriesOption } from 'echarts/charts';
 import { GridComponent, type GridComponentOption, LegendComponent, type LegendComponentOption, TitleComponent, type TitleComponentOption, TooltipComponent, type TooltipComponentOption } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
@@ -18,7 +18,7 @@ echarts.use([
     LegendComponent,
     GridComponent,
     LineChart,
-    // BarChart,
+    BarChart,
     CanvasRenderer,
     UniversalTransition
 ]);
@@ -32,8 +32,7 @@ type EChartsOption = echarts.ComposeOption<
     | TitleComponentOption
     | TooltipComponentOption
     | GridComponentOption
-    | LineSeriesOption
-    // | BarSeriesOption
+    | (LineSeriesOption | BarSeriesOption)
     | LegendComponentOption
 >;
 
@@ -125,12 +124,12 @@ export function WeatherChart({ type, loading, data, grouping, category, showMiss
     };
 
     const loadingOption = {
-        text: 'Loading',
+        text: t('chartLoading'),
         color: '#185180ff',
         textColor: '#23426bff',
         maskColor: '#868c8d9d',
         zlevel: 0,
-        fontSize: 14,
+        fontSize: 16,
         showSpinner: true,
         spinnerRadius: 10,
         lineWidth: 5,
@@ -217,7 +216,7 @@ function useGenerateYAxis(
                 return [
                     {
                         name: `${station} ${year}`,
-                        type: 'line',
+                        type: grouping === 'YEARLY' ? 'bar' : 'line',
                         smooth: true,
                         emphasis: {
                             focus: 'series'
@@ -232,7 +231,7 @@ function useGenerateYAxis(
                     },
                     {
                         name: `${station} ${year}`,
-                        type: 'line',
+                        type: grouping === 'YEARLY' ? 'bar' : 'line',
                         smooth: true,
                         emphasis: {
                             focus: 'series'
@@ -247,7 +246,7 @@ function useGenerateYAxis(
                     },
                     {
                         name: `${station} ${year}`,
-                        type: 'line',
+                        type: grouping === 'YEARLY' ? 'bar' : 'line',
                         smooth: true,
                         emphasis: {
                             focus: 'series'
@@ -266,7 +265,7 @@ function useGenerateYAxis(
                 const categoryRecords = getDataValues(chartType, xAxisLabels, data, station, year, grouping, category);
                 return ({
                     name: `${station} ${year}`,
-                    type: 'line',
+                    type: grouping === 'YEARLY' ? 'bar' : 'line',
                     smooth: true,
                     emphasis: {
                         focus: 'series'
