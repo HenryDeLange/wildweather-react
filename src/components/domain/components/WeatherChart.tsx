@@ -5,8 +5,8 @@ import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useTranslation } from 'react-i18next';
-import type { GetWeatherApiArg, WeatherDataDto } from '../../../redux/api/wildweatherApi';
-import type { CategoryFilterType, CategoryType, GroupedFieldType, WeatherFieldType } from './types';
+import type { WeatherDataDto } from '../../../redux/api/wildweatherApi';
+import type { CategoryFilterType, CategoryType, GroupedFieldType, GroupingType, WeatherFieldType } from './types';
 
 // Use individual manual imports to reduce bundle size:
 // https://github.com/hustcc/echarts-for-react?tab=readme-ov-file#usage
@@ -40,15 +40,13 @@ type Props = {
     type: WeatherFieldType;
     loading?: boolean;
     data: WeatherDataDto['weather'];
-    grouping?: GetWeatherApiArg['grouping'];
+    grouping?: GroupingType;
     category: CategoryFilterType;
     showMissing?: boolean;
 }
 
-export function WeatherChart({ type, loading, data, grouping, category, showMissing }: Props) {
+export function WeatherChart({ type, loading, data, grouping, category }: Props) {
     const { t } = useTranslation();
-
-    console.log('TODO: Show Missing', showMissing)
 
     const xAxisLabels = useGenerateXAxis(grouping);
     const yAxisValues = useGenerateYAxis(type, grouping, data, category);
