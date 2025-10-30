@@ -92,7 +92,7 @@ export function WeatherDisplay() {
                     placeholder={t('filterStation')}
                 />
                 <Select
-                    items={useGenerateXAxis('YEARLY')
+                    items={useGenerateXAxis('YEARLY', null)
                         .map(value => ({ label: value, value }))}
                     value={year}
                     onValueChange={value => setYear(value ?? null)}
@@ -137,13 +137,14 @@ export function WeatherDisplay() {
                     />
                 </Box>
             </HBox>
-            <ErrorDisplay error={weatherError || stationsError || statusError} />
+            <ErrorDisplay error={weatherError || stationsError || statusError} mode='line' />
             <WeatherChart
                 type={chart}
                 loading={isLoading}
                 data={weatherData?.weather ?? {}}
                 grouping={grouping}
                 category={category}
+                month={month ? Number(month) : undefined}
             />
         </VBox>
 
