@@ -27,6 +27,7 @@
     "fieldRequired": "Required",
     "fieldTooShort": "Must be at least {{length}} characters",
     "fieldInvalid": "Invalid",
+    "stationsButton": "Stations",
     "aboutButton": "About",
     "aboutDescription": "WildWeather is a place to view my Ambient Weather stations' historic data.",
     "aboutVersion": "Version",
