@@ -22,10 +22,14 @@ export function BaseUI_Popover({ trigger, title, description }: Props) {
                         <Popover.Arrow className={styles.Arrow}>
                             <ArrowSvg />
                         </Popover.Arrow>
-                        <Popover.Title className={styles.Title}>{title}</Popover.Title>
-                        <Popover.Description className={styles.Description}>
-                            {description}
-                        </Popover.Description>
+                        <Popover.Title className={styles.Title}>
+                            {title}
+                        </Popover.Title>
+                        <Popover.Description className={styles.Description}
+                            render={
+                                <div>{description}</div>
+                            }
+                        />
                     </Popover.Popup>
                 </Popover.Positioner>
             </Popover.Portal>

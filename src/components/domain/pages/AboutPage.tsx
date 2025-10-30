@@ -4,7 +4,7 @@ import { Box, HBox, PageContainer, VBox } from '../../ui/layout';
 import { Heading, LabeledText, Separator, Spinner, Text } from '../../ui/mywild';
 import myWildLogo from './../../../assets/mywild/mywild-logo.png';
 
-export function AppAbout() {
+export function AboutPage() {
     const { t } = useTranslation();
 
     const {

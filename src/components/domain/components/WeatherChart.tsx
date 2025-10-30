@@ -5,8 +5,8 @@ import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useTranslation } from 'react-i18next';
-import type { GetWeatherApiArg, WeatherDataDto } from '../../../redux/api/wildweatherApi';
-import type { CategoryFilterType, CategoryType, GroupedFieldType, WeatherFieldType } from './types';
+import type { WeatherDataDto } from '../../../redux/api/wildweatherApi';
+import type { CategoryFilterType, CategoryType, GroupedFieldType, GroupingType, WeatherFieldType } from './types';
 
 // Use individual manual imports to reduce bundle size:
 // https://github.com/hustcc/echarts-for-react?tab=readme-ov-file#usage
@@ -40,18 +40,16 @@ type Props = {
     type: WeatherFieldType;
     loading?: boolean;
     data: WeatherDataDto['weather'];
-    grouping?: GetWeatherApiArg['grouping'];
+    grouping?: GroupingType;
     category: CategoryFilterType;
-    showMissing?: boolean;
+    month?: number | null;
 }
 
-export function WeatherChart({ type, loading, data, grouping, category, showMissing }: Props) {
+export function WeatherChart({ type, loading, data, grouping, category, month }: Props) {
     const { t } = useTranslation();
 
-    console.log('TODO: Show Missing', showMissing)
-
-    const xAxisLabels = useGenerateXAxis(grouping);
-    const yAxisValues = useGenerateYAxis(type, grouping, data, category);
+    const xAxisLabels = useGenerateXAxis(grouping, month);
+    const yAxisValues = useGenerateYAxis(type, grouping, month, data, category);
 
     const option: EChartsOption = {
         title: {
@@ -157,7 +155,8 @@ export function WeatherChart({ type, loading, data, grouping, category, showMiss
 }
 
 export function useGenerateXAxis(
-    grouping: Props['grouping']
+    grouping: Props['grouping'],
+    month: Props['month']
 ): string[] {
     const { i18n } = useTranslation();
     switch (grouping) {
@@ -177,14 +176,18 @@ export function useGenerateXAxis(
         }
         case 'WEEKLY': {
             const weeks: string[] = [];
-            for (let i = 1; i <= 53; i++) {
+            const start = month ? Number(validWeekRangeForMonth(month)[0]) : 1;
+            const end = month ? Number(validWeekRangeForMonth(month)[1]) : 53;
+            for (let i = start; i <= end; i++) {
                 weeks.push(String(i).padStart(2, '0'));
             }
             return weeks;
         }
         case 'MONTHLY': {
             const months: string[] = [];
-            for (let i = 0; i < 12; i++) {
+            const start = month ? (month - 1) : 0;
+            const end = month ? month : 12;
+            for (let i = start; i < end; i++) {
                 const month = new Date(2025, i, 1);
                 const formatted = month.toLocaleDateString(i18n.language, {
                     month: "long"
@@ -208,17 +211,21 @@ export function useGenerateXAxis(
 function useGenerateYAxis(
     chartType: Props['type'],
     grouping: Props['grouping'],
+    month: Props['month'],
     data: WeatherDataDto['weather'],
     category: CategoryFilterType
 ): LineSeriesOption[] {
-    const xAxisLabels = useGenerateXAxis(grouping);
+    const showBarChart = grouping === 'YEARLY'
+        || (grouping === 'MONTHLY' && month);
+    const xAxisLabels = useGenerateXAxis(grouping, month);
     const yAxisValues: LineSeriesOption[] = Object.keys(data).flatMap(station => {
         return Object.keys(data[station]).flatMap(year => {
+            const seriesName = `${station} ${year}`;
             if (category === 'ALL') {
                 return [
                     {
-                        name: `${station} ${year}`,
-                        type: grouping === 'YEARLY' ? 'bar' : 'line',
+                        name: seriesName,
+                        type: showBarChart ? 'bar' : 'line',
                         smooth: true,
                         emphasis: {
                             focus: 'series'
@@ -229,11 +236,11 @@ function useGenerateYAxis(
                             type: 'dashed'
                         },
                         triggerLineEvent: true,
-                        data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'H')
+                        data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'H', month)
                     },
                     {
-                        name: `${station} ${year}`,
-                        type: grouping === 'YEARLY' ? 'bar' : 'line',
+                        name: seriesName,
+                        type: showBarChart ? 'bar' : 'line',
                         smooth: true,
                         emphasis: {
                             focus: 'series'
@@ -244,11 +251,11 @@ function useGenerateYAxis(
                             type: 'dashed'
                         },
                         triggerLineEvent: true,
-                        data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'A')
+                        data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'A', month)
                     },
                     {
-                        name: `${station} ${year}`,
-                        type: grouping === 'YEARLY' ? 'bar' : 'line',
+                        name: seriesName,
+                        type: showBarChart ? 'bar' : 'line',
                         smooth: true,
                         emphasis: {
                             focus: 'series'
@@ -259,15 +266,15 @@ function useGenerateYAxis(
                             type: 'dashed'
                         },
                         triggerLineEvent: true,
-                        data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'L')
+                        data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'L', month)
                     }
                 ] as LineSeriesOption[];
             }
             else {
-                const categoryRecords = getDataValues(chartType, xAxisLabels, data, station, year, grouping, category);
+                const categoryRecords = getDataValues(chartType, xAxisLabels, data, station, year, grouping, category, month);
                 return ({
-                    name: `${station} ${year}`,
-                    type: grouping === 'YEARLY' ? 'bar' : 'line',
+                    name: seriesName,
+                    type: showBarChart ? 'bar' : 'line',
                     smooth: true,
                     emphasis: {
                         focus: 'series'
@@ -295,12 +302,15 @@ function getDataValues(
     station: string,
     year: string,
     grouping: Props['grouping'],
-    category: CategoryType
+    category: CategoryType,
+    month: Props['month']
 ) {
     return categories.map((categoryLabel, index) => {
         const group = grouping === 'YEARLY' ? categoryLabel
             : grouping === 'DAILY' ? new Date(`${categoryLabel} ${year}`).toISOString().substring(0, 10)
-                : index < 9 ? `0${index + 1}` : `${index + 1}`;
+                : (grouping === 'MONTHLY' && month) ? month < 9 ? `0${month}` : `${month}`
+                    : (grouping === 'WEEKLY' && month) ? categoryLabel
+                        : index < 9 ? `0${index + 1}` : `${index + 1}`;
         const dataRecord = data[station][year][group] as GroupedFieldType;
         if (dataRecord) {
             return getWeatherFieldTypeValue(chartType, category, dataRecord)
@@ -314,6 +324,9 @@ function getDataValues(
                 if (Number(year) === today.getFullYear() && today.getMonth() < index) {
                     return null;
                 }
+            }
+            if (grouping === 'WEEKLY' && month) {
+                return null;
             }
             return 0;
         }
@@ -354,14 +367,33 @@ function getWeatherFieldTypeValue(
     }
 }
 
+const directions = [
+    'N', 'NNE', 'NE', 'ENE',
+    'E', 'ESE', 'SE', 'SSE',
+    'S', 'SSW', 'SW', 'WSW',
+    'W', 'WNW', 'NW', 'NNW'
+];
+
 function degreesToDirection(deg: number): string {
-    const directions = [
-        'N', 'NNE', 'NE', 'ENE',
-        'E', 'ESE', 'SE', 'SSE',
-        'S', 'SSW', 'SW', 'WSW',
-        'W', 'WNW', 'NW', 'NNW'
-    ];
     const index = Math.round(deg / (360 / 16)) % 16;
     return directions[index];
 }
 
+const monthWeeks = [
+    ['01', '06'],
+    ['05', '09'],
+    ['09', '14'],
+    ['13', '18'],
+    ['17', '22'],
+    ['22', '27'],
+    ['26', '31'],
+    ['31', '36'],
+    ['35', '40'],
+    ['40', '44'],
+    ['44', '49'],
+    ['48', '53']
+];
+
+function validWeekRangeForMonth(month: number) {
+    return monthWeeks[month - 1];
+}

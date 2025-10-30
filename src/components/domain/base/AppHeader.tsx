@@ -30,6 +30,10 @@ export function AppHeader() {
 
     const menus = [
         {
+            title: t('stationsButton'),
+            href: '/stations'
+        },
+        {
             title: t('aboutButton'),
             href: '/about'
         }
