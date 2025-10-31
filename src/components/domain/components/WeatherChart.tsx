@@ -162,15 +162,17 @@ export function useGenerateXAxis(
     switch (grouping) {
         case 'DAILY': {
             const days: string[] = [];
-            const start = new Date(2024/*leap year*/, 0, 1);
-            for (let i = 0; i < 366/*leap year*/; i++) {
-                const date = new Date(start);
-                date.setDate(start.getDate() + i);
-                const formatted = date.toLocaleDateString(i18n.language, {
-                    day: "2-digit",
-                    month: "short"
-                });
-                days.push(formatted);
+            const startDate = new Date(2024, (month ?? 1) - 1, 1); // 2024 is a leap year
+            const formatter = new Intl.DateTimeFormat(i18n.language, {
+                day: '2-digit',
+                month: 'short'
+            });
+            const start = month ? startDate.getDate() : 1; // 2024 is a leap year
+            const end = month ? new Date(2024, month, 0).getDate() : 366; // 366 for leap year
+            for (let i = start; i <= end; i++) {
+                const date = new Date(startDate);
+                date.setDate(i);
+                days.push(formatter.format(date));
             }
             return days;
         }
@@ -187,12 +189,12 @@ export function useGenerateXAxis(
             const months: string[] = [];
             const start = month ? (month - 1) : 0;
             const end = month ? month : 12;
+            const monthFormatter = new Intl.DateTimeFormat(i18n.language, {
+                month: 'long'
+            });
             for (let i = start; i < end; i++) {
                 const month = new Date(2025, i, 1);
-                const formatted = month.toLocaleDateString(i18n.language, {
-                    month: "long"
-                });
-                months.push(formatted);
+                months.push(monthFormatter.format(month));
             }
             return months;
         }
@@ -307,9 +309,9 @@ function getDataValues(
 ) {
     return categories.map((categoryLabel, index) => {
         const group = grouping === 'YEARLY' ? categoryLabel
-            : grouping === 'DAILY' ? new Date(`${categoryLabel} ${year}`).toISOString().substring(0, 10)
-                : (grouping === 'MONTHLY' && month) ? month < 9 ? `0${month}` : `${month}`
-                    : (grouping === 'WEEKLY' && month) ? categoryLabel
+            : (grouping === 'MONTHLY' && month) ? month < 9 ? `0${month}` : `${month}`
+                : (grouping === 'WEEKLY' && month) ? categoryLabel
+                    : grouping === 'DAILY' ? getDayGroup(Number(year), index, month)
                         : index < 9 ? `0${index + 1}` : `${index + 1}`;
         const dataRecord = data[station][year][group] as GroupedFieldType;
         if (dataRecord) {
@@ -328,7 +330,7 @@ function getDataValues(
             if (grouping === 'WEEKLY' && month) {
                 return null;
             }
-            return 0;
+            return null;
         }
     });
 }
@@ -339,31 +341,31 @@ function getWeatherFieldTypeValue(
     data: GroupedFieldType
 ) {
     if (!data) {
-        return 0;
+        return null;
     }
     switch (type) {
         case 'TEMPERATURE':
-            return data['tmp']?.[category] ?? 0;
+            return data['tmp']?.[category] ?? null;
         case 'WIND_SPEED':
-            return data['wSp']?.[category] ?? 0;
+            return data['wSp']?.[category] ?? null;
         case 'WIND_MAX':
-            return data['wMx']?.[category] ?? 0;
+            return data['wMx']?.[category] ?? null;
         case 'WIND_DIRECTION':
-            return data['wDr']?.[category] ?? 0;
+            return data['wDr']?.[category] ?? null;
         case 'RAIN_RATE':
-            return data['rRt']?.[category] ?? 0;
+            return data['rRt']?.[category] ?? null;
         case 'RAIN_DAILY':
-            return data['rDy']?.[category] ?? 0;
+            return data['rDy']?.[category] ?? null;
         case 'PRESSURE':
-            return data['prs']?.[category] ?? 0;
+            return data['prs']?.[category] ?? null;
         case 'HUMIDITY':
-            return data['hmd']?.[category] ?? 0;
+            return data['hmd']?.[category] ?? null;
         case 'UV_RADIATION_INDEX':
-            return data['uvI']?.[category] ?? 0;
+            return data['uvI']?.[category] ?? null;
         case 'MISSING':
-            return data['mis']?.[category] ?? 0;
+            return data['mis']?.[category] ?? null;
         default:
-            return 0;
+            return null;
     }
 }
 
@@ -396,4 +398,9 @@ const monthWeeks = [
 
 function validWeekRangeForMonth(month: number) {
     return monthWeeks[month - 1];
+}
+
+function getDayGroup(year: number, indexDay: number, month: Props['month']) {
+    const date = new Date(year, (month ?? 1) - 1, indexDay + 1);
+    return date.toLocaleDateString('en-CA').substring(0, 10); // 'en-CA' gives YYYY-MM-DD
 }
