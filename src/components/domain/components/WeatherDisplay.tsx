@@ -28,8 +28,8 @@ export function WeatherDisplay() {
         weatherFields: [chart],
         category: category === 'ALL' ? undefined : category,
         aggregate,
-        startDate: year ? new Date(Number(year), 1, 1).toISOString().substring(0, 10) : undefined,
-        endDate: year ? new Date(Number(year), 11, 31).toISOString().substring(0, 10) : undefined,
+        startDate: year ? new Date(Number(year), 0, 1).toLocaleDateString('en-CA') : undefined, // 'en-CA' gives YYYY-MM-DD
+        endDate: year ? new Date(Number(year), 11, 31).toLocaleDateString('en-CA') : undefined, // 'en-CA' gives YYYY-MM-DD
         startMonth: month ? Number(month) : undefined,
         endMonth: month ? Number(month) : undefined
     });
