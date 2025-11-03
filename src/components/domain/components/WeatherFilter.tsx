@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useGetWeatherStationsQuery } from '../../../redux/api/wildweatherApi';
 import { Box, FixedGrid, Grid, HideOnMobile, ShowOnMobile } from '../../ui/layout';
 import { Form, FormField, Popover } from '../../ui/mywild';
-import { useGenerateXAxis } from './chart/WeatherChart';
+import { useGenerateXAxis } from './chart/xAxis';
 import { WeatherData } from './WeatherData';
 import type { WeatherFilterType } from './weatherTypes';
 
@@ -140,8 +140,8 @@ function AdditionalFormFields() {
                     name: 'year'
                 }}
                 type='list'
-                items={useGenerateXAxis('YEARLY', null)
-                    .map(value => ({ label: value, value }))}
+                items={(useGenerateXAxis('YEARLY', null).data as string[])
+                    .map((value: string) => ({ label: value, value }))}
                 placeholder={t('filterYear')}
             />
             <FormField<WeatherFilterType>
