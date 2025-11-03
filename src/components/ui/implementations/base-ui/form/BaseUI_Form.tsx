@@ -15,7 +15,7 @@ export type FieldElement<T extends FieldValues> = ReactElement<typeof BaseUI_For
 type Props<T extends FieldValues> = {
     children: FieldElement<T> | FieldElement<T>[];
     formProps?: UseFormProps<T>;
-    onSubmit: SubmitHandler<T>;
+    onSubmit?: SubmitHandler<T>;
     submitLabel?: string;
     disabled?: boolean;
     loading?: boolean;
@@ -41,19 +41,23 @@ export function BaseUI_Form<T extends FieldValues>({ children, formProps, onSubm
         <FormProvider {...methods}>
             <form
                 className={styles.Form}
-                onSubmit={methods.handleSubmit(onSubmit)}
+                onSubmit={onSubmit ? methods.handleSubmit(onSubmit) : undefined}
             >
-                {children}
-                <Button
-                    type='submit'
-                    disabled={disabled}
-                    loading={loading}
-                    variant={methods.formState.isValid ? 'priority' : 'warning'}
-                    size='large'
-                >
-                    {submitLabel ?? t('formSubmitButton')}
-                </Button>
-                <ErrorDisplay error={error} errorLabel={errorLabel} mode='line' />
+                <>
+                    {children}
+                </>
+                {onSubmit &&
+                    <Button
+                        type='submit'
+                        disabled={disabled}
+                        loading={loading}
+                        variant={methods.formState.isValid ? 'priority' : 'warning'}
+                        size='large'
+                    >
+                        {submitLabel ?? t('formSubmitButton')}
+                    </Button>
+                }
+                <ErrorDisplay error={error} errorLabel={errorLabel} />
             </form>
             {DevToolComponent &&
                 <DevToolComponent control={methods.control} placement='top-left' />

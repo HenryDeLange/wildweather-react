@@ -5,8 +5,8 @@ import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useTranslation } from 'react-i18next';
-import type { WeatherDataDto } from '../../../redux/api/wildweatherApi';
-import type { CategoryFilterType, CategoryType, GroupedFieldType, GroupingType, WeatherFieldType } from './types';
+import type { WeatherDataDto } from '../../../../redux/api/wildweatherApi';
+import type { CategoryFilterType, CategoryType, GroupedFieldType, GroupingType, WeatherFieldType } from '../weatherTypes';
 
 // Use individual manual imports to reduce bundle size:
 // https://github.com/hustcc/echarts-for-react?tab=readme-ov-file#usage
@@ -36,7 +36,7 @@ type EChartsOption = echarts.ComposeOption<
     | LegendComponentOption
 >;
 
-type Props = {
+export type WeatherChartProps = {
     type: WeatherFieldType;
     loading?: boolean;
     data: WeatherDataDto['weather'];
@@ -45,7 +45,7 @@ type Props = {
     month?: number | null;
 }
 
-export function WeatherChart({ type, loading, data, grouping, category, month }: Props) {
+export function WeatherChart({ type, loading, data, grouping, category, month }: WeatherChartProps) {
     const { t } = useTranslation();
 
     const xAxisLabels = useGenerateXAxis(grouping, month);
@@ -155,8 +155,8 @@ export function WeatherChart({ type, loading, data, grouping, category, month }:
 }
 
 export function useGenerateXAxis(
-    grouping: Props['grouping'],
-    month: Props['month']
+    grouping: WeatherChartProps['grouping'],
+    month: WeatherChartProps['month']
 ): string[] {
     const { i18n } = useTranslation();
     switch (grouping) {
@@ -211,9 +211,9 @@ export function useGenerateXAxis(
 }
 
 function useGenerateYAxis(
-    chartType: Props['type'],
-    grouping: Props['grouping'],
-    month: Props['month'],
+    chartType: WeatherChartProps['type'],
+    grouping: WeatherChartProps['grouping'],
+    month: WeatherChartProps['month'],
     data: WeatherDataDto['weather'],
     category: CategoryFilterType
 ): LineSeriesOption[] {
@@ -298,14 +298,14 @@ function useGenerateYAxis(
 }
 
 function getDataValues(
-    chartType: Props['type'],
+    chartType: WeatherChartProps['type'],
     categories: string[],
     data: WeatherDataDto['weather'],
     station: string,
     year: string,
-    grouping: Props['grouping'],
+    grouping: WeatherChartProps['grouping'],
     category: CategoryType,
-    month: Props['month']
+    month: WeatherChartProps['month']
 ) {
     return categories.map((categoryLabel, index) => {
         const group = grouping === 'YEARLY' ? categoryLabel
@@ -400,7 +400,7 @@ function validWeekRangeForMonth(month: number) {
     return monthWeeks[month - 1];
 }
 
-function getDayGroup(year: number, indexDay: number, month: Props['month']) {
+function getDayGroup(year: number, indexDay: number, month: WeatherChartProps['month']) {
     const date = new Date(year, (month ?? 1) - 1, indexDay + 1);
     return date.toLocaleDateString('en-CA').substring(0, 10); // 'en-CA' gives YYYY-MM-DD
 }

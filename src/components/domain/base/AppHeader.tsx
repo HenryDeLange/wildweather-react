@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import { ArrowBigDownDash } from 'lucide-react';
-import { useCallback, useContext, type ComponentProps } from 'react';
+import { useCallback, useContext, useMemo, type ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
 import { authLogout, selectIsAuthenticated } from '../../../auth/authSlice';
 import { PwaContext } from '../../../pwa/pwaContext';
@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { Box, HBox, HideOnMobile, ShowOnMobile, VBox } from '../../ui/layout';
 import { Button, Heading, LanguageToggle, LinkButton, NavigationMenu, RouterLink, Separator, Text } from '../../ui/mywild';
 import { Drawer } from '../../ui/mywild/Drawer';
+import { WeatherStationStatus } from '../components/WeatherStationStatus';
 import type { LoginRedirectType } from '../pages/user/LoginPage';
 
 export function AppHeader() {
@@ -28,7 +29,7 @@ export function AppHeader() {
         navigate({ to: '/' });
     }, [dispatch, navigate]);
 
-    const menus = [
+    const menus = useMemo(() => [
         {
             title: t('stationsButton'),
             href: '/stations'
@@ -37,7 +38,30 @@ export function AppHeader() {
             title: t('aboutButton'),
             href: '/about'
         }
-    ];
+    ], [t]);
+
+    const authButtons = useMemo(() => (!isAuthenticated ? (
+        <Box marginLeft='auto'>
+            <HBox gap='1rem'>
+                <RouterLink
+                    to='/login'
+                    search={{
+                        redirect: (routePathName === '/login' || routePathName === '/register')
+                            ? '/'
+                            : routePathName
+                    } as LoginRedirectType}
+                >
+                    {t('loginButton')}
+                </RouterLink>
+            </HBox>
+        </Box>
+    ) : (
+        <Box marginLeft='auto'>
+            <LinkButton onClick={handleLogout}>
+                {t('logoutButton')}
+            </LinkButton>
+        </Box>
+    )), [isAuthenticated, routePathName, t]);
 
     return (
         <VBox marginTop='0.25rem'>
@@ -64,6 +88,9 @@ export function AppHeader() {
                                         ]
                                         : []),
                                     ...menus,
+                                    {
+                                        render: authButtons
+                                    },
                                     {
                                         render: (
                                             <HBox>
@@ -101,7 +128,6 @@ export function AppHeader() {
                             </Text>
                         </RouterLink>
                     </ShowOnMobile>
-
                 </HBox>
                 {!isPwa && showPwaInstallButton &&
                     <>
@@ -138,29 +164,12 @@ export function AppHeader() {
                         />
                     </HideOnMobile>
                 </Box>
-                {!isAuthenticated
-                    ?
-                    <Box marginLeft='auto'>
-                        <HBox gap='1rem'>
-                            <RouterLink
-                                to='/login'
-                                search={{
-                                    redirect: (routePathName === '/login' || routePathName === '/register')
-                                        ? '/'
-                                        : routePathName
-                                } as LoginRedirectType}
-                            >
-                                {t('loginButton')}
-                            </RouterLink>
-                        </HBox>
-                    </Box>
-                    :
-                    <Box marginLeft='auto'>
-                        <LinkButton onClick={handleLogout}>
-                            {t('logoutButton')}
-                        </LinkButton>
-                    </Box>
-                }
+                <Box marginLeft='auto' marginRight='auto'>
+                    <WeatherStationStatus />
+                </Box>
+                <HideOnMobile>
+                    {authButtons}
+                </HideOnMobile>
             </HBox>
             <Separator marginTop='-0.75rem' />
         </VBox>

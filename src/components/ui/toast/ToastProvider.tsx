@@ -1,5 +1,5 @@
 import { Toast } from '@base-ui-components/react/toast';
-import { type ReactNode } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BaseUI_Toast } from '../implementations/base-ui/toast/BaseUI_Toast';
 import { ToastContext } from './toastContext';
@@ -23,7 +23,7 @@ function ToastedChildren({ children }: Props) {
     const toastManager = Toast.useToastManager();
     return (
         <ToastContext.Provider
-            value={{
+            value={useMemo(() => ({
                 showToast: options => {
                     return toastManager.add({ ...options });
                 },
@@ -56,7 +56,7 @@ function ToastedChildren({ children }: Props) {
                         }
                     });
                 }
-            }}
+            }), [toastManager, t])}
         >
             {children}
         </ToastContext.Provider>

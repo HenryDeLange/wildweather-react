@@ -75,6 +75,7 @@ export function LoginPage() {
                                             }
                                         }
                                     }}
+                                    autoFocus
                                 />
                                 <FormField<UserLogin>
                                     type='password'

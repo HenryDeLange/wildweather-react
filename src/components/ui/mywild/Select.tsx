@@ -1,6 +1,6 @@
 import { BaseUI_Select } from '../implementations/base-ui/select/BaseUI_Select';
 
-type SelectItem = {
+export type SelectItem = {
     label: string;
     value: string | null;
 }

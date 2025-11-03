@@ -10,7 +10,7 @@ type FieldElement<T extends FieldValues> = ReactElement<typeof FormField<T>>;
 type Props<T extends FieldValues> = {
     children: FieldElement<T> | FieldElement<T>[];
     formProps?: UseFormProps<T>;
-    onSubmit: SubmitHandler<T>;
+    onSubmit?: SubmitHandler<T>;
     submitLabel?: string;
     disabled?: boolean;
     loading?: boolean;

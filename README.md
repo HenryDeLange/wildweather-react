@@ -5,13 +5,12 @@
 
 WildWeather TypeScript React web user interface.
 
-[😶‍🌫️ Live Website](https://wildweather.mywild.co.za)
+😶‍🌫️ [Live Website](https://wildweather.mywild.co.za) 😶‍🌫️
 
 See the [wildweather-spring](https://github.com/HenryDeLange/wildweather-spring) project for the web server.
 
 ## Development
 
-![Top Language](https://img.shields.io/github/languages/top/HenryDeLange/wildweather-react)
 ![Build](https://img.shields.io/github/actions/workflow/status/HenryDeLange/wildweather-react/react-source-build.yml?label=build)
 
 This project is a standard _React_ application that uses _Vite_ as the build tool.
