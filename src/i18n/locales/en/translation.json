@@ -12,7 +12,6 @@
     "loginButton": "Sign In",
     "loginTitle": "Sign In",
     "loginDescription": "Sign in using your existing account.",
-    "loginRegisterLink": "Register a new account",
     "loginFailed": "Failed to sign in!",
     "loginUsernameField": "Username",
     "registerButton": "Add new User",
