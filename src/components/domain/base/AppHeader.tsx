@@ -89,7 +89,8 @@ export function AppHeader() {
                                         : []),
                                     ...menus,
                                     {
-                                        render: authButtons
+                                        render: authButtons,
+                                        closeOnClick: true
                                     },
                                     {
                                         render: (
