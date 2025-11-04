@@ -52,6 +52,6 @@ export function useEChartsOption(
             show: true,
             type: 'scroll',
             bottom: 0
-        },
+        }
     };
 }

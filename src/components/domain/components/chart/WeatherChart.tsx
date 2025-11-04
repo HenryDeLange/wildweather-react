@@ -25,7 +25,7 @@ echarts.use([
 ]);
 
 // Register the theme
-echarts.registerTheme('my_theme', {
+echarts.registerTheme('wildweather_theme', {
     backgroundColor: '#e7e7e7ff'
 });
 
@@ -49,10 +49,8 @@ export function WeatherChart({ type, loading, data, grouping, category, month }:
             lazyUpdate={true}
             showLoading={loading}
             loadingOption={loadingOption}
-            theme='my_theme'
+            theme='wildweather_theme'
             style={{ flex: 1, height: '100%' }}
-        // className='echarts-for-echarts'
-        // onChartReady={onChartReadyCallback}
         />
     );
 }

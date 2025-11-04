@@ -12,6 +12,7 @@ type Props = {
     forceReload?: ImplementationType['reloadDocument'];
     disabled?: ImplementationType['disabled'];
     variant?: ImplementationType['variant'];
+    icon?: ImplementationType['icon'];
 }
 
 export function RouterButton({ forceReload, ...props }: Props) {
