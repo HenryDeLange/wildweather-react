@@ -12,7 +12,7 @@ type Props = {
     mode?: 'box' | 'line';
 }
 
-export function ErrorDisplay({ error, errorLabel, mode = 'box' }: Readonly<Props>) {
+export function ErrorDisplay({ error, errorLabel, mode = 'line' }: Readonly<Props>) {
     const { t } = useTranslation();
     if (!error) {
         return null;
@@ -57,7 +57,7 @@ export function ErrorDisplay({ error, errorLabel, mode = 'box' }: Readonly<Props
                 marginBottom: '1rem'
             }}
         >
-            <h3>💥👣💥</h3>
+            <h3>💥🔥💥</h3>
             {(error as any).status &&
                 <VBox>
                     <Text variant='error'>

@@ -8,13 +8,14 @@ import styles from './Tanstack_RouterButton.module.css';
 type BasicLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
     variant?: 'standard' | 'priority';
     disabled?: ComponentProps<typeof Button>['disabled'];
+    icon?: ComponentProps<typeof Button>['icon'];
 }
 
 export const Tanstack_RouterButton = createLink(forwardRef<HTMLAnchorElement, BasicLinkProps>(
     (props, ref) => {
         return (
             <a ref={ref} {...props} className={styles.RouterButton}>
-                <Button variant={props.variant} disabled={props.disabled}>
+                <Button variant={props.variant} disabled={props.disabled} icon={props.icon}>
                     {props.children}
                 </Button>
             </a>

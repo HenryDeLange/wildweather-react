@@ -45,6 +45,13 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["Users"],
       }),
+      getCsvProcessStatus: build.query<
+        GetCsvProcessStatusApiResponse,
+        GetCsvProcessStatusApiArg
+      >({
+        query: () => ({ url: `/api/v1/admin/process/csv` }),
+        providesTags: ["Admin"],
+      }),
       triggerCsvProcessing: build.mutation<
         TriggerCsvProcessingApiResponse,
         TriggerCsvProcessingApiArg
@@ -58,17 +65,18 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["Admin"],
       }),
+      getApiProcessStatus: build.query<
+        GetApiProcessStatusApiResponse,
+        GetApiProcessStatusApiArg
+      >({
+        query: () => ({ url: `/api/v1/admin/process/api` }),
+        providesTags: ["Admin"],
+      }),
       triggerApiProcessing: build.mutation<
         TriggerApiProcessingApiResponse,
         TriggerApiProcessingApiArg
       >({
-        query: (queryArg) => ({
-          url: `/api/v1/admin/process/api`,
-          method: "POST",
-          params: {
-            processAllAvailable: queryArg.processAllAvailable,
-          },
-        }),
+        query: () => ({ url: `/api/v1/admin/process/api`, method: "POST" }),
         invalidatesTags: ["Admin"],
       }),
       getWeather: build.query<GetWeatherApiResponse, GetWeatherApiArg>({
@@ -132,14 +140,16 @@ export type LoginUserApiResponse = /** status 200 OK */ Tokens;
 export type LoginUserApiArg = {
   userLogin: UserLogin;
 };
+export type GetCsvProcessStatusApiResponse = /** status 200 OK */ CsvStatus;
+export type GetCsvProcessStatusApiArg = void;
 export type TriggerCsvProcessingApiResponse = unknown;
 export type TriggerCsvProcessingApiArg = {
   forceFullReload?: boolean;
 };
+export type GetApiProcessStatusApiResponse = /** status 200 OK */ ApiStatus;
+export type GetApiProcessStatusApiArg = void;
 export type TriggerApiProcessingApiResponse = unknown;
-export type TriggerApiProcessingApiArg = {
-  processAllAvailable?: boolean;
-};
+export type TriggerApiProcessingApiArg = void;
 export type GetWeatherApiResponse = /** status 200 OK */ WeatherDataDto;
 export type GetWeatherApiArg = {
   station?: string;
@@ -192,6 +202,12 @@ export type UserLogin = {
   username: string;
   password: string;
 };
+export type CsvStatus = {
+  busy: boolean;
+};
+export type ApiStatus = {
+  busy: boolean;
+};
 export type WeatherDataDto = {
   weather: {
     [key: string]: {
@@ -222,7 +238,9 @@ export const {
   useRegisterUserMutation,
   useRefreshUserMutation,
   useLoginUserMutation,
+  useGetCsvProcessStatusQuery,
   useTriggerCsvProcessingMutation,
+  useGetApiProcessStatusQuery,
   useTriggerApiProcessingMutation,
   useGetWeatherQuery,
   useGetWeatherStatusQuery,

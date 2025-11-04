@@ -14,9 +14,9 @@ export const Route = createRootRoute({
         </div>
     ),
     notFoundComponent: () => (
-        <ErrorDisplay error={{ code: '404', message: i18n.t('errorPageNotFound') }} />
+        <ErrorDisplay error={{ code: '404', message: i18n.t('errorPageNotFound') }} mode='box' />
     ),
     errorComponent: ({ error }) => (
-        <ErrorDisplay error={error} />
+        <ErrorDisplay error={error} mode='box' />
     )
 });

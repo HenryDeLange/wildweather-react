@@ -59,6 +59,8 @@
 
 @media (max-width: $mobile-cutoff) {
     .FixedGrid {
-        grid-template-columns: 1fr !important;
+        &[data-mobile-mode=true] {
+            grid-template-columns: 1fr !important;
+        }
     }
 }
