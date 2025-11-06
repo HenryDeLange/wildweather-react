@@ -22,46 +22,37 @@ export function useGenerateSeries(
                     {
                         name: seriesName,
                         type: showBarChart ? 'bar' : 'line',
-                        smooth: true,
                         emphasis: {
                             focus: 'series'
                         },
-                        symbolSize: 10,
                         lineStyle: {
                             width: 3,
                             type: 'dashed'
                         },
-                        triggerLineEvent: true,
                         data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'H', month)
                     },
                     {
                         name: seriesName,
                         type: showBarChart ? 'bar' : 'line',
-                        smooth: true,
                         emphasis: {
                             focus: 'series'
                         },
-                        symbolSize: 12,
                         lineStyle: {
                             width: 2,
                             type: 'dashed'
                         },
-                        triggerLineEvent: true,
                         data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'A', month)
                     },
                     {
                         name: seriesName,
                         type: showBarChart ? 'bar' : 'line',
-                        smooth: true,
                         emphasis: {
                             focus: 'series'
                         },
-                        symbolSize: 12,
                         lineStyle: {
                             width: 1,
                             type: 'dashed'
                         },
-                        triggerLineEvent: true,
                         data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'L', month)
                     }
                 ] as (LineSeriesOption | BarSeriesOption)[];
@@ -71,18 +62,9 @@ export function useGenerateSeries(
                 return ({
                     name: seriesName,
                     type: showBarChart ? 'bar' : 'line',
-                    smooth: true,
                     emphasis: {
                         focus: 'series'
                     },
-                    symbolSize: 12,
-                    lineStyle: {
-                        width: 4
-                    },
-                    areaStyle: {
-                        opacity: 0.1
-                    },
-                    triggerLineEvent: true,
                     data: categoryRecords
                 }) as (LineSeriesOption | BarSeriesOption);
             }

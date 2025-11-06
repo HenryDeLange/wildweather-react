@@ -21,13 +21,13 @@ export function useEChartsLoadingOption(): LoadingOption {
     const { t } = useTranslation();
     return {
         text: t('chartLoading'),
-        color: '#185180ff',
-        textColor: '#23426bff',
-        maskColor: '#868c8d9d',
+        color: '#20569cff',
+        textColor: '#20569cff',
+        maskColor: '#acacac9d',
         zlevel: 0,
-        fontSize: 16,
+        fontSize: 24,
         showSpinner: true,
-        spinnerRadius: 10,
+        spinnerRadius: 12,
         lineWidth: 5,
         fontWeight: 'bold',
         fontStyle: 'normal',

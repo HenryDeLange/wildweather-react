@@ -1,9 +1,7 @@
 import type { EChartsOption } from 'echarts';
 import type { WeatherChartProps } from './WeatherChart';
 
-export function useGenerateYAxis(
-    chartType: WeatherChartProps['type']
-): EChartsOption['yAxis'] {
+export function useGenerateYAxis(chartType: WeatherChartProps['type']): EChartsOption['yAxis'] {
     if (chartType === 'WIND_DIRECTION') {
         return [
             {
@@ -13,7 +11,6 @@ export function useGenerateYAxis(
                 max: 360,
                 splitNumber: 12,
                 axisLabel: {
-                    fontSize: 16,
                     formatter: '{value}°'
                 }
             },
@@ -31,10 +28,7 @@ export function useGenerateYAxis(
     }
     else {
         return {
-            type: 'value',
-            axisLabel: {
-                fontSize: 16
-            }
+            type: 'value'
         };
     }
 }

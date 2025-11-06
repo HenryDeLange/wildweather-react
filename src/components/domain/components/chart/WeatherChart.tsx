@@ -4,10 +4,13 @@ import { GridComponent, LegendComponent, TitleComponent, TooltipComponent } from
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
+import { useMediaQuery } from 'usehooks-ts';
 import type { WeatherDataDto } from '../../../../redux/api/wildweatherApi';
 import type { CategoryFilterType, GroupingType, WeatherFieldType } from '../weatherTypes';
 import { useEChartsLoadingOption } from './echartsLoadingOptions';
 import { useEChartsOption } from './echartsOptions';
+import { themeDark } from './themeDark';
+import { themeLight } from './themeLight';
 
 // Use individual manual imports to reduce bundle size:
 // https://github.com/hustcc/echarts-for-react?tab=readme-ov-file#usage
@@ -25,9 +28,9 @@ echarts.use([
 ]);
 
 // Register the theme
-echarts.registerTheme('wildweather_theme', {
-    backgroundColor: '#e7e7e7ff'
-});
+// https://echarts.apache.org/en/theme-builder.html
+echarts.registerTheme('wildweather-dark', themeDark);
+echarts.registerTheme('wildweather-light', themeLight);
 
 export type WeatherChartProps = {
     type: WeatherFieldType;
@@ -41,6 +44,7 @@ export type WeatherChartProps = {
 export function WeatherChart({ type, loading, data, grouping, category, month }: WeatherChartProps) {
     const option = useEChartsOption(type, data, grouping, category, month);
     const loadingOption = useEChartsLoadingOption();
+    const dark = useMediaQuery('(prefers-color-scheme: dark)');
     return (
         <ReactEChartsCore
             echarts={echarts}
@@ -49,7 +53,7 @@ export function WeatherChart({ type, loading, data, grouping, category, month }:
             lazyUpdate={true}
             showLoading={loading}
             loadingOption={loadingOption}
-            theme='wildweather_theme'
+            theme={dark ? 'wildweather-dark' : 'wildweather-light'}
             style={{ flex: 1, height: '100%' }}
         />
     );
