@@ -84,7 +84,7 @@
 }
 
 .ArrowFill {
-    fill: var(--color-canvas);
+    fill: var(--color-surface);
 }
 
 .ArrowOuterStroke {

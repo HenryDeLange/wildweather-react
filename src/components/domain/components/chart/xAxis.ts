@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import type { WeatherChartProps } from './WeatherChart';
 
 export function useGenerateXAxis(grouping: WeatherChartProps['grouping'], month: WeatherChartProps['month']): CategoryAxisBaseOption {
-    const labels = getLabels(grouping, month);
+    const labels = useLabels(grouping, month);
     return {
         type: 'category',
         data: labels
     };
 }
 
-function getLabels(grouping: WeatherChartProps['grouping'], month: WeatherChartProps['month']): string[] {
+function useLabels(grouping: WeatherChartProps['grouping'], month: WeatherChartProps['month']): string[] {
     const { i18n } = useTranslation();
     switch (grouping) {
         case 'DAILY': {

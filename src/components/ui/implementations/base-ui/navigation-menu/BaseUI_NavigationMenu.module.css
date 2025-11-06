@@ -113,7 +113,7 @@
     position: relative;
     box-sizing: border-box;
     border-radius: 0.5rem;
-    background-color: var(--color-input);
+    background-color: var(--color-surface);
     color: var(--color-gray-900);
     transform-origin: var(--transform-origin);
     transition-property: opacity, transform, width, height;
@@ -277,7 +277,7 @@
 }
 
 .ArrowFill {
-    fill: var(--color-canvas);
+    fill: var(--color-surface);
 }
 
 .ArrowOuterStroke {

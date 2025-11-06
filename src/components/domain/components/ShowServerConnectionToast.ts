@@ -46,7 +46,7 @@ export function ShowServerConnectionToast() {
             setTimeout(() => close(toastId), 30000);
             toastIdRef.current = null;
         }
-    }, [close, data, isError, isFetching, showToast, toastIdRef, updateToast]);
-    
+    }, [close, data, isError, isFetching, showToast, toastIdRef, updateToast, t]);
+
     return null;
 }
