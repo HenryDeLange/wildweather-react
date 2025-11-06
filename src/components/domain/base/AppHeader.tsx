@@ -79,6 +79,10 @@ export function AppHeader() {
                                     </HBox>
                                 }
                                 menus={[
+                                    {
+                                        title: t('homeButton'),
+                                        href: '/'
+                                    },
                                     ...(isAuthenticated
                                         ? [
                                             {

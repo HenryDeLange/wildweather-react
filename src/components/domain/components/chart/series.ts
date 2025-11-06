@@ -14,6 +14,9 @@ export function useGenerateSeries(
     const showBarChart = grouping === 'YEARLY' || (grouping === 'MONTHLY' && month);
     const xAxis = useGenerateXAxis(grouping, month);
     const xAxisLabels = xAxis.data as string[];
+
+// TODO: group series by year, not station
+
     const series: (LineSeriesOption | BarSeriesOption)[] = Object.keys(data).flatMap(station => {
         return Object.keys(data[station]).flatMap(year => {
             const seriesName = `${station} ${year}`;

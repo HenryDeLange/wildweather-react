@@ -38,6 +38,7 @@
     "toastSaving": "Saving...",
     "toastUpdated": "Successfully updated.",
     "toastCreated": "Successfully created.",
+    "homeButton": "Home",
     "adminButton": "Admin",
     "adminProcessingTitle": "Data Processing",
     "adminCsvProcessingButton": "Reprocess all CSV files",

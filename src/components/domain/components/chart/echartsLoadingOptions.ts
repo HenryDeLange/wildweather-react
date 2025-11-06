@@ -23,7 +23,7 @@ export function useEChartsLoadingOption(): LoadingOption {
         text: t('chartLoading'),
         color: '#20569cff',
         textColor: '#20569cff',
-        maskColor: '#acacac9d',
+        maskColor: '#acacac75',
         zlevel: 0,
         fontSize: 24,
         showSpinner: true,
