@@ -49,10 +49,10 @@ export function WeatherChart({ type, loading, data, grouping, category, month }:
         error: stationsError
     } = useGetWeatherStationsQuery();
 
-    const option = useEChartsOption(type, data, grouping, category, month, stationsData ?? []);
+    const option = useEChartsOption(type, data, grouping, category, month, stationsData);
     const loadingOption = useEChartsLoadingOption();
     
-    const dark = useMediaQuery('(prefers-color-scheme: dark)');
+    const isDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
     return (
         <>
@@ -64,7 +64,7 @@ export function WeatherChart({ type, loading, data, grouping, category, month }:
                 lazyUpdate={true}
                 showLoading={loading || stationsIsLoading}
                 loadingOption={loadingOption}
-                theme={dark ? 'wildweather-dark' : 'wildweather-light'}
+                theme={isDarkMode ? 'wildweather-dark' : 'wildweather-light'}
                 style={{ flex: 1, height: '100%' }}
             />
         </>

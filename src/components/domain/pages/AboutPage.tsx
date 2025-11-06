@@ -1,11 +1,15 @@
 import { useTranslation } from 'react-i18next';
+import { useMediaQuery } from 'usehooks-ts';
 import { useGetServerVersionQuery } from '../../../redux/api/wildweatherApi';
 import { Box, HBox, PageContainer, VBox } from '../../ui/layout';
 import { Heading, LabeledText, Separator, Spinner, Text } from '../../ui/mywild';
+import GitHubLogo from './../../../assets/github/github.svg?react';
 import myWildLogo from './../../../assets/mywild/mywild-logo.png';
 
 export function AboutPage() {
     const { t } = useTranslation();
+
+    const isDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
     const {
         data: serverData,
@@ -46,6 +50,26 @@ export function AboutPage() {
                                     </Text>
                                     <Text size='small' variant='subdued'>
                                         {t('mywildDeveloper')}
+                                    </Text>
+                                </VBox>
+                            </a>
+                            <Separator orientation='vertical' />
+                            <GitHubLogo
+                                height={30}
+                                fill={isDarkMode ? '#fff' : '#000'}
+                            />
+                            <a
+                                href='https://github.com/HenryDeLange/wildweather-react'
+                                style={{ textDecoration: 'none' }}
+                                target='_blank'
+                                rel='noopener'
+                            >
+                                <VBox gap={0}>
+                                    <Text size='standard'>
+                                        {t('githubTitle')}
+                                    </Text>
+                                    <Text size='small' variant='subdued'>
+                                        {t('githubDescription')}
                                     </Text>
                                 </VBox>
                             </a>
