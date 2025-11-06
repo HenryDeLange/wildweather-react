@@ -24,6 +24,15 @@ export default defineConfig({
             algorithm: 'brotliCompress',
             ext: '.br'
         }),
+        {
+            name: 'watch-public-folder',
+            configureServer(server) {
+                server.watcher.add('public/**');
+                server.watcher.on('change', () => {
+                    server.ws.send({ type: 'full-reload' });
+                });
+            }
+        },
         VitePWA({
             devOptions: {
                 enabled: true
@@ -100,7 +109,9 @@ export default defineConfig({
                     ],
                     ui_base: [
                         '@base-ui-components/react',
-                        'lucide-react'
+                        'lucide-react',
+                        'usehooks-ts',
+                        'typescript-color-gradient'
                     ],
                     ui_form: [
                         'react-hook-form',

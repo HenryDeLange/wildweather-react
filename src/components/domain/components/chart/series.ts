@@ -1,6 +1,10 @@
 import { type BarSeriesOption, type LineSeriesOption } from 'echarts/charts';
+import { generateGradient } from 'typescript-color-gradient';
+import { useMediaQuery } from 'usehooks-ts';
 import type { WeatherDataDto } from '../../../../redux/api/wildweatherApi';
 import type { CategoryFilterType, CategoryType, GroupedFieldType, WeatherFieldType } from '../weatherTypes';
+import { themeDark } from './themeDark';
+import { themeLight } from './themeLight';
 import type { WeatherChartProps } from './WeatherChart';
 import { useGenerateXAxis } from './xAxis';
 
@@ -9,59 +13,72 @@ export function useGenerateSeries(
     data: WeatherDataDto['weather'],
     grouping: WeatherChartProps['grouping'],
     category: CategoryFilterType,
-    month: WeatherChartProps['month']
+    month: WeatherChartProps['month'],
+    stations: string[]
 ): (LineSeriesOption | BarSeriesOption)[] {
     const showBarChart = grouping === 'YEARLY' || (grouping === 'MONTHLY' && month);
+
     const xAxis = useGenerateXAxis(grouping, month);
     const xAxisLabels = xAxis.data as string[];
+
+    const dark = useMediaQuery('(prefers-color-scheme: dark)');
+    const themeColorPallet: string[] = dark ? themeDark.color : themeLight.color;
+    const colors: Record<string, Record<string, string>> = {};
+    Object.keys(data).forEach(station => {
+        const stationIndex = stations.indexOf(station);
+        const colorRange = [themeColorPallet[stationIndex * 2], themeColorPallet[stationIndex * 2 + 1]];
+        colors[station] = {};
+        const years = Object.keys(data[station]);
+        const gradient = generateGradient(colorRange, years.length);
+        years.forEach((year, yearIndex) => {
+            colors[station][year] = gradient[yearIndex];
+        });
+    });
+
     const series: (LineSeriesOption | BarSeriesOption)[] = Object.keys(data).flatMap(station => {
         return Object.keys(data[station]).flatMap(year => {
             const seriesName = `${station} ${year}`;
+            const baseSeries = {
+                name: seriesName,
+                type: showBarChart ? 'bar' : 'line',
+                emphasis: {
+                    focus: 'series'
+                },
+                lineStyle: {
+                    color: colors[station][year]
+                },
+                itemStyle: {
+                    color: colors[station][year]
+                },
+                data: null
+            };
             if (category === 'ALL') {
                 return [
                     {
-                        name: seriesName,
-                        type: showBarChart ? 'bar' : 'line',
-                        smooth: true,
-                        emphasis: {
-                            focus: 'series'
-                        },
-                        symbolSize: 10,
+                        ...baseSeries,
                         lineStyle: {
+                            ...baseSeries.lineStyle,
                             width: 3,
                             type: 'dashed'
                         },
-                        triggerLineEvent: true,
                         data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'H', month)
                     },
                     {
-                        name: seriesName,
-                        type: showBarChart ? 'bar' : 'line',
-                        smooth: true,
-                        emphasis: {
-                            focus: 'series'
-                        },
-                        symbolSize: 12,
+                        ...baseSeries,
                         lineStyle: {
+                            ...baseSeries.lineStyle,
                             width: 2,
                             type: 'dashed'
                         },
-                        triggerLineEvent: true,
                         data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'A', month)
                     },
                     {
-                        name: seriesName,
-                        type: showBarChart ? 'bar' : 'line',
-                        smooth: true,
-                        emphasis: {
-                            focus: 'series'
-                        },
-                        symbolSize: 12,
+                        ...baseSeries,
                         lineStyle: {
+                            ...baseSeries.lineStyle,
                             width: 1,
                             type: 'dashed'
                         },
-                        triggerLineEvent: true,
                         data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, 'L', month)
                     }
                 ] as (LineSeriesOption | BarSeriesOption)[];
@@ -69,20 +86,7 @@ export function useGenerateSeries(
             else {
                 const categoryRecords = getDataValues(chartType, xAxisLabels, data, station, year, grouping, category, month);
                 return ({
-                    name: seriesName,
-                    type: showBarChart ? 'bar' : 'line',
-                    smooth: true,
-                    emphasis: {
-                        focus: 'series'
-                    },
-                    symbolSize: 12,
-                    lineStyle: {
-                        width: 4
-                    },
-                    areaStyle: {
-                        opacity: 0.1
-                    },
-                    triggerLineEvent: true,
+                    ...baseSeries,
                     data: categoryRecords
                 }) as (LineSeriesOption | BarSeriesOption);
             }

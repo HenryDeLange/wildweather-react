@@ -21,17 +21,27 @@ export function useEChartsOption(
     data: WeatherDataDto['weather'],
     grouping: WeatherChartProps['grouping'],
     category: CategoryFilterType,
-    month: WeatherChartProps['month']
+    month: WeatherChartProps['month'],
+    stations: string[]
 ): EChartsOption {
     const { t } = useTranslation();
 
     const xAxisLabels = useGenerateXAxis(grouping, month);
     const yAxisLabels = useGenerateYAxis(chartType);
-    const seriesValues = useGenerateSeries(chartType, data, grouping, category, month);
+    const seriesValues = useGenerateSeries(chartType, data, grouping, category, month, stations);
+
+    const chartUnit = chartType === 'TEMPERATURE' ? 'CELSIUS'
+        : (chartType === 'WIND_SPEED' || chartType === 'WIND_MAX') ? 'KMpH'
+            : chartType === 'WIND_DIRECTION' ? 'DEGREES'
+                : chartType === 'RAIN_DAILY' ? 'MM'
+                    : (chartType === 'HUMIDITY' || chartType === 'MISSING') ? 'PERCENTAGE'
+                        : 'NONE';
 
     return {
         title: {
-            text: t(`chartType${chartType}`)
+            text: t(`chartType${chartType}`),
+            subtext: t(`chartUnit${chartUnit}`),
+            top: 4
         },
         tooltip: {
             trigger: 'item',
@@ -39,19 +49,20 @@ export function useEChartsOption(
                 type: 'cross'
             }
         },
+        legend: {
+            show: true,
+            type: 'scroll',
+            bottom: 4
+        },
         grid: {
             left: 8,
             right: 8,
-            bottom: 40,
+            top: 52,
+            bottom: 36,
             containLabel: true
         },
         series: seriesValues,
         yAxis: yAxisLabels,
-        xAxis: xAxisLabels as EChartsOption['xAxis'],
-        legend: {
-            show: true,
-            type: 'scroll',
-            bottom: 0
-        }
+        xAxis: xAxisLabels as EChartsOption['xAxis']
     };
 }

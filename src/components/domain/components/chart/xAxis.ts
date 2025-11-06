@@ -2,32 +2,15 @@ import type { CategoryAxisBaseOption } from 'echarts/types/src/coord/axisCommonT
 import { useTranslation } from 'react-i18next';
 import type { WeatherChartProps } from './WeatherChart';
 
-export function useGenerateXAxis(
-    grouping: WeatherChartProps['grouping'],
-    month: WeatherChartProps['month']
-): CategoryAxisBaseOption {
-    const labels = getLabels(grouping, month);
+export function useGenerateXAxis(grouping: WeatherChartProps['grouping'], month: WeatherChartProps['month']): CategoryAxisBaseOption {
+    const labels = useLabels(grouping, month);
     return {
         type: 'category',
-        splitLine: {
-            show: true,
-            interval: 30
-        },
-        axisLine: {
-            show: false
-        },
-        axisLabel: {
-            fontSize: 16
-        },
-        boundaryGap: true,
-        axisTick: {
-            interval: 7
-        },
         data: labels
     };
 }
 
-function getLabels(grouping: WeatherChartProps['grouping'], month: WeatherChartProps['month']): string[] {
+function useLabels(grouping: WeatherChartProps['grouping'], month: WeatherChartProps['month']): string[] {
     const { i18n } = useTranslation();
     switch (grouping) {
         case 'DAILY': {

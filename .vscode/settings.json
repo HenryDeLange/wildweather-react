@@ -15,10 +15,12 @@
         "appinstalled",
         "beforeinstallprompt",
         "codegen",
+        "hectopascal",
         "Lange",
         "languagedetector",
         "MyWild",
         "revparse",
+        "usehooks",
         "VITE",
         "WildWeather",
         "zlevel"

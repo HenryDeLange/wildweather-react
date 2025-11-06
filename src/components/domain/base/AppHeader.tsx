@@ -29,6 +29,11 @@ export function AppHeader() {
         navigate({ to: '/' });
     }, [dispatch, navigate]);
 
+    const homeMenu = useMemo(() => ({
+        title: t('homeButton'),
+        href: '/'
+    }), [t]);
+
     const menus = useMemo(() => [
         {
             title: t('stationsButton'),
@@ -61,7 +66,7 @@ export function AppHeader() {
                 {t('logoutButton')}
             </LinkButton>
         </Box>
-    )), [isAuthenticated, routePathName, t]);
+    )), [isAuthenticated, routePathName, t, handleLogout]);
 
     return (
         <VBox marginTop='0.25rem'>
@@ -79,6 +84,7 @@ export function AppHeader() {
                                     </HBox>
                                 }
                                 menus={[
+                                    homeMenu,
                                     ...(isAuthenticated
                                         ? [
                                             {
@@ -89,7 +95,8 @@ export function AppHeader() {
                                         : []),
                                     ...menus,
                                     {
-                                        render: authButtons
+                                        render: authButtons,
+                                        closeOnClick: true
                                     },
                                     {
                                         render: (
