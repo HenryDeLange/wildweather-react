@@ -110,7 +110,8 @@ export default defineConfig({
                     ui_base: [
                         '@base-ui-components/react',
                         'lucide-react',
-                        'usehooks-ts'
+                        'usehooks-ts',
+                        'typescript-color-gradient'
                     ],
                     ui_form: [
                         'react-hook-form',

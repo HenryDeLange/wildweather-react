@@ -3,18 +3,12 @@ import type { ThemeOption } from 'echarts/types/src/util/types.js';
 export const themeDark: ThemeOption = {
     backgroundColor: 'rgba(51,51,51,1)',
     color: [
-        "#e76f51",
-        "#678ebe",
-        "#d77a61",
-        "#77accd",
-        "#f4a261",
-        "#69cbc2",
-        "#e4c579",
-        "#83cd9a",
-        "#cd8aa1",
-        "#a498dd",
-        "#dda3ce",
-        "#9eb3e2"
+        "#ec355d",
+        "#ce9937",
+        "#8648cc",
+        "#1990a5",
+        "#8aa529",
+        "#26b170"
     ],
     title: {
         textStyle: {
