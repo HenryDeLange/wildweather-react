@@ -22,7 +22,7 @@ export function useEChartsOption(
     grouping: WeatherChartProps['grouping'],
     category: CategoryFilterType,
     month: WeatherChartProps['month'],
-    stations: string[]
+    stations?: string[]
 ): EChartsOption {
     const { t } = useTranslation();
 

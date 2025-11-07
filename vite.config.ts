@@ -4,6 +4,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import compression from 'vite-plugin-compression';
 import { VitePWA } from 'vite-plugin-pwa';
+import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { version } from './package.json';
 
@@ -18,6 +19,7 @@ export default defineConfig({
             autoCodeSplitting: true
         }),
         react(),
+        svgr(),
         tsconfigPaths(),
         visualizer(),
         compression({

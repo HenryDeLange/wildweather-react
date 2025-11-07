@@ -31,7 +31,7 @@ export const themeDark: ThemeOption = {
         // areaStyle: {
         //     opacity: 0.1
         // },
-        symbolSize: 12,
+        symbolSize: 10,
         symbol: "emptyCircle",
         smooth: true
     },

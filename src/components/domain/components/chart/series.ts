@@ -14,7 +14,7 @@ export function useGenerateSeries(
     grouping: WeatherChartProps['grouping'],
     category: CategoryFilterType,
     month: WeatherChartProps['month'],
-    stations: string[]
+    stations?: string[]
 ): (LineSeriesOption | BarSeriesOption)[] {
     const showBarChart = grouping === 'YEARLY' || (grouping === 'MONTHLY' && month);
 
@@ -25,14 +25,16 @@ export function useGenerateSeries(
     const themeColorPallet: string[] = dark ? themeDark.color : themeLight.color;
     const colors: Record<string, Record<string, string>> = {};
     Object.keys(data).forEach(station => {
-        const stationIndex = stations.indexOf(station);
-        const colorRange = [themeColorPallet[stationIndex * 2], themeColorPallet[stationIndex * 2 + 1]];
-        colors[station] = {};
-        const years = Object.keys(data[station]);
-        const gradient = generateGradient(colorRange, years.length);
-        years.forEach((year, yearIndex) => {
-            colors[station][year] = gradient[yearIndex];
-        });
+        if (stations) {
+            const stationIndex = stations.indexOf(station);
+            const colorRange = [themeColorPallet[stationIndex * 2], themeColorPallet[stationIndex * 2 + 1]];
+            colors[station] = {};
+            const years = Object.keys(data[station]);
+            const gradient = generateGradient(colorRange, years.length);
+            years.forEach((year, yearIndex) => {
+                colors[station][year] = gradient[yearIndex];
+            });
+        }
     });
 
     const series: (LineSeriesOption | BarSeriesOption)[] = Object.keys(data).flatMap(station => {

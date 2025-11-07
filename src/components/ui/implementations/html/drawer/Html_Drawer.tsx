@@ -2,7 +2,7 @@ import type { LinkProps } from '@tanstack/react-router';
 import { Menu } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { Box, HBox, VBox } from '../../../layout';
-import { Button, Heading, RouterLink } from '../../../mywild';
+import { Heading, LinkButton, RouterLink } from '../../../mywild';
 import styles from './Html_Drawer.module.css';
 
 type Menu = {
@@ -67,11 +67,11 @@ export function Html_Drawer({ heading, menus }: Props) {
     const isText = typeof heading === 'string' || typeof heading === 'number';
     return (
         <>
-            <Button
-                size='small'
+            <LinkButton
                 onClick={() => setOpen(!open)}
-                icon={<Menu size='1.1rem' />}
-            />
+            >
+                <Menu />
+            </LinkButton>
             <div className={open ? `${styles.drawer} ${styles.open}` : styles.drawer}>
                 <VBox fullWidth>
                     <HBox>
