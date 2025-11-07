@@ -68,7 +68,7 @@
     "filterChartRAIN_DAILY": "Rain",
     "filterChartPRESSURE": "Pressure",
     "filterChartHUMIDITY": "Humidity",
-    "filterChartUV_RADIATION_INDEX": "UV Radiation Index",
+    "filterChartUV_RADIATION_INDEX": "UV Index",
     "filterChartMISSING": "Missing",
     "filterAggregateAVERAGE": "Mean",
     "filterAggregateTOTAL": "Total",

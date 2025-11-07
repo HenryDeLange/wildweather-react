@@ -28,7 +28,13 @@ export function WeatherFilter({ children }: Props) {
             }}
         >
             <ShowOnMobile>
-                <FixedGrid columnCount={4} margin='0.25rem 0.5rem' fitCellWidth singleColumnOnMobile={false}>
+                <FixedGrid
+                    columnCount={4}
+                    margin='0.1rem 0.2rem'
+                    fitCellWidth
+                    singleColumnOnMobile={false}
+                    firstColumnIsPrimary
+                >
                     <BaseFormFields />
                     <Box margin='0.25rem'>
                         <Popover
