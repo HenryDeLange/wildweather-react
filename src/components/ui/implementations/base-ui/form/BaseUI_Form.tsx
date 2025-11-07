@@ -60,7 +60,7 @@ export function BaseUI_Form<T extends FieldValues>({ children, formProps, onSubm
                 <ErrorDisplay error={error} errorLabel={errorLabel} />
             </form>
             {DevToolComponent &&
-                <DevToolComponent control={methods.control} placement='top-left' />
+                <DevToolComponent control={methods.control} placement='bottom-right' />
             }
         </FormProvider>
     );

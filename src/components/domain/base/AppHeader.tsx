@@ -68,6 +68,9 @@ export function AppHeader() {
         </Box>
     )), [isAuthenticated, routePathName, t, handleLogout]);
 
+    const logo = <img src='/wildweather-logo.png' width={32} height={32} style={{ borderRadius: '35%' }} />;
+    const smallLogo = <img src='/wildweather-logo.png' width={16} height={16} style={{ borderRadius: '25%' }} />;
+
     return (
         <VBox marginTop='0.25rem'>
             <HBox marginLeft='0.5rem' marginRight='0.5rem'>
@@ -77,7 +80,7 @@ export function AppHeader() {
                             <Drawer
                                 heading={
                                     <HBox gap='0.25rem'>
-                                        <img src='/pwa-64x64.png' width={32} height={32} />
+                                        {logo}
                                         <Heading>
                                             {t('appTitle')}
                                         </Heading>
@@ -115,9 +118,14 @@ export function AppHeader() {
                     </ShowOnMobile>
                     <HideOnMobile useHardCutoff>
                         <RouterLink to='/'>
-                            <img src='/pwa-64x64.png' width={32} height={32} />
+                            {logo}
                         </RouterLink>
                     </HideOnMobile>
+                    <ShowOnMobile useHardCutoff>
+                        <RouterLink to='/'>
+                            {smallLogo}
+                        </RouterLink>
+                    </ShowOnMobile>
                     <HideOnMobile>
                         <HBox gap='0.25rem'>
                             <RouterLink to='/'>
