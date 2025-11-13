@@ -1,6 +1,6 @@
 import { CloudDownload, FileSearchCorner, RefreshCcw, UserPlus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useGetApiProcessStatusQuery, useGetCsvProcessStatusQuery, useTriggerApiProcessingMutation, useTriggerCsvProcessingMutation } from '../../../../redux/api/wildweatherApi';
+import { useGetAmbientWeatherApiProcessStatusQuery, useGetCsvProcessStatusQuery, useGetWeatherUndergroundApiProcessStatusQuery, useTriggerAmbientWeatherApiProcessingMutation, useTriggerCsvProcessingMutation, useTriggerWeatherUndergroundApiProcessingMutation } from '../../../../redux/api/wildweatherApi';
 import { Box, HBox, PageContainer, VBox } from '../../../ui/layout';
 import { Button, Heading, LinkButton, RouterButton, Separator } from '../../../ui/mywild';
 import { ErrorDisplay } from '../../base/ErrorDisplay';
@@ -24,19 +24,34 @@ export function AdminActions() {
     ] = useTriggerCsvProcessingMutation();
 
     const {
-        refetch: apiStatusRefetch,
-        data: apiStatus,
-        isFetching: apiStatusIsLoading,
-        error: apiStatusError
-    } = useGetApiProcessStatusQuery();
+        refetch: awApiStatusRefetch,
+        data: awApiStatus,
+        isFetching: awApiStatusIsLoading,
+        error: awApiStatusError
+    } = useGetAmbientWeatherApiProcessStatusQuery();
 
     const [
-        doApiProcessing,
+        doAwApiProcessing,
         {
-            isLoading: apiProcessIsLoading,
-            error: apiProcessError
+            isLoading: awApiProcessIsLoading,
+            error: awApiProcessError
         }
-    ] = useTriggerApiProcessingMutation();
+    ] = useTriggerAmbientWeatherApiProcessingMutation();
+
+    const {
+        refetch: wuApiStatusRefetch,
+        data: wuApiStatus,
+        isFetching: wuApiStatusIsLoading,
+        error: wuApiStatusError
+    } = useGetWeatherUndergroundApiProcessStatusQuery();
+
+    const [
+        doWuApiProcessing,
+        {
+            isLoading: wuApiProcessIsLoading,
+            error: wuApiProcessError
+        }
+    ] = useTriggerWeatherUndergroundApiProcessingMutation();
 
     return (
         <PageContainer>
@@ -48,13 +63,18 @@ export function AdminActions() {
                     <LinkButton
                         onClick={() => {
                             csvStatusRefetch();
-                            apiStatusRefetch();
+                            awApiStatusRefetch();
+                            wuApiStatusRefetch();
                         }}
                     >
                         <RefreshCcw />
                     </LinkButton>
                 </HBox>
-                <ErrorDisplay error={csvStatusError || csvProcessError || apiStatusError || apiProcessError} />
+                <ErrorDisplay error={
+                    csvStatusError || csvProcessError ||
+                    awApiStatusError || awApiProcessError ||
+                    wuApiStatusError || wuApiProcessError
+                } />
                 <Box>
                     <Button
                         icon={<FileSearchCorner />}
@@ -67,10 +87,19 @@ export function AdminActions() {
                 <Box>
                     <Button
                         icon={<CloudDownload />}
-                        onClick={() => doApiProcessing()}
-                        loading={apiProcessIsLoading || apiStatusIsLoading || apiStatus?.busy}
+                        onClick={() => doAwApiProcessing()}
+                        loading={awApiProcessIsLoading || awApiStatusIsLoading || awApiStatus?.busy}
                     >
-                        {t('adminApiProcessingButton')}
+                        {t('adminAmbientWeatherApiProcessingButton')}
+                    </Button>
+                </Box>
+                <Box>
+                    <Button
+                        icon={<CloudDownload />}
+                        onClick={() => doWuApiProcessing({ fetchAllData: true })}
+                        loading={wuApiProcessIsLoading || wuApiStatusIsLoading || wuApiStatus?.busy}
+                    >
+                        {t('adminWeatherUndergroundApiProcessingButton')}
                     </Button>
                 </Box>
                 <Separator />
