@@ -81,11 +81,11 @@ export function AboutPage() {
                             </Heading>
                             <LabeledText
                                 label={t('aboutVersionWebsite')}
-                                text={`${VITE_APP_VERSION} | ${dateFormatter.format(new Date(import.meta.env.VITE_COMMIT_DATE))} | ${import.meta.env.VITE_COMMIT_HASH}`}
+                                body={`${VITE_APP_VERSION} | ${dateFormatter.format(new Date(import.meta.env.VITE_COMMIT_DATE))} | ${import.meta.env.VITE_COMMIT_HASH}`}
                             />
                             <LabeledText
                                 label={t('aboutVersionServer')}
-                                text={
+                                body={
                                     (!serverIsFetching && serverData)
                                         ? `${serverData.appVersion} | ${dateFormatter.format(new Date(serverData.commitTime))} | ${serverData.commitId}`
                                         : !serverIsError

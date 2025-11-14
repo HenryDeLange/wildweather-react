@@ -4,26 +4,30 @@ import { Text } from '../../../mywild/Text';
 import styles from './Html_LabeledText.module.css';
 
 type Props = {
-    label: string | number;
-    text: ReactNode;
+    label: ReactNode;
+    body: ReactNode;
     truncateText?: boolean;
 }
 
-export function Html_LabeledText({ label, text, truncateText }: Props) {
-    const isText = typeof text === 'string' || typeof text === 'number';
+export function Html_LabeledText({ label, body, truncateText }: Props) {
+    const isLabelText = typeof label === 'string' || typeof label === 'number';
+    const isBodyText = typeof body === 'string' || typeof body === 'number';
     return (
         <div className={styles.Wrapper}>
             <Box>
-                <Text variant='subdued' size='small' truncateText={truncateText}>
-                    {label}
-                </Text>
+                {isLabelText
+                    ? <Text variant='subdued' size='small' truncateText={truncateText}>{label}</Text>
+                    : label === null
+                        ? <div style={{ borderBottom: '1px solid #88888888' }}><div style={{ visibility: 'hidden' }}><Text>??</Text></div></div>
+                        : label
+                }
             </Box>
             <div className={styles.Text}>
-                {isText
-                    ? <Text truncateText={truncateText}>{text}</Text>
-                    : text === null
+                {isBodyText
+                    ? <Text truncateText={truncateText}>{body}</Text>
+                    : body === null
                         ? <div style={{ borderBottom: '1px solid #88888888' }}><div style={{ visibility: 'hidden' }}><Text>??</Text></div></div>
-                        : text
+                        : body
                 }
             </div>
         </div>

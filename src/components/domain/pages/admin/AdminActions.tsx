@@ -1,12 +1,16 @@
 import { CloudDownload, FileSearchCorner, RefreshCcw, UserPlus } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetAmbientWeatherApiProcessStatusQuery, useGetCsvProcessStatusQuery, useGetWeatherUndergroundApiProcessStatusQuery, useTriggerAmbientWeatherApiProcessingMutation, useTriggerCsvProcessingMutation, useTriggerWeatherUndergroundApiProcessingMutation } from '../../../../redux/api/wildweatherApi';
 import { Box, HBox, PageContainer, VBox } from '../../../ui/layout';
-import { Button, Heading, LinkButton, RouterButton, Separator } from '../../../ui/mywild';
+import { Button, Heading, LinkButton, RouterButton, Separator, Switch } from '../../../ui/mywild';
 import { ErrorDisplay } from '../../base/ErrorDisplay';
 
 export function AdminActions() {
     const { t } = useTranslation();
+
+    const [allCsvReload, setAllCsvReload] = useState(false);
+    const [wuAllData, setWuAllData] = useState(false);
 
     const {
         refetch: csvStatusRefetch,
@@ -75,15 +79,21 @@ export function AdminActions() {
                     awApiStatusError || awApiProcessError ||
                     wuApiStatusError || wuApiProcessError
                 } />
-                <Box>
+                <HBox>
                     <Button
                         icon={<FileSearchCorner />}
-                        onClick={() => doCsvProcessing({ forceFullReload: true })}
+                        onClick={() => doCsvProcessing({ forceFullReload: allCsvReload })}
                         loading={csvProcessIsLoading || csvStatusIsLoading || csvStatus?.busy}
                     >
                         {t('adminCsvProcessingButton')}
                     </Button>
-                </Box>
+                    <Switch
+                        checked={allCsvReload}
+                        onCheckedChange={setAllCsvReload}
+                    >
+                        {allCsvReload ? t('adminCsvAllLoad') : t('adminCsvNewLoad')}
+                    </Switch>
+                </HBox>
                 <Box>
                     <Button
                         icon={<CloudDownload />}
@@ -93,15 +103,21 @@ export function AdminActions() {
                         {t('adminAmbientWeatherApiProcessingButton')}
                     </Button>
                 </Box>
-                <Box>
+                <HBox>
                     <Button
                         icon={<CloudDownload />}
-                        onClick={() => doWuApiProcessing({ fetchAllData: true })}
+                        onClick={() => doWuApiProcessing({ fetchAllData: wuAllData })}
                         loading={wuApiProcessIsLoading || wuApiStatusIsLoading || wuApiStatus?.busy}
                     >
                         {t('adminWeatherUndergroundApiProcessingButton')}
                     </Button>
-                </Box>
+                    <Switch
+                        checked={wuAllData}
+                        onCheckedChange={setWuAllData}
+                    >
+                        {wuAllData ? t('adminWeatherUndergroundAllFetch') : t('adminWeatherUndergroundNewFetch')}
+                    </Switch>
+                </HBox>
                 <Separator />
                 <Heading>
                     {t('adminUsersTitle')}

@@ -22,19 +22,20 @@ export function useGenerateSeries(
     const xAxisLabels = xAxis.data as string[];
 
     const dark = useMediaQuery('(prefers-color-scheme: dark)');
+    if (!stations) {
+        return [];
+    }
     const themeColorPallet: string[] = dark ? themeDark.color : themeLight.color;
     const colors: Record<string, Record<string, string>> = {};
     Object.keys(data).forEach(station => {
-        if (stations) {
-            const stationIndex = stations.indexOf(station);
-            const colorRange = [themeColorPallet[stationIndex * 2], themeColorPallet[stationIndex * 2 + 1]];
-            colors[station] = {};
-            const years = Object.keys(data[station]);
-            const gradient = generateGradient(colorRange, years.length);
-            years.forEach((year, yearIndex) => {
-                colors[station][year] = gradient[yearIndex];
-            });
-        }
+        const stationIndex = stations.indexOf(station);
+        const colorRange = [themeColorPallet[stationIndex * 2], themeColorPallet[stationIndex * 2 + 1]];
+        colors[station] = {};
+        const years = Object.keys(data[station]);
+        const gradient = generateGradient(colorRange, years.length);
+        years.forEach((year, yearIndex) => {
+            colors[station][year] = gradient[yearIndex];
+        });
     });
 
     const series: (LineSeriesOption | BarSeriesOption)[] = Object.keys(data).flatMap(station => {
@@ -47,10 +48,10 @@ export function useGenerateSeries(
                     focus: 'series'
                 },
                 lineStyle: {
-                    color: colors[station][year]
+                    color: colors[station][year] ?? '#555555'
                 },
                 itemStyle: {
-                    color: colors[station][year]
+                    color: colors[station][year] ?? '#555555'
                 },
                 data: null
             };

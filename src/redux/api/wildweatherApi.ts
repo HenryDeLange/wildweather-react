@@ -106,7 +106,7 @@ const injectedRtkApi = api
         query: (queryArg) => ({
           url: `/api/v1/weather`,
           params: {
-            station: queryArg.station,
+            stations: queryArg.stations,
             grouping: queryArg.grouping,
             category: queryArg.category,
             aggregate: queryArg.aggregate,
@@ -119,18 +119,18 @@ const injectedRtkApi = api
         }),
         providesTags: ["Weather"],
       }),
-      getWeatherStatus: build.query<
-        GetWeatherStatusApiResponse,
-        GetWeatherStatusApiArg
-      >({
-        query: () => ({ url: `/api/v1/weather/status` }),
-        providesTags: ["Weather"],
-      }),
       getWeatherStations: build.query<
         GetWeatherStationsApiResponse,
         GetWeatherStationsApiArg
       >({
         query: () => ({ url: `/api/v1/weather/stations` }),
+        providesTags: ["Weather"],
+      }),
+      getWeatherStatus: build.query<
+        GetWeatherStatusApiResponse,
+        GetWeatherStatusApiArg
+      >({
+        query: () => ({ url: `/api/v1/weather/stations/details` }),
         providesTags: ["Weather"],
       }),
       getServerVersion: build.query<
@@ -183,7 +183,7 @@ export type TriggerAmbientWeatherApiProcessingApiResponse = unknown;
 export type TriggerAmbientWeatherApiProcessingApiArg = void;
 export type GetWeatherApiResponse = /** status 200 OK */ WeatherDataDto;
 export type GetWeatherApiArg = {
-  station?: string;
+  stations?: string[];
   grouping?: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
   category?: "L" | "A" | "H";
   aggregate?: "AVERAGE" | "TOTAL";
@@ -204,11 +204,11 @@ export type GetWeatherApiArg = {
   startMonth?: number;
   endMonth?: number;
 };
-export type GetWeatherStatusApiResponse =
-  /** status 200 OK */ WeatherStatusDto[];
-export type GetWeatherStatusApiArg = void;
 export type GetWeatherStationsApiResponse = /** status 200 OK */ string[];
 export type GetWeatherStationsApiArg = void;
+export type GetWeatherStatusApiResponse =
+  /** status 200 OK */ WeatherStationDto[];
+export type GetWeatherStatusApiArg = void;
 export type GetServerVersionApiResponse = /** status 200 OK */ AppVersion;
 export type GetServerVersionApiArg = void;
 export type UserInfo = {
@@ -252,9 +252,11 @@ export type WeatherDataDto = {
     };
   };
 };
-export type WeatherStatusDto = {
+export type WeatherStationDto = {
   station: string;
-  lastProcessedOn: string;
+  startDate: string;
+  endDate: string;
+  myStation?: boolean;
 };
 export type AppVersion = {
   appVersion: string;
@@ -276,7 +278,7 @@ export const {
   useGetAmbientWeatherApiProcessStatusQuery,
   useTriggerAmbientWeatherApiProcessingMutation,
   useGetWeatherQuery,
-  useGetWeatherStatusQuery,
   useGetWeatherStationsQuery,
+  useGetWeatherStatusQuery,
   useGetServerVersionQuery,
 } = injectedRtkApi;

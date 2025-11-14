@@ -1,7 +1,7 @@
-import type { ReactElement } from 'react';
+import { useEffect, useState, type ReactElement } from 'react';
 import { createPortal } from 'react-dom';
 import { useWatch } from 'react-hook-form';
-import { useGetWeatherQuery } from '../../../redux/api/wildweatherApi';
+import { useGetCsvProcessStatusQuery, useGetWeatherQuery } from '../../../redux/api/wildweatherApi';
 import { Box } from '../../ui/layout';
 import { ErrorDisplay } from '../base/ErrorDisplay';
 import type { WeatherChart, WeatherChartProps } from './chart/WeatherChart';
@@ -12,7 +12,7 @@ type Props = {
 }
 
 export function WeatherData({ children }: Props) {
-    const station = useWatch<WeatherFilterType>({ name: 'station' });
+    const stations = useWatch<WeatherFilterType>({ name: 'station' });
     const grouping = useWatch<WeatherFilterType>({ name: 'grouping' }) as GroupingType;
     const type = useWatch<WeatherFilterType>({ name: 'type' }) as WeatherFieldType;
     const category = useWatch<WeatherFilterType>({ name: 'category' }) as CategoryFilterType;
@@ -20,12 +20,25 @@ export function WeatherData({ children }: Props) {
     const year = useWatch<WeatherFilterType>({ name: 'year' });
     const month = useWatch<WeatherFilterType>({ name: 'month' });
 
+    const [polling, setPolling] = useState(false);
+    const {
+        data: csvStatus,
+        isFetching: csvStatusIsLoading,
+        error: csvStatusError
+    } = useGetCsvProcessStatusQuery(undefined, {
+        pollingInterval: polling ? 1000 : undefined,
+    });
+    useEffect(() => {
+        setPolling(csvStatus?.busy ?? false);
+    }, [csvStatus?.busy, polling]);
+
+
     const {
         data: weatherData,
         isFetching: weatherIsLoading,
         error: weatherError
     } = useGetWeatherQuery({
-        station: station ?? undefined,
+        stations: stations ? [stations] : undefined,
         grouping: grouping,
         weatherFields: [type],
         category: category === 'ALL' ? undefined : category,
@@ -43,10 +56,11 @@ export function WeatherData({ children }: Props) {
     }
 
     return createPortal(
-        weatherError ? <Box margin='1rem'><ErrorDisplay error={weatherError} /></Box>
+        weatherError
+            ? <Box margin='1rem'><ErrorDisplay error={weatherError || csvStatusError} /></Box>
             : children({
                 type: type,
-                loading: weatherIsLoading,
+                loading: weatherIsLoading || csvStatusIsLoading || csvStatus?.busy,
                 data: weatherData?.weather ?? {},
                 grouping: grouping,
                 category: category,

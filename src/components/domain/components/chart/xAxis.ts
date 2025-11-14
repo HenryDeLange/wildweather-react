@@ -1,5 +1,6 @@
 import type { CategoryAxisBaseOption } from 'echarts/types/src/coord/axisCommonTypes.js';
 import { useTranslation } from 'react-i18next';
+import { useGetWeatherStatusQuery } from '../../../../redux/api/wildweatherApi';
 import type { WeatherChartProps } from './WeatherChart';
 
 export function useGenerateXAxis(grouping: WeatherChartProps['grouping'], month: WeatherChartProps['month']): CategoryAxisBaseOption {
@@ -12,6 +13,9 @@ export function useGenerateXAxis(grouping: WeatherChartProps['grouping'], month:
 
 function useLabels(grouping: WeatherChartProps['grouping'], month: WeatherChartProps['month']): string[] {
     const { i18n } = useTranslation();
+    const {
+        data: stationStatusData
+    } = useGetWeatherStatusQuery();
     switch (grouping) {
         case 'DAILY': {
             const days: string[] = [];
@@ -53,7 +57,10 @@ function useLabels(grouping: WeatherChartProps['grouping'], month: WeatherChartP
         }
         case 'YEARLY': {
             const years: string[] = [];
-            for (let i = 2023; i <= new Date().getFullYear(); i++) {
+            const earliestStartDate = Number((stationStatusData?.reduce((earliest, current) => {
+                return new Date(current.startDate) < new Date(earliest.startDate) ? current : earliest;
+            })?.startDate ?? '2023').substring(0, 4));
+            for (let i = new Date().getFullYear(); i >= earliestStartDate; i--) {
                 years.push(String(i));
             }
             return years;

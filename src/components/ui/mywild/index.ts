@@ -15,5 +15,6 @@ export * from './RouterLink';
 export * from './Select';
 export * from './Separator';
 export * from './Spinner';
+export * from './Switch';
 export * from './Text';
 
