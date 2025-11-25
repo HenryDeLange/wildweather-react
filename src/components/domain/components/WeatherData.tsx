@@ -12,7 +12,7 @@ type Props = {
 }
 
 export function WeatherData({ children }: Props) {
-    const stations = useWatch<WeatherFilterType>({ name: 'station' });
+    const stations = useWatch<WeatherFilterType>({ name: 'stations' }) as WeatherFilterType['stations'];
     const grouping = useWatch<WeatherFilterType>({ name: 'grouping' }) as GroupingType;
     const type = useWatch<WeatherFilterType>({ name: 'type' }) as WeatherFieldType;
     const category = useWatch<WeatherFilterType>({ name: 'category' }) as CategoryFilterType;
@@ -38,7 +38,7 @@ export function WeatherData({ children }: Props) {
         isFetching: weatherIsLoading,
         error: weatherError
     } = useGetWeatherQuery({
-        stations: stations ? [stations] : undefined,
+        stations: stations ? stations : undefined,
         grouping: grouping,
         weatherFields: [type],
         category: category === 'ALL' ? undefined : category,

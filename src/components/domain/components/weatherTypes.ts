@@ -2,7 +2,7 @@ import type { GetWeatherApiArg } from '../../../redux/api/wildweatherApi';
 
 export type WeatherFilterType = {
     type: WeatherFieldType;
-    station: string | null;
+    stations: string[] | null;
     grouping: GroupingType;
     category: CategoryFilterType;
     aggregate: AggregateType;

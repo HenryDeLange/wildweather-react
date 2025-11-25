@@ -2,7 +2,7 @@ import { BaseUI_Select } from '../implementations/base-ui/select/BaseUI_Select';
 
 export type SelectItem = {
     label: string;
-    value: string | null;
+    value: string;
 }
 
 type Props = {
