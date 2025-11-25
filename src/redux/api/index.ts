@@ -8,7 +8,7 @@ type SpringErrorResponse = {
 export function getErrorReason(error: FetchBaseQueryError | SerializedError): string | null {
     if (error && 'data' in error) {
         const data = error.data as SpringErrorResponse;
-        return data.reason ?? null;
+        return data?.reason ?? null;
     }
     return null;
 }

@@ -77,8 +77,9 @@ export const themeDark: ThemeOption = {
         // areaStyle: {
         //     opacity: 0.1
         // },
-        symbolSize: 10,
-        symbol: "emptyCircle",
+        // symbolSize: 10,
+        // symbol: "emptyCircle",
+        symbol: "circle",
         smooth: true
     },
     legend: {

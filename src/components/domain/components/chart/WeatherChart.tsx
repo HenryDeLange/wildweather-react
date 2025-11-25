@@ -40,16 +40,17 @@ export type WeatherChartProps = {
     grouping?: GroupingType;
     category: CategoryFilterType;
     month?: number | null;
+    year?: number | null;
 }
 
-export function WeatherChart({ type, loading, data, grouping, category, month }: WeatherChartProps) {
+export function WeatherChart({ type, loading, data, grouping, category, month, year }: WeatherChartProps) {
     const {
         data: stationsData,
         isFetching: stationsIsLoading,
         error: stationsError
     } = useGetWeatherStationsQuery();
 
-    const option = useEChartsOption(type, data, grouping, category, month, stationsData);
+    const option = useEChartsOption(type, data, grouping, category, month, year, stationsData);
     const loadingOption = useEChartsLoadingOption();
     
     const isDarkMode = useMediaQuery('(prefers-color-scheme: dark)');

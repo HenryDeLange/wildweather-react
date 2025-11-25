@@ -3,15 +3,23 @@ import { useTranslation } from 'react-i18next';
 import { useGetWeatherStatusQuery } from '../../../../redux/api/wildweatherApi';
 import type { WeatherChartProps } from './WeatherChart';
 
-export function useGenerateXAxis(grouping: WeatherChartProps['grouping'], month: WeatherChartProps['month']): CategoryAxisBaseOption {
-    const labels = useLabels(grouping, month);
+export function useGenerateXAxis(
+    grouping: WeatherChartProps['grouping'],
+    month: WeatherChartProps['month'],
+    year: WeatherChartProps['year']
+): CategoryAxisBaseOption {
+    const labels = useLabels(grouping, month, year);
     return {
         type: 'category',
         data: labels
     };
 }
 
-function useLabels(grouping: WeatherChartProps['grouping'], month: WeatherChartProps['month']): string[] {
+function useLabels(
+    grouping: WeatherChartProps['grouping'],
+    month: WeatherChartProps['month'],
+    year: WeatherChartProps['year']
+): string[] {
     const { i18n } = useTranslation();
     const {
         data: stationStatusData
@@ -56,11 +64,14 @@ function useLabels(grouping: WeatherChartProps['grouping'], month: WeatherChartP
             return months;
         }
         case 'YEARLY': {
+            if (year) {
+                return [year.toString()]
+            }
             const years: string[] = [];
             const earliestStartDate = Number((stationStatusData?.reduce((earliest, current) => {
                 return new Date(current.startDate) < new Date(earliest.startDate) ? current : earliest;
             })?.startDate ?? '2023').substring(0, 4));
-            for (let i = new Date().getFullYear(); i >= earliestStartDate; i--) {
+            for (let i = earliestStartDate; i <= new Date().getFullYear(); i++) {
                 years.push(String(i));
             }
             return years;

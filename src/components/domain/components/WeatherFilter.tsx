@@ -146,7 +146,7 @@ function AdditionalFormFields() {
                     name: 'year'
                 }}
                 type='list'
-                items={(useGenerateXAxis('YEARLY', null).data as string[])
+                items={(useGenerateXAxis('YEARLY', null, null).data?.reverse() as string[])
                     .map((value: string) => ({ label: value, value }))}
                 placeholder={t('filterYear')}
             />

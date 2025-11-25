@@ -1,5 +1,5 @@
 import { CloudDownload, FileSearchCorner, RefreshCcw, UserPlus } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetAmbientWeatherApiProcessStatusQuery, useGetCsvProcessStatusQuery, useGetWeatherUndergroundApiProcessStatusQuery, useTriggerAmbientWeatherApiProcessingMutation, useTriggerCsvProcessingMutation, useTriggerWeatherUndergroundApiProcessingMutation } from '../../../../redux/api/wildweatherApi';
 import { Box, HBox, PageContainer, VBox } from '../../../ui/layout';
@@ -9,6 +9,9 @@ import { ErrorDisplay } from '../../base/ErrorDisplay';
 export function AdminActions() {
     const { t } = useTranslation();
 
+    const [csvPolling, setCsvPolling] = useState(false);
+    const [awPolling, setAwPolling] = useState(false);
+    const [wuPolling, setWuPolling] = useState(false);
     const [allCsvReload, setAllCsvReload] = useState(false);
     const [wuAllData, setWuAllData] = useState(false);
 
@@ -17,7 +20,12 @@ export function AdminActions() {
         data: csvStatus,
         isFetching: csvStatusIsLoading,
         error: csvStatusError
-    } = useGetCsvProcessStatusQuery();
+    } = useGetCsvProcessStatusQuery(undefined, {
+        pollingInterval: csvPolling ? 1000 : undefined
+    });
+    useEffect(() => {
+        setCsvPolling(csvStatus?.busy ?? false);
+    }, [csvStatus?.busy]);
 
     const [
         doCsvProcessing,
@@ -32,7 +40,12 @@ export function AdminActions() {
         data: awApiStatus,
         isFetching: awApiStatusIsLoading,
         error: awApiStatusError
-    } = useGetAmbientWeatherApiProcessStatusQuery();
+    } = useGetAmbientWeatherApiProcessStatusQuery(undefined, {
+        pollingInterval: awPolling ? 1000 : undefined
+    });
+    useEffect(() => {
+        setAwPolling(awApiStatus?.busy ?? false);
+    }, [awApiStatus?.busy]);
 
     const [
         doAwApiProcessing,
@@ -47,7 +60,12 @@ export function AdminActions() {
         data: wuApiStatus,
         isFetching: wuApiStatusIsLoading,
         error: wuApiStatusError
-    } = useGetWeatherUndergroundApiProcessStatusQuery();
+    } = useGetWeatherUndergroundApiProcessStatusQuery(undefined, {
+        pollingInterval: wuPolling ? 1000 : undefined
+    });
+    useEffect(() => {
+        setWuPolling(wuApiStatus?.busy ?? false);
+    }, [wuApiStatus?.busy]);
 
     const [
         doWuApiProcessing,

@@ -26,7 +26,7 @@ export function WeatherData({ children }: Props) {
         isFetching: csvStatusIsLoading,
         error: csvStatusError
     } = useGetCsvProcessStatusQuery(undefined, {
-        pollingInterval: polling ? 1000 : undefined,
+        pollingInterval: polling ? 1000 : undefined
     });
     useEffect(() => {
         setPolling(csvStatus?.busy ?? false);
@@ -64,7 +64,8 @@ export function WeatherData({ children }: Props) {
                 data: weatherData?.weather ?? {},
                 grouping: grouping,
                 category: category,
-                month: month ? Number(month) : undefined
+                month: month ? Number(month) : undefined,
+                year:  year ? Number(year) : undefined
             }), chartNode);
 }
 

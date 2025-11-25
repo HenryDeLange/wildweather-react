@@ -22,13 +22,14 @@ export function useEChartsOption(
     grouping: WeatherChartProps['grouping'],
     category: CategoryFilterType,
     month: WeatherChartProps['month'],
+    year: WeatherChartProps['year'],
     stations?: string[]
 ): EChartsOption {
     const { t } = useTranslation();
 
-    const xAxisLabels = useGenerateXAxis(grouping, month);
+    const xAxisLabels = useGenerateXAxis(grouping, month, year);
     const yAxisLabels = useGenerateYAxis(chartType);
-    const seriesValues = useGenerateSeries(chartType, data, grouping, category, month, stations);
+    const seriesValues = useGenerateSeries(chartType, data, grouping, category, month, year, stations);
 
     const chartUnit = chartType === 'TEMPERATURE' ? 'CELSIUS'
         : (chartType === 'WIND_SPEED' || chartType === 'WIND_MAX') ? 'KMpH'

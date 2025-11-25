@@ -14,11 +14,12 @@ export function useGenerateSeries(
     grouping: WeatherChartProps['grouping'],
     category: CategoryFilterType,
     month: WeatherChartProps['month'],
+    year: WeatherChartProps['year'],
     stations?: string[]
 ): (LineSeriesOption | BarSeriesOption)[] {
     const showBarChart = grouping === 'YEARLY' || (grouping === 'MONTHLY' && month);
 
-    const xAxis = useGenerateXAxis(grouping, month);
+    const xAxis = useGenerateXAxis(grouping, month, year);
     const xAxisLabels = xAxis.data as string[];
 
     const dark = useMediaQuery('(prefers-color-scheme: dark)');
