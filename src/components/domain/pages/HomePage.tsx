@@ -1,6 +1,5 @@
 import { PageContainer, VBox } from '../../ui/layout';
 import { WeatherChart } from '../components/chart/WeatherChart';
-import { ShowServerConnectionToast } from '../components/ShowServerConnectionToast';
 import { WEATHER_CHART_DOM_ID, WeatherData } from '../components/WeatherData';
 import { WeatherFilter } from '../components/WeatherFilter';
 
@@ -17,7 +16,6 @@ export function HomePage() {
                 </WeatherFilter>
                 <div id={WEATHER_CHART_DOM_ID} style={{ height: '100%' }} />
             </VBox>
-            <ShowServerConnectionToast />
         </PageContainer>
     );
 }

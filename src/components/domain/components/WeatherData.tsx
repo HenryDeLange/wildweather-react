@@ -51,7 +51,7 @@ export function WeatherData({ children }: Props) {
 
     const chartNode = document.getElementById(WEATHER_CHART_DOM_ID);
     if (!chartNode) {
-        console.warn(`Unable to render WeatherChart from WeatherData: Could not get element with id "${WEATHER_CHART_DOM_ID}".`)
+        // console.warn(`Unable to render WeatherChart from WeatherData: Could not get element with id "${WEATHER_CHART_DOM_ID}".`)
         return null;
     }
 

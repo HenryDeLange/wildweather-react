@@ -106,5 +106,6 @@
     "serverToastConnecting": "Connecting to server...",
     "serverToastOnline": "Online and ready.",
     "serverToastOffline": "Unable to connect to server! Please try again later.",
+    "selected": "Selected {{count}}",
     "": ""
 }

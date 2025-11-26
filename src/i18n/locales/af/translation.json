@@ -102,5 +102,6 @@
   "serverToastConnecting": "Koppel aan bediener...",
   "serverToastOnline": "Aanlyn en gereed.",
   "serverToastOffline": "Kan nie aan die bediener koppel nie! Probeer asseblief later weer.",
+  "selected": "Geselekteer {{count}}",
   "": ""
 }

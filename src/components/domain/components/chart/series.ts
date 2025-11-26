@@ -48,6 +48,8 @@ export function useGenerateSeries(
                 emphasis: {
                     focus: 'series'
                 },
+                triggerEvent: true,
+                triggerLineEvent: true,
                 lineStyle: {
                     color: colors[station][year] ?? '#555555'
                 },

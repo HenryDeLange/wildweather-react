@@ -1,8 +1,10 @@
 import { Select } from '@base-ui-components/react/select';
-import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
+import { CheckIcon, ChevronsUpDownIcon, ListChecks, ListX } from 'lucide-react';
 import { useState } from 'react';
 import type { Noop } from 'react-hook-form';
-import { Text } from '../../../mywild';
+import { useTranslation } from 'react-i18next';
+import { Box, HBox } from '../../../layout';
+import { Separator, Text } from '../../../mywild';
 import styles from './BaseUI_MultiSelect.module.css';
 
 // https://base-ui.com/react/components/select
@@ -22,14 +24,15 @@ type Props = {
 }
 
 export function BaseUI_MultiSelect({ placeholder, autoFocus, items, values, onValueChange, onBlur }: Props) {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     return (
         <Select.Root
             multiple
             items={items}
-            // value={values ? null : values}
+            value={values}
             onValueChange={(selectedValues, event) => {
-                onValueChange?.(selectedValues.length > 0 ? selectedValues : null, event);
+                onValueChange(selectedValues.length > 0 ? selectedValues : null, event);
                 setOpen(false);
             }}
             open={open}
@@ -54,6 +57,22 @@ export function BaseUI_MultiSelect({ placeholder, autoFocus, items, values, onVa
                 <Select.Positioner sideOffset={-4} alignItemWithTrigger={false} className={styles.Positioner}>
                     <Select.ScrollUpArrow className={styles.ScrollArrow} />
                     <Select.Popup className={styles.Popup}>
+                        <HBox>
+                            <ListChecks
+                                cursor='pointer'
+                                onClick={() => onValueChange(items.map(item => item.value))}
+                            />
+                            <Box marginLeft='auto' marginRight='auto'>
+                                <Text size='small' variant='subdued'>
+                                    {values ? t('selected', { count: values.length }) : ''}
+                                </Text>
+                            </Box>
+                            <ListX
+                                cursor='pointer'
+                                onClick={() => onValueChange(null)}
+                            />
+                        </HBox>
+                        <Separator marginTop='0.25rem' />
                         <Select.List className={styles.List}>
                             {items.map(({ label, value }) => (
                                 <Select.Item key={label} value={value} className={styles.Item}>

@@ -1,5 +1,6 @@
 import { type BarSeriesOption, type LineSeriesOption } from 'echarts/charts';
 import { type GridComponentOption, type LegendComponentOption, type TitleComponentOption, type TooltipComponentOption } from 'echarts/components';
+import type { TooltipFormatterCallback, TopLevelFormatterParams } from 'echarts/types/dist/shared';
 import { useTranslation } from 'react-i18next';
 import type { WeatherDataDto } from '../../../../redux/api/wildweatherApi';
 import type { CategoryFilterType } from '../weatherTypes';
@@ -23,7 +24,8 @@ export function useEChartsOption(
     category: CategoryFilterType,
     month: WeatherChartProps['month'],
     year: WeatherChartProps['year'],
-    stations?: string[]
+    stations?: string[],
+    tooltipRenderer?: string | TooltipFormatterCallback<TopLevelFormatterParams>
 ): EChartsOption {
     const { t } = useTranslation();
 
@@ -45,10 +47,14 @@ export function useEChartsOption(
             top: 4
         },
         tooltip: {
-            trigger: 'item',
+            // trigger: 'item',
+            trigger: 'axis',
             axisPointer: {
-                type: 'cross'
-            }
+                type: 'cross',
+                snap: true
+            },
+            formatter: tooltipRenderer,
+            renderMode: 'html'
         },
         legend: {
             show: true,
