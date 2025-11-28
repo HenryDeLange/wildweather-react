@@ -30,7 +30,7 @@ export function BaseUI_MultiSelect({ placeholder, autoFocus, items, values, onVa
         <Select.Root
             multiple
             items={items}
-            value={values ?? undefined}
+            value={values ?? []}
             onValueChange={(selectedValues, event) => {
                 onValueChange(selectedValues.length > 0 ? selectedValues : null, event);
                 setOpen(false);
