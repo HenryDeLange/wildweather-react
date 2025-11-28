@@ -47,7 +47,6 @@ export function useEChartsOption(
             top: 4
         },
         tooltip: {
-            // trigger: 'item',
             trigger: 'axis',
             axisPointer: {
                 type: 'cross',

@@ -30,7 +30,7 @@ export function WeatherData({ children }: Props) {
     });
     useEffect(() => {
         setPolling(csvStatus?.busy ?? false);
-    }, [csvStatus?.busy, polling]);
+    }, [csvStatus?.busy]);
 
 
     const {

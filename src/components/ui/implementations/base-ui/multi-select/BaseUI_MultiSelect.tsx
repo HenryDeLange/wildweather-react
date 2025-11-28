@@ -61,15 +61,17 @@ export function BaseUI_MultiSelect({ placeholder, autoFocus, items, values, onVa
                             <ListChecks
                                 cursor='pointer'
                                 onClick={() => onValueChange(items.map(item => item.value))}
+                                size='1.25rem'
                             />
                             <Box marginLeft='auto' marginRight='auto'>
                                 <Text size='small' variant='subdued'>
-                                    {values ? t('selected', { count: values.length }) : ''}
+                                    {t('selected', { count: values?.length ?? 0 })}
                                 </Text>
                             </Box>
                             <ListX
                                 cursor='pointer'
                                 onClick={() => onValueChange(null)}
+                                size='1.25rem'
                             />
                         </HBox>
                         <Separator marginTop='0.25rem' />

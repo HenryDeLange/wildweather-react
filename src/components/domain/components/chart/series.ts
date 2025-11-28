@@ -30,7 +30,9 @@ export function useGenerateSeries(
     const colors: Record<string, Record<string, string>> = {};
     Object.keys(data).forEach(station => {
         const stationIndex = stations.indexOf(station);
-        const colorRange = [themeColorPallet[stationIndex * 2], themeColorPallet[stationIndex * 2 + 1]];
+        const colorRange = station.startsWith('AW')
+            ? [themeColorPallet[stationIndex * 2], themeColorPallet[stationIndex * 2 + 1]]
+            : [themeColorPallet[themeColorPallet.length - 2], themeColorPallet[themeColorPallet.length - 1]];
         colors[station] = {};
         const years = Object.keys(data[station]);
         const gradient = generateGradient(colorRange, years.length);
@@ -41,14 +43,13 @@ export function useGenerateSeries(
 
     const series: (LineSeriesOption | BarSeriesOption)[] = Object.keys(data).flatMap(station => {
         return Object.keys(data[station]).flatMap(year => {
-            const seriesName = `${station} ${year}`;
+            const seriesName = grouping === 'YEARLY' ? station : `${station} ${year}`;
             const baseSeries = {
                 name: seriesName,
                 type: showBarChart ? 'bar' : 'line',
                 emphasis: {
                     focus: 'series'
                 },
-                triggerEvent: true,
                 triggerLineEvent: true,
                 lineStyle: {
                     color: colors[station][year] ?? '#555555'
@@ -56,6 +57,7 @@ export function useGenerateSeries(
                 itemStyle: {
                     color: colors[station][year] ?? '#555555'
                 },
+                z: station.startsWith('AW') ? 9999 : year,
                 data: null
             };
             if (category === 'ALL') {
@@ -90,10 +92,9 @@ export function useGenerateSeries(
                 ] as (LineSeriesOption | BarSeriesOption)[];
             }
             else {
-                const categoryRecords = getDataValues(chartType, xAxisLabels, data, station, year, grouping, category, month);
                 return ({
                     ...baseSeries,
-                    data: categoryRecords
+                    data: getDataValues(chartType, xAxisLabels, data, station, year, grouping, category, month)
                 }) as (LineSeriesOption | BarSeriesOption);
             }
         });

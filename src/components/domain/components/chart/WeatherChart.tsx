@@ -56,7 +56,7 @@ export function WeatherChart({ type, loading, data, grouping, category, month, y
 
     const tooltipRenderer = useCallback((params: CallbackDataParams | CallbackDataParams[]) => {
         const active = Array.isArray(params) ? params.find(p => p.seriesIndex === highlightedSeriesIndex) : params;
-        if (!active) {
+        if (!active || !active.name || !active.value) {
             return '';
         }
         return `<b>${active.seriesName}</b><br />${active.name}<br />${active.value}`;
@@ -69,7 +69,7 @@ export function WeatherChart({ type, loading, data, grouping, category, month, y
 
     const onEvents = useMemo(() => ({
         mouseover: (params: echarts.ECElementEvent) => {
-            if (params.seriesIndex !== undefined) {
+            if (params.componentType === 'series' && params.seriesIndex !== undefined) {
                 setHighlightedSeriesIndex(params.seriesIndex);
             }
         },
