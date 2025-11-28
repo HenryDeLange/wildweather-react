@@ -20,7 +20,7 @@
 
     @media (hover: hover) {
         &:hover {
-            background-color: var(--color-gray-300);
+            background-color: var(--color-gray-100);
             cursor: pointer;
         }
     }
@@ -90,15 +90,6 @@
     }
 }
 
-.List {
-    box-sizing: border-box;
-    position: relative;
-    padding-block: 0.25rem;
-    overflow-y: auto;
-    max-height: var(--available-height);
-    scroll-padding-block: 1.5rem;
-}
-
 .Item {
     box-sizing: border-box;
     outline: 0;
@@ -137,7 +128,7 @@
         inset-block: 0;
         inset-inline: 0.25rem;
         border-radius: 0.25rem;
-        background-color: var(--color-gray-200);
+        background-color: var(--color-gray-300);
     }
 }
 

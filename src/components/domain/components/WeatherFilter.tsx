@@ -18,7 +18,7 @@ export function WeatherFilter({ children }: Props) {
             formProps={{
                 defaultValues: {
                     type: 'TEMPERATURE',
-                    station: null,
+                    stations: null,
                     grouping: 'MONTHLY',
                     category: 'A',
                     aggregate: 'AVERAGE',
@@ -135,18 +135,19 @@ function AdditionalFormFields() {
             />
             <FormField<WeatherFilterType>
                 formControl={{
-                    name: 'station'
+                    name: 'stations'
                 }}
                 type='list'
                 items={stationsData?.map(value => ({ label: value, value })) ?? []}
                 placeholder={t('filterStation')}
+                multiple
             />
             <FormField<WeatherFilterType>
                 formControl={{
                     name: 'year'
                 }}
                 type='list'
-                items={(useGenerateXAxis('YEARLY', null).data as string[])
+                items={(useGenerateXAxis('YEARLY', null, null).data?.reverse() as string[])
                     .map((value: string) => ({ label: value, value }))}
                 placeholder={t('filterYear')}
             />

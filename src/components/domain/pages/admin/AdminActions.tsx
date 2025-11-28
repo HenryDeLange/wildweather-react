@@ -1,19 +1,31 @@
 import { CloudDownload, FileSearchCorner, RefreshCcw, UserPlus } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetApiProcessStatusQuery, useGetCsvProcessStatusQuery, useTriggerApiProcessingMutation, useTriggerCsvProcessingMutation } from '../../../../redux/api/wildweatherApi';
+import { useGetAmbientWeatherApiProcessStatusQuery, useGetCsvProcessStatusQuery, useGetWeatherUndergroundApiProcessStatusQuery, useTriggerAmbientWeatherApiProcessingMutation, useTriggerCsvProcessingMutation, useTriggerWeatherUndergroundApiProcessingMutation } from '../../../../redux/api/wildweatherApi';
 import { Box, HBox, PageContainer, VBox } from '../../../ui/layout';
-import { Button, Heading, LinkButton, RouterButton, Separator } from '../../../ui/mywild';
+import { Button, Heading, LinkButton, RouterButton, Separator, Switch } from '../../../ui/mywild';
 import { ErrorDisplay } from '../../base/ErrorDisplay';
 
 export function AdminActions() {
     const { t } = useTranslation();
+
+    const [csvPolling, setCsvPolling] = useState(false);
+    const [awPolling, setAwPolling] = useState(false);
+    const [wuPolling, setWuPolling] = useState(false);
+    const [allCsvReload, setAllCsvReload] = useState(false);
+    const [wuAllData, setWuAllData] = useState(false);
 
     const {
         refetch: csvStatusRefetch,
         data: csvStatus,
         isFetching: csvStatusIsLoading,
         error: csvStatusError
-    } = useGetCsvProcessStatusQuery();
+    } = useGetCsvProcessStatusQuery(undefined, {
+        pollingInterval: csvPolling ? 1000 : undefined
+    });
+    useEffect(() => {
+        setCsvPolling(csvStatus?.busy ?? false);
+    }, [csvStatus?.busy]);
 
     const [
         doCsvProcessing,
@@ -24,19 +36,44 @@ export function AdminActions() {
     ] = useTriggerCsvProcessingMutation();
 
     const {
-        refetch: apiStatusRefetch,
-        data: apiStatus,
-        isFetching: apiStatusIsLoading,
-        error: apiStatusError
-    } = useGetApiProcessStatusQuery();
+        refetch: awApiStatusRefetch,
+        data: awApiStatus,
+        isFetching: awApiStatusIsLoading,
+        error: awApiStatusError
+    } = useGetAmbientWeatherApiProcessStatusQuery(undefined, {
+        pollingInterval: awPolling ? 1000 : undefined
+    });
+    useEffect(() => {
+        setAwPolling(awApiStatus?.busy ?? false);
+    }, [awApiStatus?.busy]);
 
     const [
-        doApiProcessing,
+        doAwApiProcessing,
         {
-            isLoading: apiProcessIsLoading,
-            error: apiProcessError
+            isLoading: awApiProcessIsLoading,
+            error: awApiProcessError
         }
-    ] = useTriggerApiProcessingMutation();
+    ] = useTriggerAmbientWeatherApiProcessingMutation();
+
+    const {
+        refetch: wuApiStatusRefetch,
+        data: wuApiStatus,
+        isFetching: wuApiStatusIsLoading,
+        error: wuApiStatusError
+    } = useGetWeatherUndergroundApiProcessStatusQuery(undefined, {
+        pollingInterval: wuPolling ? 1000 : undefined
+    });
+    useEffect(() => {
+        setWuPolling(wuApiStatus?.busy ?? false);
+    }, [wuApiStatus?.busy]);
+
+    const [
+        doWuApiProcessing,
+        {
+            isLoading: wuApiProcessIsLoading,
+            error: wuApiProcessError
+        }
+    ] = useTriggerWeatherUndergroundApiProcessingMutation();
 
     return (
         <PageContainer>
@@ -48,31 +85,57 @@ export function AdminActions() {
                     <LinkButton
                         onClick={() => {
                             csvStatusRefetch();
-                            apiStatusRefetch();
+                            awApiStatusRefetch();
+                            wuApiStatusRefetch();
                         }}
                     >
                         <RefreshCcw />
                     </LinkButton>
                 </HBox>
-                <ErrorDisplay error={csvStatusError || csvProcessError || apiStatusError || apiProcessError} />
-                <Box>
+                <ErrorDisplay error={
+                    csvStatusError || csvProcessError ||
+                    awApiStatusError || awApiProcessError ||
+                    wuApiStatusError || wuApiProcessError
+                } />
+                <HBox>
                     <Button
                         icon={<FileSearchCorner />}
-                        onClick={() => doCsvProcessing({ forceFullReload: true })}
+                        onClick={() => doCsvProcessing({ forceFullReload: allCsvReload })}
                         loading={csvProcessIsLoading || csvStatusIsLoading || csvStatus?.busy}
                     >
                         {t('adminCsvProcessingButton')}
                     </Button>
-                </Box>
+                    <Switch
+                        checked={allCsvReload}
+                        onCheckedChange={setAllCsvReload}
+                    >
+                        {allCsvReload ? t('adminCsvAllLoad') : t('adminCsvNewLoad')}
+                    </Switch>
+                </HBox>
                 <Box>
                     <Button
                         icon={<CloudDownload />}
-                        onClick={() => doApiProcessing()}
-                        loading={apiProcessIsLoading || apiStatusIsLoading || apiStatus?.busy}
+                        onClick={() => doAwApiProcessing()}
+                        loading={awApiProcessIsLoading || awApiStatusIsLoading || awApiStatus?.busy}
                     >
-                        {t('adminApiProcessingButton')}
+                        {t('adminAmbientWeatherApiProcessingButton')}
                     </Button>
                 </Box>
+                <HBox>
+                    <Button
+                        icon={<CloudDownload />}
+                        onClick={() => doWuApiProcessing({ fetchAllData: wuAllData })}
+                        loading={wuApiProcessIsLoading || wuApiStatusIsLoading || wuApiStatus?.busy}
+                    >
+                        {t('adminWeatherUndergroundApiProcessingButton')}
+                    </Button>
+                    <Switch
+                        checked={wuAllData}
+                        onCheckedChange={setWuAllData}
+                    >
+                        {wuAllData ? t('adminWeatherUndergroundAllFetch') : t('adminWeatherUndergroundNewFetch')}
+                    </Switch>
+                </HBox>
                 <Separator />
                 <Heading>
                     {t('adminUsersTitle')}

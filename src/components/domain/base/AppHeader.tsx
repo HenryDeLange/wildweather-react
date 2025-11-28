@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { Box, HBox, HideOnMobile, ShowOnMobile, VBox } from '../../ui/layout';
 import { Button, Heading, LanguageToggle, LinkButton, NavigationMenu, RouterLink, Separator, Text } from '../../ui/mywild';
 import { Drawer } from '../../ui/mywild/Drawer';
+import { ShowServerConnectionToast } from '../components/ShowServerConnectionToast';
 import { WeatherStationStatus } from '../components/WeatherStationStatus';
 import type { LoginRedirectType } from '../pages/user/LoginPage';
 
@@ -187,6 +188,7 @@ export function AppHeader() {
                 </HideOnMobile>
             </HBox>
             <Separator marginTop='-0.75rem' />
+            <ShowServerConnectionToast />
         </VBox>
     );
 }

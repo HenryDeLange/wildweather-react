@@ -1,4 +1,5 @@
 import { Select } from '@base-ui-components/react/select';
+import { CheckIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { languages } from '../../../../../i18n';
 import { Text } from '../../../mywild/Text';
@@ -15,7 +16,7 @@ export function BaseUI_LanguageToggle() {
         <Select.Root
             items={items}
             value={i18n.language}
-            onValueChange={value => i18n.changeLanguage(value)}
+            onValueChange={value => i18n.changeLanguage(value ?? undefined)}
         >
             <Select.Trigger className={styles.Select}>
                 <Select.Value>
@@ -29,15 +30,20 @@ export function BaseUI_LanguageToggle() {
             <Select.Portal>
                 <Select.Positioner className={styles.Positioner} sideOffset={8}>
                     <Select.Popup className={styles.Popup}>
-                        {items.map(({ label, value }) => (
-                            <Select.Item className={styles.Item} key={label} value={value}>
-                                <Select.ItemText>
-                                    <Text>
-                                        {label}
-                                    </Text>
-                                </Select.ItemText>
-                            </Select.Item>
-                        ))}
+                        <Select.List className={styles.List}>
+                            {items.map(({ label, value }) => (
+                                <Select.Item key={label} value={value} className={styles.Item}>
+                                    <Select.ItemIndicator className={styles.ItemIndicator}>
+                                        <CheckIcon size='0.75rem' />
+                                    </Select.ItemIndicator>
+                                    <Select.ItemText>
+                                        <Text>
+                                            {label}
+                                        </Text>
+                                    </Select.ItemText>
+                                </Select.Item>
+                            ))}
+                        </Select.List>
                     </Select.Popup>
                 </Select.Positioner>
             </Select.Portal>

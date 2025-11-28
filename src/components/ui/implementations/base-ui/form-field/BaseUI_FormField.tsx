@@ -1,6 +1,7 @@
 import { Field } from '@base-ui-components/react/field';
 import { Input } from '@base-ui-components/react/input';
 import { type FieldValues, type UseControllerProps, useController } from 'react-hook-form';
+import { BaseUI_MultiSelect } from '../multi-select/BaseUI_MultiSelect';
 import { BaseUI_Select, type SelectItem } from '../select/BaseUI_Select';
 import styles from './BaseUI_FormField.module.css';
 
@@ -18,18 +19,20 @@ type BaseProps<T extends FieldValues> = {
 type NonListProps<T extends FieldValues> = BaseProps<T> & {
     type?: 'text' | 'password';
     items?: never;
+    multiple?: never;
     forceNotEmpty?: never;
 }
 
 type ListProps<T extends FieldValues> = BaseProps<T> & {
     type: 'list';
     items: SelectItem[];
+    multiple?: boolean;
     forceNotEmpty?: boolean;
 }
 
 type Props<T extends FieldValues> = NonListProps<T> | ListProps<T>
 
-export function BaseUI_FormField<T extends FieldValues>({ label, description, placeholder, autoFocus, formControl, type, disabled, items, forceNotEmpty }: Props<T>) {
+export function BaseUI_FormField<T extends FieldValues>({ label, description, placeholder, autoFocus, formControl, type, disabled, items, multiple, forceNotEmpty }: Props<T>) {
     const { field, fieldState: { error, invalid } } = useController(formControl);
     return (
         <Field.Root className={styles.Field} disabled={disabled} invalid={invalid}>
@@ -49,14 +52,25 @@ export function BaseUI_FormField<T extends FieldValues>({ label, description, pl
                             {...field}
                         />
                         : type === 'list' ?
-                            <BaseUI_Select
-                                items={items ?? []}
-                                value={field.value}
-                                onValueChange={forceNotEmpty ? (value) => field.onChange(!value ? field.value : value) : field.onChange}
-                                onBlur={field.onBlur}
-                                placeholder={placeholder}
-                                autoFocus={autoFocus}
-                            />
+                            multiple
+                                ?
+                                <BaseUI_MultiSelect
+                                    items={items ?? []}
+                                    values={field.value}
+                                    onValueChange={forceNotEmpty ? (value) => field.onChange(!value ? field.value : value) : field.onChange}
+                                    onBlur={field.onBlur}
+                                    placeholder={placeholder}
+                                    autoFocus={autoFocus}
+                                />
+                                :
+                                <BaseUI_Select
+                                    items={items ?? []}
+                                    value={field.value}
+                                    onValueChange={forceNotEmpty ? (value) => field.onChange(!value ? field.value : value) : field.onChange}
+                                    onBlur={field.onBlur}
+                                    placeholder={placeholder}
+                                    autoFocus={autoFocus}
+                                />
                             :
                             <Input
                                 type={type}

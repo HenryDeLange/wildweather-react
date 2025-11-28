@@ -3,12 +3,12 @@ import type { ThemeOption } from 'echarts/types/src/util/types.js';
 export const themeDark: ThemeOption = {
     backgroundColor: 'rgba(51,51,51,1)',
     color: [
-        "#ec355d",
-        "#ce9937",
-        "#8648cc",
-        "#1990a5",
-        "#8aa529",
-        "#26b170"
+        "#11a2db",
+        "#068bc0",
+        "#dba40c",
+        "#c28f05",
+        "#787e7a",
+        "#5b615c",
     ],
     title: {
         textStyle: {
@@ -31,8 +31,9 @@ export const themeDark: ThemeOption = {
         // areaStyle: {
         //     opacity: 0.1
         // },
-        symbolSize: 10,
-        symbol: "emptyCircle",
+        // symbolSize: 10,
+        // symbol: "emptyCircle",
+        symbol: "circle",
         smooth: true
     },
     legend: {

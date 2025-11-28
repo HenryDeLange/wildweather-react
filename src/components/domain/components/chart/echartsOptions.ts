@@ -1,5 +1,6 @@
 import { type BarSeriesOption, type LineSeriesOption } from 'echarts/charts';
 import { type GridComponentOption, type LegendComponentOption, type TitleComponentOption, type TooltipComponentOption } from 'echarts/components';
+import type { TooltipFormatterCallback, TopLevelFormatterParams } from 'echarts/types/dist/shared';
 import { useTranslation } from 'react-i18next';
 import type { WeatherDataDto } from '../../../../redux/api/wildweatherApi';
 import type { CategoryFilterType } from '../weatherTypes';
@@ -22,13 +23,15 @@ export function useEChartsOption(
     grouping: WeatherChartProps['grouping'],
     category: CategoryFilterType,
     month: WeatherChartProps['month'],
-    stations?: string[]
+    year: WeatherChartProps['year'],
+    stations?: string[],
+    tooltipRenderer?: string | TooltipFormatterCallback<TopLevelFormatterParams>
 ): EChartsOption {
     const { t } = useTranslation();
 
-    const xAxisLabels = useGenerateXAxis(grouping, month);
+    const xAxisLabels = useGenerateXAxis(grouping, month, year);
     const yAxisLabels = useGenerateYAxis(chartType);
-    const seriesValues = useGenerateSeries(chartType, data, grouping, category, month, stations);
+    const seriesValues = useGenerateSeries(chartType, data, grouping, category, month, year, stations);
 
     const chartUnit = chartType === 'TEMPERATURE' ? 'CELSIUS'
         : (chartType === 'WIND_SPEED' || chartType === 'WIND_MAX') ? 'KMpH'
@@ -44,10 +47,13 @@ export function useEChartsOption(
             top: 4
         },
         tooltip: {
-            trigger: 'item',
+            trigger: 'axis',
             axisPointer: {
-                type: 'cross'
-            }
+                type: 'cross',
+                snap: true
+            },
+            formatter: tooltipRenderer,
+            renderMode: 'html'
         },
         legend: {
             show: true,

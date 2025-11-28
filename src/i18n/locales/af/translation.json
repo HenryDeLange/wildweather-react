@@ -44,7 +44,8 @@
   "adminButton": "Admin",
   "adminProcessingTitle": "Data Verwerking",
   "adminCsvProcessingButton": "Herproses alle CSV-lêers",
-  "adminApiProcessingButton": "Laai nuwe API-data af",
+  "adminAmbientWeatherApiProcessingButton": "Laai nuwe Ambient Weather API-data af",
+  "adminWeatherUndergroundApiProcessingButton": "Laai alle Weather Underground API-data af",
   "adminUsersTitle": "Gebruikerbestuur",
   "chartLoading": "Laai",
   "chartTypeTEMPERATURE": "Temperatuur",
@@ -101,5 +102,6 @@
   "serverToastConnecting": "Koppel aan bediener...",
   "serverToastOnline": "Aanlyn en gereed.",
   "serverToastOffline": "Kan nie aan die bediener koppel nie! Probeer asseblief later weer.",
+  "selected": "{{count}} geselekteer",
   "": ""
 }

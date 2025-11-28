@@ -43,8 +43,13 @@
     "homeButton": "Home",
     "adminButton": "Admin",
     "adminProcessingTitle": "Data Processing",
-    "adminCsvProcessingButton": "Reprocess all CSV files",
-    "adminApiProcessingButton": "Download new API data",
+    "adminCsvProcessingButton": "Process CSV files",
+    "adminCsvAllLoad": "Reload all CSV files",
+    "adminCsvNewLoad": "Load only new CSV files",
+    "adminAmbientWeatherApiProcessingButton": "Download Ambient Weather data",
+    "adminWeatherUndergroundApiProcessingButton": "Download Weather Underground data",
+    "adminWeatherUndergroundAllFetch": "Fetch all Weather Underground data",
+    "adminWeatherUndergroundNewFetch": "Fetch new Weather Underground data",
     "adminUsersTitle": "User Management",
     "chartLoading": "Loading",
     "chartTypeTEMPERATURE": "Temperature",
@@ -101,5 +106,6 @@
     "serverToastConnecting": "Connecting to server...",
     "serverToastOnline": "Online and ready.",
     "serverToastOffline": "Unable to connect to server! Please try again later.",
+    "selected": "{{count}} selected",
     "": ""
 }

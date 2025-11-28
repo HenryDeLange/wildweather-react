@@ -4,6 +4,8 @@ import { GridComponent, LegendComponent, TitleComponent, TooltipComponent } from
 import * as echarts from 'echarts/core';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
+import type { CallbackDataParams } from 'echarts/types/dist/shared';
+import { useCallback, useMemo, useState } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
 import { useGetWeatherStationsQuery, type WeatherDataDto } from '../../../../redux/api/wildweatherApi';
 import { ErrorDisplay } from '../../base/ErrorDisplay';
@@ -40,19 +42,41 @@ export type WeatherChartProps = {
     grouping?: GroupingType;
     category: CategoryFilterType;
     month?: number | null;
+    year?: number | null;
 }
 
-export function WeatherChart({ type, loading, data, grouping, category, month }: WeatherChartProps) {
+export function WeatherChart({ type, loading, data, grouping, category, month, year }: WeatherChartProps) {
     const {
         data: stationsData,
         isFetching: stationsIsLoading,
         error: stationsError
     } = useGetWeatherStationsQuery();
 
-    const option = useEChartsOption(type, data, grouping, category, month, stationsData);
+    const [highlightedSeriesIndex, setHighlightedSeriesIndex] = useState<number | undefined>();
+
+    const tooltipRenderer = useCallback((params: CallbackDataParams | CallbackDataParams[]) => {
+        const active = Array.isArray(params) ? params.find(p => p.seriesIndex === highlightedSeriesIndex) : params;
+        if (!active || !active.name || !active.value) {
+            return '';
+        }
+        return `<b>${active.seriesName}</b><br />${active.name}<br />${active.value}`;
+    }, [highlightedSeriesIndex]);
+
+    const option = useEChartsOption(type, data, grouping, category, month, year, stationsData, tooltipRenderer);
     const loadingOption = useEChartsLoadingOption();
-    
+
     const isDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+    const onEvents = useMemo(() => ({
+        mouseover: (params: echarts.ECElementEvent) => {
+            if (params.componentType === 'series' && params.seriesIndex !== undefined) {
+                setHighlightedSeriesIndex(params.seriesIndex);
+            }
+        },
+        mouseout: () => {
+            setHighlightedSeriesIndex(undefined);
+        }
+    }), []);
 
     return (
         <>
@@ -66,6 +90,7 @@ export function WeatherChart({ type, loading, data, grouping, category, month }:
                 loadingOption={loadingOption}
                 theme={isDarkMode ? 'wildweather-dark' : 'wildweather-light'}
                 style={{ flex: 1, height: '100%' }}
+                onEvents={onEvents}
             />
         </>
     );

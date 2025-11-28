@@ -17,11 +17,11 @@ export function WeatherStationStatus() {
                 trigger={
                     <LabeledText
                         label={t('lastUpdated')}
-                        text={isFetching ? <Text size='small' variant='subdued'>{t('chartLoading')}</Text> :
+                        body={isFetching ? <Text size='small' variant='subdued'>{t('chartLoading')}</Text> :
                             <Text size='small'>
                                 {data?.reduce((hasLatestDate, stationStatus) =>
-                                    stationStatus.lastProcessedOn > hasLatestDate.lastProcessedOn ? stationStatus : hasLatestDate)
-                                    .lastProcessedOn ?? ''}
+                                    stationStatus.endDate > hasLatestDate.endDate ? stationStatus : hasLatestDate)
+                                    .endDate ?? ''}
                             </Text>
                         }
                     />
@@ -32,10 +32,14 @@ export function WeatherStationStatus() {
                         {data?.map(stationStatus => (
                             <LabeledText
                                 key={stationStatus.station}
-                                label={stationStatus.station}
-                                text={
-                                    <Text size='small'>
-                                        {stationStatus.lastProcessedOn}
+                                label={
+                                    <Text size='small' variant={stationStatus.myStation ? 'bold' : undefined}>
+                                        {stationStatus.station}
+                                    </Text>
+                                }
+                                body={
+                                    <Text size='small' variant={stationStatus.myStation ? 'bold' : undefined}>
+                                        {`${stationStatus.startDate} to ${stationStatus.endDate}`}
                                     </Text>
                                 }
                             />

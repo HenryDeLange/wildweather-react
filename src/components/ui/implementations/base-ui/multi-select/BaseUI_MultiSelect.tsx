@@ -1,8 +1,11 @@
 import { Select } from '@base-ui-components/react/select';
-import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
+import { CheckIcon, ChevronsUpDownIcon, ListChecks, ListX } from 'lucide-react';
+import { useState } from 'react';
 import type { Noop } from 'react-hook-form';
-import { Text } from '../../../mywild';
-import styles from './BaseUI_Select.module.css';
+import { useTranslation } from 'react-i18next';
+import { Box, HBox } from '../../../layout';
+import { Separator, Text } from '../../../mywild';
+import styles from './BaseUI_MultiSelect.module.css';
 
 // https://base-ui.com/react/components/select
 
@@ -15,23 +18,34 @@ type Props = {
     placeholder?: string;
     autoFocus?: boolean;
     items: SelectItem[];
-    value?: string | null;
-    onValueChange: (value?: string | null, eventDetails?: Select.Root.ChangeEventDetails) => void;
+    values?: string[] | null;
+    onValueChange: (value?: string[] | null, eventDetails?: Select.Root.ChangeEventDetails) => void;
     onBlur?: Noop;
 }
 
-export function BaseUI_Select({ placeholder, autoFocus, items, value, onValueChange, onBlur }: Props) {
+export function BaseUI_MultiSelect({ placeholder, autoFocus, items, values, onValueChange, onBlur }: Props) {
+    const { t } = useTranslation();
+    const [open, setOpen] = useState(false);
     return (
         <Select.Root
+            multiple
             items={items}
-            value={value === '' ? null : value}
-            onValueChange={(selectedValue, event) => onValueChange?.(selectedValue !== value ? selectedValue : null, event)}
+            value={values ?? []}
+            onValueChange={(selectedValues, event) => {
+                onValueChange(selectedValues.length > 0 ? selectedValues : null, event);
+                setOpen(false);
+            }}
+            open={open}
+            onOpenChange={open => setOpen(open)}
         >
             <Select.Trigger className={styles.Select} onBlur={onBlur} autoFocus={autoFocus}>
                 <Select.Value
                     render={
-                        <Text size='small' variant={!value && placeholder ? 'subdued' : 'standard'}>
-                            {!value ? (placeholder ?? '') : items.find(item => item.value === value)?.label ?? ''}
+                        <Text size='small' variant={!values && placeholder ? 'subdued' : 'standard'}>
+                            {`
+                            ${!values ? (placeholder ?? '') : items.find(item => values.indexOf(item.value) >= 0)?.label ?? ''}
+                            ${(values?.length ?? 0) > 1 ? `(+${values!.length - 1})` : ''}
+                            `}
                         </Text>
                     }
                 />
@@ -43,6 +57,24 @@ export function BaseUI_Select({ placeholder, autoFocus, items, value, onValueCha
                 <Select.Positioner sideOffset={-4} alignItemWithTrigger={false} className={styles.Positioner}>
                     <Select.ScrollUpArrow className={styles.ScrollArrow} />
                     <Select.Popup className={styles.Popup}>
+                        <HBox>
+                            <ListChecks
+                                cursor='pointer'
+                                onClick={() => onValueChange(items.map(item => item.value))}
+                                size='1.25rem'
+                            />
+                            <Box marginLeft='auto' marginRight='auto'>
+                                <Text size='small' variant='subdued'>
+                                    {t('selected', { count: values?.length ?? 0 })}
+                                </Text>
+                            </Box>
+                            <ListX
+                                cursor='pointer'
+                                onClick={() => onValueChange(null)}
+                                size='1.25rem'
+                            />
+                        </HBox>
+                        <Separator marginTop='0.25rem' />
                         <Select.List className={styles.List}>
                             {items.map(({ label, value }) => (
                                 <Select.Item key={label} value={value} className={styles.Item}>
