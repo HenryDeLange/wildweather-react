@@ -16,7 +16,7 @@ export function BaseUI_LanguageToggle() {
         <Select.Root
             items={items}
             value={i18n.language}
-            onValueChange={value => i18n.changeLanguage(value)}
+            onValueChange={value => i18n.changeLanguage(value ?? undefined)}
         >
             <Select.Trigger className={styles.Select}>
                 <Select.Value>
