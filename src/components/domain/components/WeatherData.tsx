@@ -29,9 +29,10 @@ export function WeatherData({ children }: Props) {
         pollingInterval: polling ? 1000 : undefined
     });
     useEffect(() => {
-        setPolling(csvStatus?.busy ?? false);
+        const shouldPoll = csvStatus?.busy ?? false;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setPolling(prev => prev === shouldPoll ? prev : shouldPoll);
     }, [csvStatus?.busy]);
-
 
     const {
         data: weatherData,
@@ -65,7 +66,7 @@ export function WeatherData({ children }: Props) {
                 grouping: grouping,
                 category: category,
                 month: month ? Number(month) : undefined,
-                year:  year ? Number(year) : undefined
+                year: year ? Number(year) : undefined
             }), chartNode);
 }
 

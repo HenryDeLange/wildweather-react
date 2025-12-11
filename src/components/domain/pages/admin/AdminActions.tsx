@@ -24,7 +24,9 @@ export function AdminActions() {
         pollingInterval: csvPolling ? 1000 : undefined
     });
     useEffect(() => {
-        setCsvPolling(csvStatus?.busy ?? false);
+        const shouldPoll = csvStatus?.busy ?? false;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCsvPolling(prev => prev === shouldPoll ? prev : shouldPoll);
     }, [csvStatus?.busy]);
 
     const [
@@ -44,7 +46,9 @@ export function AdminActions() {
         pollingInterval: awPolling ? 1000 : undefined
     });
     useEffect(() => {
-        setAwPolling(awApiStatus?.busy ?? false);
+        const shouldPoll = awApiStatus?.busy ?? false;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setAwPolling(prev => prev === shouldPoll ? prev : shouldPoll);
     }, [awApiStatus?.busy]);
 
     const [
@@ -64,7 +68,9 @@ export function AdminActions() {
         pollingInterval: wuPolling ? 1000 : undefined
     });
     useEffect(() => {
-        setWuPolling(wuApiStatus?.busy ?? false);
+        const shouldPoll = wuApiStatus?.busy ?? false;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setWuPolling(prev => prev === shouldPoll ? prev : shouldPoll);
     }, [wuApiStatus?.busy]);
 
     const [
