@@ -6,7 +6,7 @@ import type { WeatherDataDto } from '../../../../redux/api/wildweatherApi';
 import type { CategoryFilterType } from '../weatherTypes';
 import { useGenerateSeries } from './series';
 import type { WeatherChartProps } from './WeatherChart';
-import { useGenerateXAxis } from './xAxis';
+import { useEarliestDataYear, useGenerateXAxis } from './xAxis';
 import { useGenerateYAxis } from './yAxis';
 
 type EChartsOption = echarts.ComposeOption<
@@ -29,7 +29,8 @@ export function useEChartsOption(
 ): EChartsOption {
     const { t } = useTranslation();
 
-    const xAxisLabels = useGenerateXAxis(grouping, month, year);
+    const earliestYear = useEarliestDataYear(data);
+    const xAxisLabels = useGenerateXAxis(grouping, month, year, earliestYear);
     const yAxisLabels = useGenerateYAxis(chartType);
     const seriesValues = useGenerateSeries(chartType, data, grouping, category, month, year, stations);
 

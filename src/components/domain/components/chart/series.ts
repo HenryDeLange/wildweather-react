@@ -6,7 +6,7 @@ import type { CategoryFilterType, CategoryType, GroupedFieldType, WeatherFieldTy
 import { themeDark } from './themeDark';
 import { themeLight } from './themeLight';
 import type { WeatherChartProps } from './WeatherChart';
-import { useGenerateXAxis } from './xAxis';
+import { useEarliestDataYear, useGenerateXAxis } from './xAxis';
 
 export function useGenerateSeries(
     chartType: WeatherChartProps['type'],
@@ -19,7 +19,8 @@ export function useGenerateSeries(
 ): (LineSeriesOption | BarSeriesOption)[] {
     const showBarChart = grouping === 'YEARLY' || (grouping === 'MONTHLY' && month);
 
-    const xAxis = useGenerateXAxis(grouping, month, year);
+    const earliestYear = useEarliestDataYear(data);
+    const xAxis = useGenerateXAxis(grouping, month, year, earliestYear);
     const xAxisLabels = xAxis.data as string[];
 
     const dark = useMediaQuery('(prefers-color-scheme: dark)');

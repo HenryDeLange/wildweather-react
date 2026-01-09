@@ -63,7 +63,12 @@
         transform 150ms,
         opacity 150ms;
     overflow-y: auto;
-    max-height: var(--available-height);
+    background-clip: padding-box;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
 
     &[data-starting-style],
     &[data-ending-style] {
@@ -95,7 +100,7 @@
     position: relative;
     padding-block: 0.25rem;
     overflow-y: auto;
-    max-height: var(--available-height);
+    max-height: calc(var(--available-height) - 2rem);
     scroll-padding-block: 1.5rem;
 }
 
@@ -151,7 +156,7 @@
 
 .ScrollArrow {
     width: 100%;
-    background: var(--color-canvas);
+    background: var(--color-gray-200);
     z-index: 1;
     text-align: center;
     cursor: default;

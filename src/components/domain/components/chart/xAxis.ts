@@ -1,14 +1,16 @@
 import type { CategoryAxisBaseOption } from 'echarts/types/src/coord/axisCommonTypes.js';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetWeatherStatusQuery } from '../../../../redux/api/wildweatherApi';
+import { useGetWeatherStatusQuery, type WeatherDataDto } from '../../../../redux/api/wildweatherApi';
 import type { WeatherChartProps } from './WeatherChart';
 
 export function useGenerateXAxis(
     grouping: WeatherChartProps['grouping'],
     month: WeatherChartProps['month'],
-    year: WeatherChartProps['year']
+    year: WeatherChartProps['year'],
+    earliestYear: number
 ): CategoryAxisBaseOption {
-    const labels = useLabels(grouping, month, year);
+    const labels = useLabels(grouping, month, year, earliestYear);
     return {
         type: 'category',
         data: labels
@@ -18,12 +20,10 @@ export function useGenerateXAxis(
 function useLabels(
     grouping: WeatherChartProps['grouping'],
     month: WeatherChartProps['month'],
-    year: WeatherChartProps['year']
+    year: WeatherChartProps['year'],
+    earliestYear: number
 ): string[] {
     const { i18n } = useTranslation();
-    const {
-        data: stationStatusData
-    } = useGetWeatherStatusQuery();
     switch (grouping) {
         case 'DAILY': {
             const days: string[] = [];
@@ -68,10 +68,7 @@ function useLabels(
                 return [year.toString()]
             }
             const years: string[] = [];
-            const earliestStartDate = Number((stationStatusData?.reduce((earliest, current) => {
-                return new Date(current.startDate) < new Date(earliest.startDate) ? current : earliest;
-            })?.startDate ?? '2023').substring(0, 4));
-            for (let i = earliestStartDate; i <= new Date().getFullYear(); i++) {
+            for (let i = earliestYear; i <= new Date().getFullYear(); i++) {
                 years.push(String(i));
             }
             return years;
@@ -98,4 +95,28 @@ const monthWeeks = [
 
 function validWeekRangeForMonth(month: number) {
     return monthWeeks[month - 1];
+}
+
+export function useEarliestStationYear(): number {
+    const {
+        data: stationStatusData
+    } = useGetWeatherStatusQuery();
+    const year = useMemo(() => {
+        return Number(
+            (stationStatusData?.reduce((earliest, current) => {
+                return new Date(current.startDate) < new Date(earliest.startDate) ? current : earliest;
+            })?.startDate ?? '2023').substring(0, 4)
+        );
+    }, [stationStatusData]);
+    return year;
+}
+
+export function useEarliestDataYear(data: WeatherDataDto['weather']): number {
+    const year = useMemo(() => {
+        const years = Object.values(data).flatMap(station => {
+            return Object.keys(station).map(key => Number(key));
+        });
+        return Math.min(...years);
+    }, [data]);
+    return year;
 }
