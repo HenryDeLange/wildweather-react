@@ -32,7 +32,11 @@ export function useGenerateSeries(
         const stationIndex = stations.indexOf(station);
         const colorRange = station.startsWith('AW')
             ? [themeColorPallet[stationIndex * 2], themeColorPallet[stationIndex * 2 + 1]]
-            : [themeColorPallet[themeColorPallet.length - 2], themeColorPallet[themeColorPallet.length - 1]];
+            : station.startsWith('OM')
+                ? [themeColorPallet[themeColorPallet.length - 6], themeColorPallet[themeColorPallet.length - 5]]
+                : station.startsWith('WU')
+                    ? [themeColorPallet[themeColorPallet.length - 4], themeColorPallet[themeColorPallet.length - 3]]
+                    : [themeColorPallet[themeColorPallet.length - 2], themeColorPallet[themeColorPallet.length - 1]];
         colors[station] = {};
         const years = Object.keys(data[station]);
         const gradient = generateGradient(colorRange, years.length);

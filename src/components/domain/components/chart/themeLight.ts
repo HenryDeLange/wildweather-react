@@ -3,20 +3,24 @@ import type { ThemeOption } from 'echarts/types/src/util/types.js';
 export const themeLight: ThemeOption = {
     backgroundColor: 'rgba(254,248,239,1)',
     color: [
-        "#26b2e9",
-        "#14a1da",
-        "#f5be28",
-        "#e4b021",
-        "#bec7c1",
-        "#acb4ae",
+        '#26b2e9',
+        '#14a1da',
+        '#f5be28',
+        '#e4b021',
+        '#bddac7',
+        '#a2bda9',
+        '#cabacf',
+        '#baabbe',
+        '#bec7c1',
+        '#acb4ae',
     ],
     title: {
         textStyle: {
-            color: "#13556bff",
+            color: '#13556bff',
             fontSize: 24
         },
         subtextStyle: {
-            color: "#254550ff",
+            color: '#254550ff',
             fontSize: 14
         },
         itemGap: 6
@@ -32,23 +36,23 @@ export const themeLight: ThemeOption = {
         //     opacity: 0.1
         // },
         // symbolSize: 10,
-        // symbol: "emptyCircle",
-        symbol: "circle",
+        // symbol: 'emptyCircle',
+        symbol: 'circle',
         smooth: true
     },
     legend: {
         textStyle: {
-            color: "#333333"
+            color: '#333333'
         }
     },
     tooltip: {
         axisPointer: {
             lineStyle: {
-                color: "#333333",
+                color: '#333333',
                 width: 1
             },
             crossStyle: {
-                color: "#333333",
+                color: '#333333',
                 width: 1
             }
         }
@@ -56,32 +60,32 @@ export const themeLight: ThemeOption = {
     bar: {
         itemStyle: {
             barBorderWidth: 0,
-            barBorderColor: "#cec6c6ff"
+            barBorderColor: '#cec6c6ff'
         }
     },
     categoryAxis: {
         axisLine: {
             show: true,
             lineStyle: {
-                color: "#9e9e9eff"
+                color: '#9e9e9eff'
             }
         },
         axisTick: {
             show: true,
             lineStyle: {
-                color: "#9e9e9eff"
+                color: '#9e9e9eff'
             }
         },
         axisLabel: {
             show: true,
-            color: "#333333",
+            color: '#333333',
             fontSize: 16
         },
         splitLine: {
             show: false,
             lineStyle: {
                 color: [
-                    "#ccccccff"
+                    '#ccccccff'
                 ]
             }
         },
@@ -93,25 +97,25 @@ export const themeLight: ThemeOption = {
         axisLine: {
             show: true,
             lineStyle: {
-                color: "#9e9e9eff"
+                color: '#9e9e9eff'
             }
         },
         axisTick: {
             show: true,
             lineStyle: {
-                color: "#9e9e9eff"
+                color: '#9e9e9eff'
             }
         },
         axisLabel: {
             show: true,
-            color: "#333333",
+            color: '#333333',
             fontSize: 16
         },
         splitLine: {
             show: false,
             lineStyle: {
                 color: [
-                    "#ccccccff"
+                    '#ccccccff'
                 ]
             }
         },

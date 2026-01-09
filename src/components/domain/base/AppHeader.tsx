@@ -118,18 +118,18 @@ export function AppHeader() {
                         </HBox>
                     </ShowOnMobile>
                     <HideOnMobile useHardCutoff>
-                        <RouterLink to='/'>
+                        <RouterLink to='/' forceReload>
                             {logo}
                         </RouterLink>
                     </HideOnMobile>
                     <ShowOnMobile useHardCutoff>
-                        <RouterLink to='/'>
+                        <RouterLink to='/' forceReload>
                             {smallLogo}
                         </RouterLink>
                     </ShowOnMobile>
                     <HideOnMobile>
                         <HBox gap='0.25rem'>
-                            <RouterLink to='/'>
+                            <RouterLink to='/' forceReload>
                                 <Heading variant='priority' size='sub-title'>
                                     {t('appTitle')}
                                 </Heading>
@@ -138,7 +138,7 @@ export function AppHeader() {
                         </HBox>
                     </HideOnMobile>
                     <ShowOnMobile>
-                        <RouterLink to='/'>
+                        <RouterLink to='/' forceReload>
                             <Text size='large'>
                                 {t('appTitle')}
                             </Text>

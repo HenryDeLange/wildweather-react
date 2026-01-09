@@ -85,6 +85,26 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["Admin"],
       }),
+      getOpenMeteoApiProcessStatus: build.query<
+        GetOpenMeteoApiProcessStatusApiResponse,
+        GetOpenMeteoApiProcessStatusApiArg
+      >({
+        query: () => ({ url: `/api/v1/admin/process/api/open-meteo` }),
+        providesTags: ["Admin"],
+      }),
+      triggerOpenMeteoApiProcessing: build.mutation<
+        TriggerOpenMeteoApiProcessingApiResponse,
+        TriggerOpenMeteoApiProcessingApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/api/v1/admin/process/api/open-meteo`,
+          method: "POST",
+          params: {
+            fetchAllData: queryArg.fetchAllData,
+          },
+        }),
+        invalidatesTags: ["Admin"],
+      }),
       getAmbientWeatherApiProcessStatus: build.query<
         GetAmbientWeatherApiProcessStatusApiResponse,
         GetAmbientWeatherApiProcessStatusApiArg
@@ -174,6 +194,13 @@ export type GetWeatherUndergroundApiProcessStatusApiResponse =
 export type GetWeatherUndergroundApiProcessStatusApiArg = void;
 export type TriggerWeatherUndergroundApiProcessingApiResponse = unknown;
 export type TriggerWeatherUndergroundApiProcessingApiArg = {
+  fetchAllData?: boolean;
+};
+export type GetOpenMeteoApiProcessStatusApiResponse =
+  /** status 200 OK */ ApiStatus;
+export type GetOpenMeteoApiProcessStatusApiArg = void;
+export type TriggerOpenMeteoApiProcessingApiResponse = unknown;
+export type TriggerOpenMeteoApiProcessingApiArg = {
   fetchAllData?: boolean;
 };
 export type GetAmbientWeatherApiProcessStatusApiResponse =
@@ -275,6 +302,8 @@ export const {
   useTriggerCsvProcessingMutation,
   useGetWeatherUndergroundApiProcessStatusQuery,
   useTriggerWeatherUndergroundApiProcessingMutation,
+  useGetOpenMeteoApiProcessStatusQuery,
+  useTriggerOpenMeteoApiProcessingMutation,
   useGetAmbientWeatherApiProcessStatusQuery,
   useTriggerAmbientWeatherApiProcessingMutation,
   useGetWeatherQuery,
