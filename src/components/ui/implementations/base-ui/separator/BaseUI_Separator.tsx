@@ -1,5 +1,5 @@
-import type { Orientation } from '@base-ui-components/react';
-import { Separator } from '@base-ui-components/react/separator';
+import type { Orientation } from '@base-ui/react';
+import { Separator } from '@base-ui/react/separator';
 import styles from './BaseUI_Separator.module.css';
 
 // https://base-ui.com/react/components/separator

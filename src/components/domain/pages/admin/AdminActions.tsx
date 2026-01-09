@@ -2,7 +2,7 @@ import { CloudDownload, FileSearchCorner, RefreshCcw, UserPlus } from 'lucide-re
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetAmbientWeatherApiProcessStatusQuery, useGetCsvProcessStatusQuery, useGetOpenMeteoApiProcessStatusQuery, useGetWeatherUndergroundApiProcessStatusQuery, useTriggerAmbientWeatherApiProcessingMutation, useTriggerCsvProcessingMutation, useTriggerOpenMeteoApiProcessingMutation, useTriggerWeatherUndergroundApiProcessingMutation } from '../../../../redux/api/wildweatherApi';
-import { Box, HBox, PageContainer, VBox } from '../../../ui/layout';
+import { Box, HBox, PageContainer, ShowOnMobile, VBox } from '../../../ui/layout';
 import { Button, Heading, LinkButton, RouterButton, Separator, Switch } from '../../../ui/mywild';
 import { ErrorDisplay } from '../../base/ErrorDisplay';
 
@@ -14,6 +14,7 @@ export function AdminActions() {
     const [wuPolling, setWuPolling] = useState(false);
     const [omPolling, setOmPolling] = useState(false);
     const [allCsvReload, setAllCsvReload] = useState(false);
+    const [awAllData, setAwAllData] = useState(false);
     const [wuAllData, setWuAllData] = useState(false);
     const [omAllData, setOmAllData] = useState(false);
 
@@ -144,15 +145,27 @@ export function AdminActions() {
                         {allCsvReload ? t('adminCsvAllLoad') : t('adminCsvNewLoad')}
                     </Switch>
                 </HBox>
-                <Box>
+                <ShowOnMobile>
+                    <br />
+                </ShowOnMobile>
+                <HBox>
                     <Button
                         icon={<CloudDownload />}
-                        onClick={() => doAwApiProcessing()}
+                        onClick={() => doAwApiProcessing({ fetchAllData: awAllData })}
                         loading={awApiProcessIsLoading || awApiStatusIsLoading || awApiStatus?.busy}
                     >
                         {t('adminAmbientWeatherApiProcessingButton')}
                     </Button>
-                </Box>
+                    <Switch
+                        checked={awAllData}
+                        onCheckedChange={setAwAllData}
+                    >
+                        {awAllData ? t('adminAllFetch') : t('adminNewFetch')}
+                    </Switch>
+                </HBox>
+                <ShowOnMobile>
+                    <br />
+                </ShowOnMobile>
                 <HBox>
                     <Button
                         icon={<CloudDownload />}
@@ -168,6 +181,9 @@ export function AdminActions() {
                         {wuAllData ? t('adminAllFetch') : t('adminNewFetch')}
                     </Switch>
                 </HBox>
+                <ShowOnMobile>
+                    <br />
+                </ShowOnMobile>
                 <HBox>
                     <Button
                         icon={<CloudDownload />}

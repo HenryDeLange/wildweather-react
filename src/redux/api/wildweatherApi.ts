@@ -116,9 +116,12 @@ const injectedRtkApi = api
         TriggerAmbientWeatherApiProcessingApiResponse,
         TriggerAmbientWeatherApiProcessingApiArg
       >({
-        query: () => ({
+        query: (queryArg) => ({
           url: `/api/v1/admin/process/api/ambient-weather`,
           method: "POST",
+          params: {
+            fetchAllData: queryArg.fetchAllData,
+          },
         }),
         invalidatesTags: ["Admin"],
       }),
@@ -207,7 +210,9 @@ export type GetAmbientWeatherApiProcessStatusApiResponse =
   /** status 200 OK */ ApiStatus;
 export type GetAmbientWeatherApiProcessStatusApiArg = void;
 export type TriggerAmbientWeatherApiProcessingApiResponse = unknown;
-export type TriggerAmbientWeatherApiProcessingApiArg = void;
+export type TriggerAmbientWeatherApiProcessingApiArg = {
+  fetchAllData?: boolean;
+};
 export type GetWeatherApiResponse = /** status 200 OK */ WeatherDataDto;
 export type GetWeatherApiArg = {
   stations?: string[];

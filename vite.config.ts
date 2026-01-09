@@ -110,7 +110,7 @@ export default defineConfig({
                         'async-mutex'
                     ],
                     ui_base: [
-                        '@base-ui-components/react',
+                        '@base-ui/react',
                         'lucide-react',
                         'usehooks-ts',
                         'typescript-color-gradient'

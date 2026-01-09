@@ -9,10 +9,10 @@ export const themeDark: ThemeOption = {
         '#c28f05',
         '#91a799',
         '#64756a',
-        '#998b9e',
-        '#645a68',
-        '#787e7a',
-        '#5b615c',
+        '#9e8b99',
+        '#685a65',
+        '#7c7c7c',
+        '#616161',
     ],
     title: {
         textStyle: {

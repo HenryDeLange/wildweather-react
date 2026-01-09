@@ -1,4 +1,4 @@
-import { Toast } from '@base-ui-components/react/toast';
+import { Toast } from '@base-ui/react/toast';
 import type { ReactNode } from 'react';
 import styles from './BaseUI_Toast.module.css';
 import { BaseUI_ToastList } from './BaseUI_ToastList';

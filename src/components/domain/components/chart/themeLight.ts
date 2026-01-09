@@ -9,10 +9,10 @@ export const themeLight: ThemeOption = {
         '#e4b021',
         '#bddac7',
         '#a2bda9',
-        '#cabacf',
-        '#baabbe',
-        '#bec7c1',
-        '#acb4ae',
+        '#cfbacc',
+        '#beabb8',
+        '#c5c5c5',
+        '#adadad',
     ],
     title: {
         textStyle: {

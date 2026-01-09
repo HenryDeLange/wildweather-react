@@ -1,6 +1,6 @@
-import type { BaseUIChangeEventDetails } from '@base-ui-components/react';
-import { Field } from '@base-ui-components/react/field';
-import { Switch } from '@base-ui-components/react/switch';
+import type { BaseUIChangeEventDetails } from '@base-ui/react';
+import { Field } from '@base-ui/react/field';
+import { Switch } from '@base-ui/react/switch';
 import { Text } from '../../../mywild';
 import styles from './BaseUI_Switch.module.css';
 
