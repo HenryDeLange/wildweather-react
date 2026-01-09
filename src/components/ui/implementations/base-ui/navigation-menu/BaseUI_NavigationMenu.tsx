@@ -1,4 +1,4 @@
-import { NavigationMenu } from '@base-ui-components/react/navigation-menu';
+import { NavigationMenu } from '@base-ui/react/navigation-menu';
 import { type LinkProps } from '@tanstack/react-router';
 import { ChevronDown } from 'lucide-react';
 import { Spinner } from '../../../mywild';

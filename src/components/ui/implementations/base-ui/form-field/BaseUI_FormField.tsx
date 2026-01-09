@@ -1,5 +1,5 @@
-import { Field } from '@base-ui-components/react/field';
-import { Input } from '@base-ui-components/react/input';
+import { Field } from '@base-ui/react/field';
+import { Input } from '@base-ui/react/input';
 import { type FieldValues, type UseControllerProps, useController } from 'react-hook-form';
 import { BaseUI_MultiSelect } from '../multi-select/BaseUI_MultiSelect';
 import { BaseUI_Select, type SelectItem } from '../select/BaseUI_Select';

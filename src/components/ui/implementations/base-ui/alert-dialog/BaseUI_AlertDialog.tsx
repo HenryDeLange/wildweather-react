@@ -1,4 +1,4 @@
-import { AlertDialog } from '@base-ui-components/react/alert-dialog';
+import { AlertDialog } from '@base-ui/react/alert-dialog';
 import type { ReactNode } from 'react';
 import { Heading, Text } from '../../../mywild';
 import styles from './BaseUI_AlertDialog.module.css';

@@ -1,4 +1,4 @@
-import { Toast } from '@base-ui-components/react/toast';
+import { Toast } from '@base-ui/react/toast';
 import { useMemo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BaseUI_Toast } from '../implementations/base-ui/toast/BaseUI_Toast';

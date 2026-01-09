@@ -3,20 +3,24 @@ import type { ThemeOption } from 'echarts/types/src/util/types.js';
 export const themeDark: ThemeOption = {
     backgroundColor: 'rgba(51,51,51,1)',
     color: [
-        "#11a2db",
-        "#068bc0",
-        "#dba40c",
-        "#c28f05",
-        "#787e7a",
-        "#5b615c",
+        '#11a2db',
+        '#068bc0',
+        '#dba40c',
+        '#c28f05',
+        '#91a799',
+        '#64756a',
+        '#9e8b99',
+        '#685a65',
+        '#7c7c7c',
+        '#616161',
     ],
     title: {
         textStyle: {
-            color: "#daf3fcff",
+            color: '#daf3fcff',
             fontSize: 24
         },
         subtextStyle: {
-            color: "#adbfc5ff",
+            color: '#adbfc5ff',
             fontSize: 14
         },
         itemGap: 6
@@ -32,23 +36,23 @@ export const themeDark: ThemeOption = {
         //     opacity: 0.1
         // },
         // symbolSize: 10,
-        // symbol: "emptyCircle",
-        symbol: "circle",
+        // symbol: 'emptyCircle',
+        symbol: 'circle',
         smooth: true
     },
     legend: {
         textStyle: {
-            color: "#eeeeee"
+            color: '#eeeeee'
         }
     },
     tooltip: {
         axisPointer: {
             lineStyle: {
-                color: "#eeeeee",
+                color: '#eeeeee',
                 width: 1
             },
             crossStyle: {
-                color: "#eeeeee",
+                color: '#eeeeee',
                 width: 1
             }
         }
@@ -56,32 +60,32 @@ export const themeDark: ThemeOption = {
     bar: {
         itemStyle: {
             barBorderWidth: 0,
-            barBorderColor: "#727272"
+            barBorderColor: '#727272'
         }
     },
     categoryAxis: {
         axisLine: {
             show: true,
             lineStyle: {
-                color: "#eeeeee"
+                color: '#eeeeee'
             }
         },
         axisTick: {
             show: true,
             lineStyle: {
-                color: "#eeeeee"
+                color: '#eeeeee'
             }
         },
         axisLabel: {
             show: true,
-            color: "#eeeeee",
+            color: '#eeeeee',
             fontSize: 16
         },
         splitLine: {
             show: false,
             lineStyle: {
                 color: [
-                    "#444444"
+                    '#444444'
                 ]
             }
         },
@@ -93,25 +97,25 @@ export const themeDark: ThemeOption = {
         axisLine: {
             show: true,
             lineStyle: {
-                color: "#eeeeee"
+                color: '#eeeeee'
             }
         },
         axisTick: {
             show: true,
             lineStyle: {
-                color: "#eeeeee"
+                color: '#eeeeee'
             }
         },
         axisLabel: {
             show: true,
-            color: "#eeeeee",
+            color: '#eeeeee',
             fontSize: 16
         },
         splitLine: {
             show: false,
             lineStyle: {
                 color: [
-                    "#444444"
+                    '#444444'
                 ]
             }
         },

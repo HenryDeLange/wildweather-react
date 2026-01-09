@@ -1,4 +1,4 @@
-import { Popover } from '@base-ui-components/react/popover';
+import { Popover } from '@base-ui/react/popover';
 import type { ReactNode } from 'react';
 import { ArrowSvg } from './BaseUI_ArrowSvg';
 import styles from './BaseUI_Popover.module.css';

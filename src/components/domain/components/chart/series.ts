@@ -6,7 +6,7 @@ import type { CategoryFilterType, CategoryType, GroupedFieldType, WeatherFieldTy
 import { themeDark } from './themeDark';
 import { themeLight } from './themeLight';
 import type { WeatherChartProps } from './WeatherChart';
-import { useGenerateXAxis } from './xAxis';
+import { useEarliestDataYear, useGenerateXAxis } from './xAxis';
 
 export function useGenerateSeries(
     chartType: WeatherChartProps['type'],
@@ -19,7 +19,8 @@ export function useGenerateSeries(
 ): (LineSeriesOption | BarSeriesOption)[] {
     const showBarChart = grouping === 'YEARLY' || (grouping === 'MONTHLY' && month);
 
-    const xAxis = useGenerateXAxis(grouping, month, year);
+    const earliestYear = useEarliestDataYear(data);
+    const xAxis = useGenerateXAxis(grouping, month, year, earliestYear);
     const xAxisLabels = xAxis.data as string[];
 
     const dark = useMediaQuery('(prefers-color-scheme: dark)');
@@ -32,7 +33,11 @@ export function useGenerateSeries(
         const stationIndex = stations.indexOf(station);
         const colorRange = station.startsWith('AW')
             ? [themeColorPallet[stationIndex * 2], themeColorPallet[stationIndex * 2 + 1]]
-            : [themeColorPallet[themeColorPallet.length - 2], themeColorPallet[themeColorPallet.length - 1]];
+            : station.startsWith('OM')
+                ? [themeColorPallet[themeColorPallet.length - 6], themeColorPallet[themeColorPallet.length - 5]]
+                : station.startsWith('WU')
+                    ? [themeColorPallet[themeColorPallet.length - 4], themeColorPallet[themeColorPallet.length - 3]]
+                    : [themeColorPallet[themeColorPallet.length - 2], themeColorPallet[themeColorPallet.length - 1]];
         colors[station] = {};
         const years = Object.keys(data[station]);
         const gradient = generateGradient(colorRange, years.length);

@@ -1,8 +1,8 @@
 import { CloudDownload, FileSearchCorner, RefreshCcw, UserPlus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetAmbientWeatherApiProcessStatusQuery, useGetCsvProcessStatusQuery, useGetWeatherUndergroundApiProcessStatusQuery, useTriggerAmbientWeatherApiProcessingMutation, useTriggerCsvProcessingMutation, useTriggerWeatherUndergroundApiProcessingMutation } from '../../../../redux/api/wildweatherApi';
-import { Box, HBox, PageContainer, VBox } from '../../../ui/layout';
+import { useGetAmbientWeatherApiProcessStatusQuery, useGetCsvProcessStatusQuery, useGetOpenMeteoApiProcessStatusQuery, useGetWeatherUndergroundApiProcessStatusQuery, useTriggerAmbientWeatherApiProcessingMutation, useTriggerCsvProcessingMutation, useTriggerOpenMeteoApiProcessingMutation, useTriggerWeatherUndergroundApiProcessingMutation } from '../../../../redux/api/wildweatherApi';
+import { Box, HBox, PageContainer, ShowOnMobile, VBox } from '../../../ui/layout';
 import { Button, Heading, LinkButton, RouterButton, Separator, Switch } from '../../../ui/mywild';
 import { ErrorDisplay } from '../../base/ErrorDisplay';
 
@@ -12,8 +12,11 @@ export function AdminActions() {
     const [csvPolling, setCsvPolling] = useState(false);
     const [awPolling, setAwPolling] = useState(false);
     const [wuPolling, setWuPolling] = useState(false);
+    const [omPolling, setOmPolling] = useState(false);
     const [allCsvReload, setAllCsvReload] = useState(false);
+    const [awAllData, setAwAllData] = useState(false);
     const [wuAllData, setWuAllData] = useState(false);
+    const [omAllData, setOmAllData] = useState(false);
 
     const {
         refetch: csvStatusRefetch,
@@ -24,7 +27,9 @@ export function AdminActions() {
         pollingInterval: csvPolling ? 1000 : undefined
     });
     useEffect(() => {
-        setCsvPolling(csvStatus?.busy ?? false);
+        const shouldPoll = csvStatus?.busy ?? false;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCsvPolling(prev => prev === shouldPoll ? prev : shouldPoll);
     }, [csvStatus?.busy]);
 
     const [
@@ -44,7 +49,9 @@ export function AdminActions() {
         pollingInterval: awPolling ? 1000 : undefined
     });
     useEffect(() => {
-        setAwPolling(awApiStatus?.busy ?? false);
+        const shouldPoll = awApiStatus?.busy ?? false;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setAwPolling(prev => prev === shouldPoll ? prev : shouldPoll);
     }, [awApiStatus?.busy]);
 
     const [
@@ -64,7 +71,9 @@ export function AdminActions() {
         pollingInterval: wuPolling ? 1000 : undefined
     });
     useEffect(() => {
-        setWuPolling(wuApiStatus?.busy ?? false);
+        const shouldPoll = wuApiStatus?.busy ?? false;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setWuPolling(prev => prev === shouldPoll ? prev : shouldPoll);
     }, [wuApiStatus?.busy]);
 
     const [
@@ -74,6 +83,28 @@ export function AdminActions() {
             error: wuApiProcessError
         }
     ] = useTriggerWeatherUndergroundApiProcessingMutation();
+
+    const {
+        refetch: omApiStatusRefetch,
+        data: omApiStatus,
+        isFetching: omApiStatusIsLoading,
+        error: omApiStatusError
+    } = useGetOpenMeteoApiProcessStatusQuery(undefined, {
+        pollingInterval: omPolling ? 1000 : undefined
+    });
+    useEffect(() => {
+        const shouldPoll = omApiStatus?.busy ?? false;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setOmPolling(prev => prev === shouldPoll ? prev : shouldPoll);
+    }, [omApiStatus?.busy]);
+
+    const [
+        doOmApiProcessing,
+        {
+            isLoading: omApiProcessIsLoading,
+            error: omApiProcessError
+        }
+    ] = useTriggerOpenMeteoApiProcessingMutation();
 
     return (
         <PageContainer>
@@ -87,6 +118,7 @@ export function AdminActions() {
                             csvStatusRefetch();
                             awApiStatusRefetch();
                             wuApiStatusRefetch();
+                            omApiStatusRefetch();
                         }}
                     >
                         <RefreshCcw />
@@ -95,7 +127,8 @@ export function AdminActions() {
                 <ErrorDisplay error={
                     csvStatusError || csvProcessError ||
                     awApiStatusError || awApiProcessError ||
-                    wuApiStatusError || wuApiProcessError
+                    wuApiStatusError || wuApiProcessError ||
+                    omApiStatusError || omApiProcessError
                 } />
                 <HBox>
                     <Button
@@ -112,15 +145,27 @@ export function AdminActions() {
                         {allCsvReload ? t('adminCsvAllLoad') : t('adminCsvNewLoad')}
                     </Switch>
                 </HBox>
-                <Box>
+                <ShowOnMobile>
+                    <br />
+                </ShowOnMobile>
+                <HBox>
                     <Button
                         icon={<CloudDownload />}
-                        onClick={() => doAwApiProcessing()}
+                        onClick={() => doAwApiProcessing({ fetchAllData: awAllData })}
                         loading={awApiProcessIsLoading || awApiStatusIsLoading || awApiStatus?.busy}
                     >
                         {t('adminAmbientWeatherApiProcessingButton')}
                     </Button>
-                </Box>
+                    <Switch
+                        checked={awAllData}
+                        onCheckedChange={setAwAllData}
+                    >
+                        {awAllData ? t('adminAllFetch') : t('adminNewFetch')}
+                    </Switch>
+                </HBox>
+                <ShowOnMobile>
+                    <br />
+                </ShowOnMobile>
                 <HBox>
                     <Button
                         icon={<CloudDownload />}
@@ -133,7 +178,25 @@ export function AdminActions() {
                         checked={wuAllData}
                         onCheckedChange={setWuAllData}
                     >
-                        {wuAllData ? t('adminWeatherUndergroundAllFetch') : t('adminWeatherUndergroundNewFetch')}
+                        {wuAllData ? t('adminAllFetch') : t('adminNewFetch')}
+                    </Switch>
+                </HBox>
+                <ShowOnMobile>
+                    <br />
+                </ShowOnMobile>
+                <HBox>
+                    <Button
+                        icon={<CloudDownload />}
+                        onClick={() => doOmApiProcessing({ fetchAllData: omAllData })}
+                        loading={omApiProcessIsLoading || omApiStatusIsLoading || omApiStatus?.busy}
+                    >
+                        {t('adminOpenMeteoApiProcessingButton')}
+                    </Button>
+                    <Switch
+                        checked={omAllData}
+                        onCheckedChange={setOmAllData}
+                    >
+                        {omAllData ? t('adminAllFetch') : t('adminNewFetch')}
                     </Switch>
                 </HBox>
                 <Separator />
