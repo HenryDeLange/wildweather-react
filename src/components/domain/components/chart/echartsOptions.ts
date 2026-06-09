@@ -1,5 +1,6 @@
 import { type BarSeriesOption, type LineSeriesOption } from 'echarts/charts';
 import { type GridComponentOption, type LegendComponentOption, type TitleComponentOption, type TooltipComponentOption } from 'echarts/components';
+import type { ComposeOption } from 'echarts/core';
 import type { TooltipFormatterCallback, TopLevelFormatterParams } from 'echarts/types/dist/shared';
 import { useTranslation } from 'react-i18next';
 import type { WeatherDataDto } from '../../../../redux/api/wildweatherApi';
@@ -9,7 +10,7 @@ import type { WeatherChartProps } from './WeatherChart';
 import { useEarliestDataYear, useGenerateXAxis } from './xAxis';
 import { useGenerateYAxis } from './yAxis';
 
-type EChartsOption = echarts.ComposeOption<
+type EChartsOption = ComposeOption<
     | TitleComponentOption
     | TooltipComponentOption
     | GridComponentOption

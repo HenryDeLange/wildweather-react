@@ -138,3 +138,6 @@ licenses.csv
 
 # Ignore PWA dev worker
 dev-dist/
+
+# Ignore TanStack Router
+.tanstack

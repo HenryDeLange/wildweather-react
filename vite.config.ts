@@ -5,13 +5,15 @@ import { defineConfig } from 'vite';
 import compression from 'vite-plugin-compression';
 import { VitePWA } from 'vite-plugin-pwa';
 import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { version } from './package.json';
 
 // https://vite.dev/config/
 export default defineConfig({
     define: {
         VITE_APP_VERSION: JSON.stringify(version)
+    },
+    resolve: {
+        tsconfigPaths: true
     },
     plugins: [
         tanstackRouter({ // Make sure that '@tanstack/router-plugin' is passed before '@vitejs/plugin-react'
@@ -20,7 +22,6 @@ export default defineConfig({
         }),
         react(),
         svgr(),
-        tsconfigPaths(),
         visualizer(),
         compression({
             algorithm: 'brotliCompress',
@@ -96,44 +97,25 @@ export default defineConfig({
         })
     ],
     build: {
-        rollupOptions: {
+        rolldownOptions: {
             output: {
-                manualChunks: {
-                    react: [
-                        'react',
-                        'react-dom'
-                    ],
-                    redux: [
-                        'redux',
-                        'react-redux',
-                        '@reduxjs/toolkit',
-                        'async-mutex'
-                    ],
-                    ui_base: [
-                        '@base-ui/react',
-                        'lucide-react',
-                        'usehooks-ts',
-                        'typescript-color-gradient'
-                    ],
-                    ui_form: [
-                        'react-hook-form',
-                        '@hookform/devtools'
-                    ],
-                    echarts: [
-                        'echarts',
-                        'echarts-for-react'
-                    ],
-                    routing: [
-                        'react-error-boundary',
-                        '@tanstack/react-router',
-                        '@tanstack/react-router-devtools',
-                        '@tanstack/router-devtools'
-                    ],
-                    i18n: [
-                        'i18next',
-                        'i18next-browser-languagedetector',
-                        'react-i18next'
-                    ]
+                manualChunks: (moduleId) => {
+                    if (moduleId.includes('node_modules')) {
+                        // React
+                        if (/react|react-dom/.test(moduleId)) return 'react';
+                        // Redux
+                        if (/redux|react-redux|@reduxjs\/toolkit|async-mutex/.test(moduleId)) return 'redux';
+                        // UI Base
+                        if (/@base-ui\/react|lucide-react|usehooks-ts|typescript-color-gradient/.test(moduleId)) return 'ui_base';
+                        // UI Form
+                        if (/react-hook-form|@hookform\/devtools/.test(moduleId)) return 'ui_form';
+                        // Charts
+                        if (/echarts|echarts-for-react/.test(moduleId)) return 'echarts';
+                        // Routing
+                        if (/react-error-boundary|@tanstack\/react-router|@tanstack\/router/.test(moduleId)) return 'routing';
+                        // i18n
+                        if (/i18next|react-i18next/.test(moduleId)) return 'i18n';
+                    }
                 }
             }
         }

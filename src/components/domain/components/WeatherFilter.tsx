@@ -1,9 +1,9 @@
 import { SlidersHorizontal } from 'lucide-react';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGetWeatherStationsQuery } from '../../../redux/api/wildweatherApi';
-import { Box, FixedGrid, Grid, HideOnMobile, ShowOnMobile } from '../../ui/layout';
-import { Form, FormField, Popover } from '../../ui/mywild';
+import { useGetWeatherStationsQuery, useGetWeatherStatusQuery } from '../../../redux/api/wildweatherApi';
+import { Box, FixedGrid, Grid, HideOnMobile, ShowOnMobile, VBox } from '../../ui/layout';
+import { Form, FormField, Popover, Spinner } from '../../ui/mywild';
 import { useEarliestStationYear, useGenerateXAxis } from './chart/xAxis';
 import { WeatherData } from './WeatherData';
 import type { WeatherFilterType } from './weatherTypes';
@@ -13,12 +13,22 @@ type Props = {
 };
 
 export function WeatherFilter({ children }: Props) {
+    const {
+        data: stationsData,
+        isLoading: stationsIsLoading
+    } = useGetWeatherStatusQuery();
+    if (stationsIsLoading)
+        return (
+            <VBox margin='auto' marginTop='1rem'>
+                <Spinner />
+            </VBox>
+        );
     return (
         <Form<WeatherFilterType>
             formProps={{
                 defaultValues: {
                     type: 'TEMPERATURE',
-                    stations: null,
+                    stations: stationsData?.filter(station => station.myStation).map(station => station.station) ?? [],
                     grouping: 'MONTHLY',
                     category: 'A',
                     aggregate: 'AVERAGE',
@@ -117,9 +127,7 @@ function AdditionalFormFields() {
     const earliestYear = useEarliestStationYear();
 
     const {
-        data: stationsData,
-        // isFetching: stationsIsLoading,
-        // error: stationsError
+        data: stationsData
     } = useGetWeatherStationsQuery();
 
     return (
