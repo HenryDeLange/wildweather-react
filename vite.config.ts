@@ -5,13 +5,15 @@ import { defineConfig } from 'vite';
 import compression from 'vite-plugin-compression';
 import { VitePWA } from 'vite-plugin-pwa';
 import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { version } from './package.json';
 
 // https://vite.dev/config/
 export default defineConfig({
     define: {
         VITE_APP_VERSION: JSON.stringify(version)
+    },
+    resolve: {
+        tsconfigPaths: true
     },
     plugins: [
         tanstackRouter({ // Make sure that '@tanstack/router-plugin' is passed before '@vitejs/plugin-react'
@@ -20,7 +22,6 @@ export default defineConfig({
         }),
         react(),
         svgr(),
-        tsconfigPaths(),
         visualizer(),
         compression({
             algorithm: 'brotliCompress',
@@ -96,43 +97,38 @@ export default defineConfig({
         })
     ],
     build: {
-        rollupOptions: {
+        rolldownOptions: {
             output: {
-                manualChunks: {
-                    react: [
-                        'react',
-                        'react-dom'
-                    ],
-                    redux: [
-                        'redux',
-                        'react-redux',
-                        '@reduxjs/toolkit',
-                        'async-mutex'
-                    ],
-                    ui_base: [
-                        '@base-ui/react',
-                        'lucide-react',
-                        'usehooks-ts',
-                        'typescript-color-gradient'
-                    ],
-                    ui_form: [
-                        'react-hook-form',
-                        '@hookform/devtools'
-                    ],
-                    echarts: [
-                        'echarts',
-                        'echarts-for-react'
-                    ],
-                    routing: [
-                        'react-error-boundary',
-                        '@tanstack/react-router',
-                        '@tanstack/react-router-devtools',
-                        '@tanstack/router-devtools'
-                    ],
-                    i18n: [
-                        'i18next',
-                        'i18next-browser-languagedetector',
-                        'react-i18next'
+                codeSplitting: {
+                    groups: [
+                        {
+                            name: 'react',
+                            test: /node_modules\/(react|react-dom)/,
+                        },
+                        {
+                            name: 'redux',
+                            test: /node_modules\/(redux|react-redux|@reduxjs\/toolkit|async-mutex)/,
+                        },
+                        {
+                            name: 'ui_base',
+                            test: /node_modules\/(@base-ui\/react|lucide-react|usehooks-ts|typescript-color-gradient)/,
+                        },
+                        {
+                            name: 'ui_form',
+                            test: /node_modules\/(react-hook-form|@hookform\/devtools)/,
+                        },
+                        {
+                            name: 'echarts',
+                            test: /node_modules\/(echarts|echarts-for-react)/,
+                        },
+                        {
+                            name: 'routing',
+                            test: /node_modules\/(react-error-boundary|@tanstack\/react-router|@tanstack\/router)/,
+                        },
+                        {
+                            name: 'i18n',
+                            test: /node_modules\/(i18next|react-i18next)/,
+                        },
                     ]
                 }
             }

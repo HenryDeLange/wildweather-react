@@ -42,7 +42,7 @@ export function AboutPage() {
                                 href='https://www.mywild.co.za'
                                 style={{ textDecoration: 'none' }}
                                 target='_blank'
-                                rel='noopener'
+                                rel='noreferrer'
                             >
                                 <VBox gap={0}>
                                     <Text size='standard'>
@@ -62,7 +62,7 @@ export function AboutPage() {
                                 href='https://github.com/HenryDeLange/wildweather-react'
                                 style={{ textDecoration: 'none' }}
                                 target='_blank'
-                                rel='noopener'
+                                rel='noreferrer'
                             >
                                 <VBox gap={0}>
                                     <Text size='standard'>

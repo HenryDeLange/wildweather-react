@@ -53,7 +53,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/stations': typeof StationsRoute
   '/user/register': typeof UserRegisterRoute
-  '/admin': typeof AdminIndexRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -80,7 +80,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/stations'
     | '/user/register'
-    | '/admin'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/about' | '/login' | '/stations' | '/user/register' | '/admin'
   id:
@@ -135,7 +135,7 @@ declare module '@tanstack/react-router' {
     '/admin/': {
       id: '/admin/'
       path: '/admin'
-      fullPath: '/admin'
+      fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
