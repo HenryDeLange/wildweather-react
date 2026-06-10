@@ -1,5 +1,6 @@
 import { SlidersHorizontal } from 'lucide-react';
-import type { ReactElement } from 'react';
+import { useEffect, type ReactElement } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useGetWeatherStationsQuery, useGetWeatherStatusQuery } from '../../../redux/api/wildweatherApi';
 import { Box, FixedGrid, Grid, HideOnMobile, ShowOnMobile, VBox } from '../../ui/layout';
@@ -71,6 +72,19 @@ export function WeatherFilter({ children }: Props) {
 
 function BaseFormFields() {
     const { t } = useTranslation();
+
+    const { control, setValue } = useFormContext<WeatherFilterType>();
+    const type = useWatch({ control, name: 'type' });
+    useEffect(() => {
+        if (type === 'RAIN_DAILY') {
+            setValue('category', 'H');
+            setValue('aggregate', 'TOTAL');
+        }
+        else {
+            setValue('category', 'A');
+            setValue('aggregate', 'AVERAGE');
+        }
+    }, [type, setValue]);
 
     return (
         <>

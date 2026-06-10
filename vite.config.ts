@@ -99,23 +99,37 @@ export default defineConfig({
     build: {
         rolldownOptions: {
             output: {
-                manualChunks: (moduleId) => {
-                    if (moduleId.includes('node_modules')) {
-                        // React
-                        if (/react|react-dom/.test(moduleId)) return 'react';
-                        // Redux
-                        if (/redux|react-redux|@reduxjs\/toolkit|async-mutex/.test(moduleId)) return 'redux';
-                        // UI Base
-                        if (/@base-ui\/react|lucide-react|usehooks-ts|typescript-color-gradient/.test(moduleId)) return 'ui_base';
-                        // UI Form
-                        if (/react-hook-form|@hookform\/devtools/.test(moduleId)) return 'ui_form';
-                        // Charts
-                        if (/echarts|echarts-for-react/.test(moduleId)) return 'echarts';
-                        // Routing
-                        if (/react-error-boundary|@tanstack\/react-router|@tanstack\/router/.test(moduleId)) return 'routing';
-                        // i18n
-                        if (/i18next|react-i18next/.test(moduleId)) return 'i18n';
-                    }
+                codeSplitting: {
+                    groups: [
+                        {
+                            name: 'react',
+                            test: /node_modules\/(react|react-dom)/,
+                        },
+                        {
+                            name: 'redux',
+                            test: /node_modules\/(redux|react-redux|@reduxjs\/toolkit|async-mutex)/,
+                        },
+                        {
+                            name: 'ui_base',
+                            test: /node_modules\/(@base-ui\/react|lucide-react|usehooks-ts|typescript-color-gradient)/,
+                        },
+                        {
+                            name: 'ui_form',
+                            test: /node_modules\/(react-hook-form|@hookform\/devtools)/,
+                        },
+                        {
+                            name: 'echarts',
+                            test: /node_modules\/(echarts|echarts-for-react)/,
+                        },
+                        {
+                            name: 'routing',
+                            test: /node_modules\/(react-error-boundary|@tanstack\/react-router|@tanstack\/router)/,
+                        },
+                        {
+                            name: 'i18n',
+                            test: /node_modules\/(i18next|react-i18next)/,
+                        },
+                    ]
                 }
             }
         }
