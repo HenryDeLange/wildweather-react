@@ -9,7 +9,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
 import { useGetWeatherStationsQuery, type WeatherDataDto } from '../../../../redux/api/wildweatherApi';
 import { ErrorDisplay } from '../../base/ErrorDisplay';
-import type { CategoryFilterType, GroupingType, WeatherFieldType } from '../weatherTypes';
+import type { AggregateType, CategoryFilterType, GroupingType, WeatherFieldType } from '../weatherTypes';
 import { useEChartsLoadingOption } from './echartsLoadingOptions';
 import { useEChartsOption } from './echartsOptions';
 import { themeDark } from './themeDark';
@@ -40,12 +40,13 @@ export type WeatherChartProps = {
     loading?: boolean;
     data: WeatherDataDto['weather'];
     grouping?: GroupingType;
+    aggregate: AggregateType,
     category: CategoryFilterType;
     month?: number | null;
     year?: number | null;
 }
 
-export function WeatherChart({ type, loading, data, grouping, category, month, year }: WeatherChartProps) {
+export function WeatherChart({ type, loading, data, grouping, aggregate, category, month, year }: WeatherChartProps) {
     const {
         data: stationsData,
         isFetching: stationsIsLoading,
@@ -62,7 +63,7 @@ export function WeatherChart({ type, loading, data, grouping, category, month, y
         return `<b>${active.seriesName}</b><br />${active.name}<br />${active.value}`;
     }, [highlightedSeriesIndex]);
 
-    const option = useEChartsOption(type, data, grouping, category, month, year, stationsData, tooltipRenderer);
+    const option = useEChartsOption(type, data, grouping, aggregate, category, month, year, stationsData, tooltipRenderer);
     const loadingOption = useEChartsLoadingOption();
 
     const isDarkMode = useMediaQuery('(prefers-color-scheme: dark)');

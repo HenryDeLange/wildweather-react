@@ -64,6 +64,7 @@ export function WeatherData({ children }: Props) {
                 loading: weatherIsLoading || csvStatusIsLoading || csvStatus?.busy,
                 data: weatherData?.weather ?? {},
                 grouping: grouping,
+                aggregate: aggregate,
                 category: category,
                 month: month ? Number(month) : undefined,
                 year: year ? Number(year) : undefined

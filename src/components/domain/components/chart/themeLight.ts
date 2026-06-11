@@ -3,10 +3,10 @@ import type { ThemeOption } from 'echarts/types/src/util/types.js';
 export const themeLight: ThemeOption = {
     backgroundColor: 'rgba(254,248,239,1)',
     color: [
-        '#26b2e9',
-        '#14a1da',
-        '#f5be28',
-        '#e4b021',
+        '#89c3d6',
+        '#aa4fff',
+        '#d1c27d',
+        '#f05a5a',
         '#bddac7',
         '#a2bda9',
         '#cfbacc',
