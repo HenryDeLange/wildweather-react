@@ -99,8 +99,9 @@ function BaseFormFields() {
                     'WIND_SPEED',
                     'WIND_MAX',
                     'WIND_DIRECTION',
-                    'HUMIDITY',
                     'UV_RADIATION_INDEX',
+                    'HUMIDITY',
+                    'PRESSURE',
                     'MISSING'
                 ].map(value => ({ label: t(`filterChart${value}`), value }))}
                 forceNotEmpty

@@ -135,3 +135,7 @@
 .ItemIndicator {
     grid-column-start: 1;
 }
+
+.ItemText {
+  grid-column-start: 2;
+}

@@ -36,7 +36,7 @@ export function BaseUI_LanguageToggle() {
                                     <Select.ItemIndicator className={styles.ItemIndicator}>
                                         <CheckIcon size='0.75rem' />
                                     </Select.ItemIndicator>
-                                    <Select.ItemText>
+                                    <Select.ItemText className={styles.ItemText}>
                                         <Text>
                                             {label}
                                         </Text>

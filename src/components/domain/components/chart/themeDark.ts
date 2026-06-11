@@ -3,11 +3,11 @@ import type { ThemeOption } from 'echarts/types/src/util/types.js';
 export const themeDark: ThemeOption = {
     backgroundColor: 'rgba(51,51,51,1)',
     color: [
-        '#11a2db',
-        '#068bc0',
-        '#dba40c',
-        '#c28f05',
-        '#91a799',
+        '#75adc0',
+        '#7c2bc9',
+        '#b8a75d',
+        '#a82525',
+        '#91a796',
         '#64756a',
         '#9e8b99',
         '#685a65',
