@@ -45,7 +45,7 @@ export default defineConfig({
             manifest: {
                 name: 'WildWeather',
                 short_name: 'WildWeather',
-                description: 'WildWeather Web Portal.',
+                description: 'WildWeather Website.',
                 theme_color: '#21809cff',
                 icons: [
                     {
