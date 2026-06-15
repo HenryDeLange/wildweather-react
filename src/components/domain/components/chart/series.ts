@@ -55,7 +55,7 @@ export function useGenerateSeries(
                 emphasis: {
                     focus: 'series'
                 },
-                triggerLineEvent: true,
+                triggerEvent: true,
                 lineStyle: {
                     color: colors[station][year] ?? '#555555'
                 },
@@ -119,7 +119,7 @@ function getDataValues(
 ) {
     return categories.map((categoryLabel, index) => {
         const group = grouping === 'YEARLY' ? categoryLabel
-            : (grouping === 'MONTHLY' && month) ? month < 9 ? `0${month}` : `${month}`
+            : (grouping === 'MONTHLY' && month) ? (month <= 9 ? `0${month}` : `${month}`)
                 : (grouping === 'WEEKLY' && month) ? categoryLabel
                     : grouping === 'DAILY' ? getDayGroup(Number(year), index, month)
                         : index < 9 ? `0${index + 1}` : `${index + 1}`;
